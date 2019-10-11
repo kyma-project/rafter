@@ -90,7 +90,7 @@
 [[projects]]
   digest = "1:321809367e6a213270ff54e2260e4e077562f7481438baef0a1beafb2561e6da"
   name = "github.com/kyma-project/kyma"
-  packages = ["components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"]
+  packages = ["components/asset-store-controller-manager/pkg/apis/rafter/v1beta1"]
   pruneopts = "UT"
   revision = "f5d791b218819a0aecde663dedda1905d7c12bb5"
 
@@ -474,7 +474,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/kisielk/errcheck",
-    "github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2",
+    "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1",
     "github.com/minio/minio-go",
     "github.com/onsi/gomega",
     "github.com/pkg/errors",

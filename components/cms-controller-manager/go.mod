@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/go-logr/logr v0.1.0
-	github.com/kyma-project/kyma/components/asset-store-controller-manager v0.0.0-20190830194033-1cd6f437c6f4
+	github.com/kyma-project/rafter v0.0.0-20190830194033-1cd6f437c6f4
 	github.com/onsi/ginkgo v1.6.0
 	github.com/onsi/gomega v1.4.2
 	github.com/pkg/errors v0.8.1

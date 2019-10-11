@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/source"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/pkg/apis/cms/v1alpha1"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	apiErrors "k8s.io/apimachinery/pkg/api/errors"
@@ -59,12 +59,12 @@ var _ = Describe("Asset", func() {
 		validateDocsTopic(docstopic.Status.CommonDocsTopicStatus, docstopic.ObjectMeta, v1alpha1.DocsTopicPending, v1alpha1.DocsTopicWaitingForAssets)
 
 		By("ClusterAssets changes states to ready")
-		assets := &v1alpha2.ClusterAssetList{}
+		assets := &v1beta1.ClusterAssetList{}
 		Expect(k8sClient.List(context.TODO(), assets)).To(Succeed())
 		Expect(assets.Items).To(HaveLen(len(docstopic.Spec.Sources)))
 
 		for _, asset := range assets.Items {
-			asset.Status.Phase = v1alpha2.AssetReady
+			asset.Status.Phase = v1beta1.AssetReady
 			asset.Status.LastHeartbeatTime = v1.Now()
 			Expect(k8sClient.Status().Update(context.TODO(), &asset)).To(Succeed())
 
@@ -95,7 +95,7 @@ var _ = Describe("Asset", func() {
 		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, docstopic)).To(Succeed())
 		validateDocsTopic(docstopic.Status.CommonDocsTopicStatus, docstopic.ObjectMeta, v1alpha1.DocsTopicPending, v1alpha1.DocsTopicWaitingForAssets)
 
-		assets = &v1alpha2.ClusterAssetList{}
+		assets = &v1beta1.ClusterAssetList{}
 		Expect(k8sClient.List(context.TODO(), assets)).To(Succeed())
 		Expect(assets.Items).To(HaveLen(len(docstopic.Spec.Sources)))
 		for _, a := range assets.Items {

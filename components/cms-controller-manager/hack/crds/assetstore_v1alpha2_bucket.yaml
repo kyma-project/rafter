@@ -4,7 +4,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
-  name: buckets.assetstore.kyma-project.io
+  name: buckets.rafter.kyma-project.io
 spec:
   additionalPrinterColumns:
     - JSONPath: .status.phase
@@ -16,7 +16,7 @@ spec:
     - JSONPath: .metadata.creationTimestamp
       name: Age
       type: date
-  group: assetstore.kyma-project.io
+  group: rafter.kyma-project.io
   names:
     kind: Bucket
     plural: buckets
@@ -71,7 +71,7 @@ spec:
           type: object
       type: object
   versions:
-    - name: v1alpha2
+    - name: v1beta1
       served: true
       storage: true
 status:

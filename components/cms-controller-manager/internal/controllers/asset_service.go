@@ -3,8 +3,8 @@ package controllers
 import (
 	"context"
 
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/handler/docstopic"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -26,7 +26,7 @@ func newAssetService(client client.Client, scheme *runtime.Scheme) *assetService
 }
 
 func (s *assetService) List(ctx context.Context, namespace string, labels map[string]string) ([]docstopic.CommonAsset, error) {
-	instances := &v1alpha2.AssetList{}
+	instances := &v1beta1.AssetList{}
 	err := s.client.List(ctx, instances, client.MatchingLabels(labels))
 	if err != nil {
 		return nil, errors.Wrapf(err, "while listing Assets in namespace %s", namespace)
@@ -45,9 +45,9 @@ func (s *assetService) List(ctx context.Context, namespace string, labels map[st
 }
 
 func (s *assetService) Create(ctx context.Context, docsTopic v1.Object, commonAsset docstopic.CommonAsset) error {
-	instance := &v1alpha2.Asset{
+	instance := &v1beta1.Asset{
 		ObjectMeta: commonAsset.ObjectMeta,
-		Spec: v1alpha2.AssetSpec{
+		Spec: v1beta1.AssetSpec{
 			CommonAssetSpec: commonAsset.Spec,
 		},
 	}
@@ -60,7 +60,7 @@ func (s *assetService) Create(ctx context.Context, docsTopic v1.Object, commonAs
 }
 
 func (s *assetService) Update(ctx context.Context, commonAsset docstopic.CommonAsset) error {
-	instance := &v1alpha2.Asset{}
+	instance := &v1beta1.Asset{}
 	err := s.client.Get(ctx, types.NamespacedName{Name: commonAsset.Name, Namespace: commonAsset.Namespace}, instance)
 	if err != nil {
 		return errors.Wrapf(err, "while updating Asset %s in namespace %s", commonAsset.Name, commonAsset.Namespace)
@@ -73,7 +73,7 @@ func (s *assetService) Update(ctx context.Context, commonAsset docstopic.CommonA
 }
 
 func (s *assetService) Delete(ctx context.Context, commonAsset docstopic.CommonAsset) error {
-	instance := &v1alpha2.Asset{}
+	instance := &v1beta1.Asset{}
 	err := s.client.Get(ctx, types.NamespacedName{Name: commonAsset.Name, Namespace: commonAsset.Namespace}, instance)
 	if err != nil {
 		return errors.Wrapf(err, "while deleting Asset %s in namespace %s", commonAsset.Name, commonAsset.Namespace)
@@ -82,7 +82,7 @@ func (s *assetService) Delete(ctx context.Context, commonAsset docstopic.CommonA
 	return s.client.Delete(ctx, instance)
 }
 
-func (s *assetService) assetToCommon(instance v1alpha2.Asset) docstopic.CommonAsset {
+func (s *assetService) assetToCommon(instance v1beta1.Asset) docstopic.CommonAsset {
 	return docstopic.CommonAsset{
 		ObjectMeta: instance.ObjectMeta,
 		Spec:       instance.Spec.CommonAssetSpec,

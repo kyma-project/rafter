@@ -3,9 +3,9 @@ package testsuite
 import (
 	"time"
 
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/tests/asset-store/pkg/resource"
 	"github.com/kyma-project/kyma/tests/asset-store/pkg/waiter"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -24,8 +24,8 @@ type asset struct {
 func newAsset(dynamicCli dynamic.Interface, namespace string, bucketName string, waitTimeout time.Duration, logFn func(format string, args ...interface{})) *asset {
 	return &asset{
 		resCli: resource.New(dynamicCli, schema.GroupVersionResource{
-			Version:  v1alpha2.SchemeGroupVersion.Version,
-			Group:    v1alpha2.SchemeGroupVersion.Group,
+			Version:  v1beta1.SchemeGroupVersion.Version,
+			Group:    v1beta1.SchemeGroupVersion.Group,
 			Resource: "assets",
 		}, namespace, logFn),
 		waitTimeout: waitTimeout,
@@ -36,21 +36,21 @@ func newAsset(dynamicCli dynamic.Interface, namespace string, bucketName string,
 
 func (a *asset) CreateMany(assets []assetData) error {
 	for _, asset := range assets {
-		asset := &v1alpha2.Asset{
+		asset := &v1beta1.Asset{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "Asset",
-				APIVersion: v1alpha2.SchemeGroupVersion.String(),
+				APIVersion: v1beta1.SchemeGroupVersion.String(),
 			},
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      asset.Name,
 				Namespace: a.Namespace,
 			},
-			Spec: v1alpha2.AssetSpec{
-				CommonAssetSpec: v1alpha2.CommonAssetSpec{
-					BucketRef: v1alpha2.AssetBucketRef{
+			Spec: v1beta1.AssetSpec{
+				CommonAssetSpec: v1beta1.CommonAssetSpec{
+					BucketRef: v1beta1.AssetBucketRef{
 						Name: a.BucketName,
 					},
-					Source: v1alpha2.AssetSource{
+					Source: v1beta1.AssetSource{
 						URL:  asset.URL,
 						Mode: asset.Mode,
 					},
@@ -75,7 +75,7 @@ func (a *asset) WaitForStatusesReady(assets []assetData) error {
 				return false, err
 			}
 
-			if res.Status.Phase != v1alpha2.AssetReady {
+			if res.Status.Phase != v1beta1.AssetReady {
 				return false, nil
 			}
 		}
@@ -128,13 +128,13 @@ func (a *asset) PopulateUploadFiles(assets []assetData) ([]uploadedFile, error) 
 	return files, nil
 }
 
-func (a *asset) Get(name string) (*v1alpha2.Asset, error) {
+func (a *asset) Get(name string) (*v1beta1.Asset, error) {
 	u, err := a.resCli.Get(name)
 	if err != nil {
 		return nil, err
 	}
 
-	var res v1alpha2.Asset
+	var res v1beta1.Asset
 	err = runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &res)
 	if err != nil {
 		if apierrors.IsNotFound(err) {

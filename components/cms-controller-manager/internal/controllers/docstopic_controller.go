@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/handler/docstopic"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/webhookconfig"
 	cmsv1alpha1 "github.com/kyma-project/kyma/components/cms-controller-manager/pkg/apis/cms/v1alpha1"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/pkg/errors"
 	apiErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/client-go/tools/record"
@@ -52,10 +52,10 @@ func NewDocsTopic(config DocsTopicConfig, log logr.Logger, mgr ctrl.Manager, web
 // Automatically generate RBAC rules to allow the Controller to read and write DocsTopics, Assets, and Buckets
 // +kubebuilder:rbac:groups=cms.kyma-project.io,resources=docstopics,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=cms.kyma-project.io,resources=docstopics/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=assetstore.kyma-project.io,resources=assets,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=assetstore.kyma-project.io,resources=assets/status,verbs=get;list
-// +kubebuilder:rbac:groups=assetstore.kyma-project.io,resources=buckets,verbs=get;list;watch;create;update;patch
-// +kubebuilder:rbac:groups=assetstore.kyma-project.io,resources=buckets/status,verbs=get;list
+// +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=assets,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=assets/status,verbs=get;list
+// +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=buckets,verbs=get;list;watch;create;update;patch
+// +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=buckets/status,verbs=get;list
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;watch
 
 func (r *DocsTopicReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
@@ -94,7 +94,7 @@ func (r *DocsTopicReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 func (r *DocsTopicReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&cmsv1alpha1.DocsTopic{}).
-		Owns(&v1alpha2.Asset{}).
+		Owns(&v1beta1.Asset{}).
 		Complete(r)
 }
 

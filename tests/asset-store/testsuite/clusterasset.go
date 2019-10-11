@@ -3,9 +3,9 @@ package testsuite
 import (
 	"time"
 
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/tests/asset-store/pkg/resource"
 	"github.com/kyma-project/kyma/tests/asset-store/pkg/waiter"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,8 +23,8 @@ type clusterAsset struct {
 func newClusterAsset(dynamicCli dynamic.Interface, clusterBucketName string, waitTimeout time.Duration, logFn func(format string, args ...interface{})) *clusterAsset {
 	return &clusterAsset{
 		resCli: resource.New(dynamicCli, schema.GroupVersionResource{
-			Version:  v1alpha2.SchemeGroupVersion.Version,
-			Group:    v1alpha2.SchemeGroupVersion.Group,
+			Version:  v1beta1.SchemeGroupVersion.Version,
+			Group:    v1beta1.SchemeGroupVersion.Group,
 			Resource: "clusterassets",
 		}, "", logFn),
 		waitTimeout:       waitTimeout,
@@ -34,20 +34,20 @@ func newClusterAsset(dynamicCli dynamic.Interface, clusterBucketName string, wai
 
 func (a *clusterAsset) CreateMany(assets []assetData) error {
 	for _, asset := range assets {
-		asset := &v1alpha2.ClusterAsset{
+		asset := &v1beta1.ClusterAsset{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "ClusterAsset",
-				APIVersion: v1alpha2.SchemeGroupVersion.String(),
+				APIVersion: v1beta1.SchemeGroupVersion.String(),
 			},
 			ObjectMeta: metav1.ObjectMeta{
 				Name: asset.Name,
 			},
-			Spec: v1alpha2.ClusterAssetSpec{
-				CommonAssetSpec: v1alpha2.CommonAssetSpec{
-					BucketRef: v1alpha2.AssetBucketRef{
+			Spec: v1beta1.ClusterAssetSpec{
+				CommonAssetSpec: v1beta1.CommonAssetSpec{
+					BucketRef: v1beta1.AssetBucketRef{
 						Name: a.ClusterBucketName,
 					},
-					Source: v1alpha2.AssetSource{
+					Source: v1beta1.AssetSource{
 						URL:  asset.URL,
 						Mode: asset.Mode,
 					},
@@ -73,7 +73,7 @@ func (a *clusterAsset) WaitForStatusesReady(assets []assetData) error {
 				return false, err
 			}
 
-			if res.Status.Phase != v1alpha2.AssetReady {
+			if res.Status.Phase != v1beta1.AssetReady {
 				return false, nil
 			}
 		}
@@ -127,13 +127,13 @@ func (a *clusterAsset) PopulateUploadFiles(assets []assetData) ([]uploadedFile, 
 	return files, nil
 }
 
-func (a *clusterAsset) Get(name string) (*v1alpha2.ClusterAsset, error) {
+func (a *clusterAsset) Get(name string) (*v1beta1.ClusterAsset, error) {
 	u, err := a.resCli.Get(name)
 	if err != nil {
 		return nil, err
 	}
 
-	var ca v1alpha2.ClusterAsset
+	var ca v1beta1.ClusterAsset
 	err = runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &ca)
 	if err != nil {
 		return nil, errors.Wrapf(err, "while converting ClusterAsset %s", name)

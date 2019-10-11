@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/handler/docstopic"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/webhookconfig"
 	cmsv1alpha1 "github.com/kyma-project/kyma/components/cms-controller-manager/pkg/apis/cms/v1alpha1"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/pkg/errors"
 	apiErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/client-go/tools/record"
@@ -52,10 +52,10 @@ func NewClusterDocsTopic(config ClusterDocsTopicConfig, log logr.Logger, mgr ctr
 // Automatically generate RBAC rules to allow the Controller to read and write ClusterDocsTopics, ClusterAssets, and ClusterBuckets
 // +kubebuilder:rbac:groups=cms.kyma-project.io,resources=clusterdocstopics,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=cms.kyma-project.io,resources=clusterdocstopics/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=assetstore.kyma-project.io,resources=clusterassets,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=assetstore.kyma-project.io,resources=clusterassets/status,verbs=get;list
-// +kubebuilder:rbac:groups=assetstore.kyma-project.io,resources=clusterbuckets,verbs=get;list;watch;create;update;patch
-// +kubebuilder:rbac:groups=assetstore.kyma-project.io,resources=clusterbuckets/status,verbs=get;list
+// +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=clusterassets,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=clusterassets/status,verbs=get;list
+// +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=clusterbuckets,verbs=get;list;watch;create;update;patch
+// +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=clusterbuckets/status,verbs=get;list
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;watch
 
 func (r *ClusterDocsTopicReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
@@ -105,6 +105,6 @@ func (r *ClusterDocsTopicReconciler) updateStatus(ctx context.Context, instance 
 func (r *ClusterDocsTopicReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&cmsv1alpha1.ClusterDocsTopic{}).
-		Owns(&v1alpha2.ClusterAsset{}).
+		Owns(&v1beta1.ClusterAsset{}).
 		Complete(r)
 }

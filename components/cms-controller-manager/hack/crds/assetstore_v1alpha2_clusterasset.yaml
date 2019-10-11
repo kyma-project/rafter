@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: clusterassets.assetstore.kyma-project.io
+  name: clusterassets.rafter.kyma-project.io
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.phase
@@ -16,7 +16,7 @@ spec:
   - JSONPath: .metadata.creationTimestamp
     name: Age
     type: date
-  group: assetstore.kyma-project.io
+  group: rafter.kyma-project.io
   names:
     kind: ClusterAsset
     plural: clusterassets
@@ -157,7 +157,7 @@ spec:
           - lastHeartbeatTime
           - observedGeneration
           type: object
-  version: v1alpha2
+  version: v1beta1
 status:
   acceptedNames:
     kind: ""

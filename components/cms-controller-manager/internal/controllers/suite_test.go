@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/webhookconfig"
 	cmsv1alpha1 "github.com/kyma-project/kyma/components/cms-controller-manager/pkg/apis/cms/v1alpha1"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -59,7 +59,7 @@ var _ = BeforeSuite(func(done Done) {
 	err = cmsv1alpha1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = v1alpha2.AddToScheme(scheme.Scheme)
+	err = v1beta1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
 	// +kubebuilder:scaffold:scheme

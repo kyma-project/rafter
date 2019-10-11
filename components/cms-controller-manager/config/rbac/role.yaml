@@ -7,7 +7,7 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - assetstore.kyma-project.io
+  - rafter.kyma-project.io
   resources:
   - assets
   verbs:
@@ -19,14 +19,14 @@ rules:
   - update
   - watch
 - apiGroups:
-  - assetstore.kyma-project.io
+  - rafter.kyma-project.io
   resources:
   - assets/status
   verbs:
   - get
   - list
 - apiGroups:
-  - assetstore.kyma-project.io
+  - rafter.kyma-project.io
   resources:
   - buckets
   verbs:
@@ -37,14 +37,14 @@ rules:
   - update
   - watch
 - apiGroups:
-  - assetstore.kyma-project.io
+  - rafter.kyma-project.io
   resources:
   - buckets/status
   verbs:
   - get
   - list
 - apiGroups:
-  - assetstore.kyma-project.io
+  - rafter.kyma-project.io
   resources:
   - clusterassets
   verbs:
@@ -56,14 +56,14 @@ rules:
   - update
   - watch
 - apiGroups:
-  - assetstore.kyma-project.io
+  - rafter.kyma-project.io
   resources:
   - clusterassets/status
   verbs:
   - get
   - list
 - apiGroups:
-  - assetstore.kyma-project.io
+  - rafter.kyma-project.io
   resources:
   - clusterbuckets
   verbs:
@@ -74,7 +74,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - assetstore.kyma-project.io
+  - rafter.kyma-project.io
   resources:
   - clusterbuckets/status
   verbs:

@@ -4,24 +4,24 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/tests/asset-store/pkg/upload"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 )
 
 type assetData struct {
 	Name string
 	URL  string
-	Mode v1alpha2.AssetMode
+	Mode v1beta1.AssetMode
 }
 
 func convertToAssetResourceDetails(response *upload.Response, prefix string) []assetData {
 	var assets []assetData
 	for _, file := range response.UploadedFiles {
-		var mode v1alpha2.AssetMode
+		var mode v1beta1.AssetMode
 		if strings.HasSuffix(file.FileName, ".tar.gz") || strings.HasSuffix(file.FileName, ".zip") {
-			mode = v1alpha2.AssetPackage
+			mode = v1beta1.AssetPackage
 		} else {
-			mode = v1alpha2.AssetSingle
+			mode = v1beta1.AssetSingle
 		}
 
 		asset := assetData{

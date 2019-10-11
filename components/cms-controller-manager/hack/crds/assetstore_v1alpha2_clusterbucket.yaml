@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     controller-tools.k8s.io: "1.0"
-  name: clusterbuckets.assetstore.kyma-project.io
+  name: clusterbuckets.rafter.kyma-project.io
 spec:
   additionalPrinterColumns:
     - JSONPath: .status.phase
@@ -16,7 +16,7 @@ spec:
     - JSONPath: .metadata.creationTimestamp
       name: Age
       type: date
-  group: assetstore.kyma-project.io
+  group: rafter.kyma-project.io
   names:
     kind: ClusterBucket
     plural: clusterbuckets
@@ -83,7 +83,7 @@ spec:
           required:
             - observedGeneration
           type: object
-  version: v1alpha2
+  version: v1beta1
 status:
   acceptedNames:
     kind: ""

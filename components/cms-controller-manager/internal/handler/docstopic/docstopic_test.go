@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/handler/docstopic"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/handler/docstopic/automock"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/webhookconfig"
 	amcfg "github.com/kyma-project/kyma/components/cms-controller-manager/internal/webhookconfig/automock"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/pkg/apis/cms/v1alpha1"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
 	"github.com/pkg/errors"
@@ -203,7 +203,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		}
 		testData := testData("halo", sources)
 		source, _ := getSourceByType(sources, sourceName)
-		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1alpha2.AssetPending)
+		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAsset.Spec.Source.Filter = "xyz"
 		existingAssets := []docstopic.CommonAsset{existingAsset}
 
@@ -268,7 +268,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		sources := []v1alpha1.Source{testSource(sourceName, assetType, "https://dummy.url", v1alpha1.DocsTopicSingle, nil)}
 		testData := testData("halo", sources)
 		source, _ := getSourceByType(sources, sourceName)
-		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1alpha2.AssetPending)
+		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAsset.Spec.Source.Filter = "xyz"
 		existingAssets := []docstopic.CommonAsset{existingAsset}
 
@@ -305,8 +305,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		testData := testData("halo", sources)
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
-		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1alpha2.AssetPending)
-		toRemove := commonAsset("papa", assetType, testData.Name, bucketName, *source, v1alpha2.AssetPending)
+		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
+		toRemove := commonAsset("papa", assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAssets := []docstopic.CommonAsset{existingAsset, toRemove}
 
 		assetSvc := new(automock.AssetService)
@@ -342,8 +342,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		testData := testData("halo", sources)
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
-		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1alpha2.AssetPending)
-		toRemove := commonAsset("papa", assetType, testData.Name, bucketName, *source, v1alpha2.AssetPending)
+		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
+		toRemove := commonAsset("papa", assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAssets := []docstopic.CommonAsset{existingAsset, toRemove}
 
 		assetSvc := new(automock.AssetService)
@@ -503,7 +503,7 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		testData.Status.Phase = v1alpha1.DocsTopicPending
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
-		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1alpha2.AssetPending)
+		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAssets := []docstopic.CommonAsset{existingAsset}
 
 		assetSvc := new(automock.AssetService)
@@ -537,7 +537,7 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		testData.Status.Phase = v1alpha1.DocsTopicPending
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
-		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1alpha2.AssetReady)
+		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetReady)
 		existingAssets := []docstopic.CommonAsset{existingAsset}
 
 		assetSvc := new(automock.AssetService)
@@ -573,7 +573,7 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		testData.Status.Phase = v1alpha1.DocsTopicReady
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
-		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1alpha2.AssetFailed)
+		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetFailed)
 		existingAssets := []docstopic.CommonAsset{existingAsset}
 
 		assetSvc := new(automock.AssetService)
@@ -630,7 +630,7 @@ func testData(name string, sources []v1alpha1.Source) *v1alpha1.DocsTopic {
 	}
 }
 
-func commonAsset(name v1alpha1.DocsTopicSourceName, assetType v1alpha1.DocsTopicSourceType, docsName, bucketName string, source v1alpha1.Source, phase v1alpha2.AssetPhase) docstopic.CommonAsset {
+func commonAsset(name v1alpha1.DocsTopicSourceName, assetType v1alpha1.DocsTopicSourceType, docsName, bucketName string, source v1alpha1.Source, phase v1beta1.AssetPhase) docstopic.CommonAsset {
 	return docstopic.CommonAsset{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      string(name),
@@ -643,17 +643,17 @@ func commonAsset(name v1alpha1.DocsTopicSourceName, assetType v1alpha1.DocsTopic
 				"cms.kyma-project.io/asset-short-name": string(name),
 			},
 		},
-		Spec: v1alpha2.CommonAssetSpec{
-			Source: v1alpha2.AssetSource{
+		Spec: v1beta1.CommonAssetSpec{
+			Source: v1beta1.AssetSource{
 				URL:    source.URL,
-				Mode:   v1alpha2.AssetMode(source.Mode),
+				Mode:   v1beta1.AssetMode(source.Mode),
 				Filter: source.Filter,
 			},
-			BucketRef: v1alpha2.AssetBucketRef{
+			BucketRef: v1beta1.AssetBucketRef{
 				Name: bucketName,
 			},
 		},
-		Status: v1alpha2.CommonAssetStatus{
+		Status: v1beta1.CommonAssetStatus{
 			Phase: phase,
 		},
 	}

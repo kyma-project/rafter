@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/webhookconfig"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/pkg/apis/cms/v1alpha1"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -22,8 +22,8 @@ import (
 
 type CommonAsset struct {
 	v1.ObjectMeta
-	Spec   v1alpha2.CommonAssetSpec
-	Status v1alpha2.CommonAssetStatus
+	Spec   v1beta1.CommonAssetSpec
+	Status v1beta1.CommonAssetStatus
 }
 
 const (
@@ -343,9 +343,9 @@ func (h *docstopicHandler) convertToAssetMap(assets []CommonAsset) map[v1alpha1.
 	return result
 }
 
-func (h *docstopicHandler) convertToCommonAssetSpec(spec v1alpha1.Source, bucketName string, cfg webhookconfig.AssetWebhookConfig) v1alpha2.CommonAssetSpec {
-	return v1alpha2.CommonAssetSpec{
-		Source: v1alpha2.AssetSource{
+func (h *docstopicHandler) convertToCommonAssetSpec(spec v1alpha1.Source, bucketName string, cfg webhookconfig.AssetWebhookConfig) v1beta1.CommonAssetSpec {
+	return v1beta1.CommonAssetSpec{
+		Source: v1beta1.AssetSource{
 			Mode:                     h.convertToAssetMode(spec.Mode),
 			URL:                      spec.URL,
 			Filter:                   spec.Filter,
@@ -353,21 +353,21 @@ func (h *docstopicHandler) convertToCommonAssetSpec(spec v1alpha1.Source, bucket
 			MutationWebhookService:   convertToAssetWebhookServices(cfg.Mutations),
 			MetadataWebhookService:   convertToWebhookService(cfg.MetadataExtractors),
 		},
-		BucketRef: v1alpha2.AssetBucketRef{
+		BucketRef: v1beta1.AssetBucketRef{
 			Name: bucketName,
 		},
 		Parameters: spec.Parameters,
 	}
 }
 
-func convertToWebhookService(services []webhookconfig.WebhookService) []v1alpha2.WebhookService {
+func convertToWebhookService(services []webhookconfig.WebhookService) []v1beta1.WebhookService {
 	servicesLen := len(services)
 	if servicesLen < 1 {
 		return nil
 	}
-	result := make([]v1alpha2.WebhookService, 0, servicesLen)
+	result := make([]v1beta1.WebhookService, 0, servicesLen)
 	for _, service := range services {
-		result = append(result, v1alpha2.WebhookService{
+		result = append(result, v1beta1.WebhookService{
 			Name:      service.Name,
 			Namespace: service.Namespace,
 			Endpoint:  service.Endpoint,
@@ -377,15 +377,15 @@ func convertToWebhookService(services []webhookconfig.WebhookService) []v1alpha2
 	return result
 }
 
-func convertToAssetWebhookServices(services []webhookconfig.AssetWebhookService) []v1alpha2.AssetWebhookService {
+func convertToAssetWebhookServices(services []webhookconfig.AssetWebhookService) []v1beta1.AssetWebhookService {
 	servicesLen := len(services)
 	if servicesLen < 1 {
 		return nil
 	}
-	result := make([]v1alpha2.AssetWebhookService, 0, servicesLen)
+	result := make([]v1beta1.AssetWebhookService, 0, servicesLen)
 	for _, s := range services {
-		result = append(result, v1alpha2.AssetWebhookService{
-			WebhookService: v1alpha2.WebhookService{
+		result = append(result, v1beta1.AssetWebhookService{
+			WebhookService: v1beta1.WebhookService{
 				Name:      s.Name,
 				Namespace: s.Namespace,
 				Endpoint:  s.Endpoint,
@@ -415,20 +415,20 @@ func (h *docstopicHandler) buildAnnotations(assetShortName v1alpha1.DocsTopicSou
 	}
 }
 
-func (h *docstopicHandler) convertToAssetMode(mode v1alpha1.DocsTopicSourceMode) v1alpha2.AssetMode {
+func (h *docstopicHandler) convertToAssetMode(mode v1alpha1.DocsTopicSourceMode) v1beta1.AssetMode {
 	switch mode {
 	case v1alpha1.DocsTopicIndex:
-		return v1alpha2.AssetIndex
+		return v1beta1.AssetIndex
 	case v1alpha1.DocsTopicPackage:
-		return v1alpha2.AssetPackage
+		return v1beta1.AssetPackage
 	default:
-		return v1alpha2.AssetSingle
+		return v1beta1.AssetSingle
 	}
 }
 
 func (h *docstopicHandler) calculateAssetPhase(existing map[v1alpha1.DocsTopicSourceName]CommonAsset) v1alpha1.DocsTopicPhase {
 	for _, asset := range existing {
-		if asset.Status.Phase != v1alpha2.AssetReady {
+		if asset.Status.Phase != v1beta1.AssetReady {
 			return v1alpha1.DocsTopicPending
 		}
 	}

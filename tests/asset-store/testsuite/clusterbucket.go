@@ -3,9 +3,9 @@ package testsuite
 import (
 	"time"
 
-	"github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
 	"github.com/kyma-project/kyma/tests/asset-store/pkg/resource"
 	"github.com/kyma-project/kyma/tests/asset-store/pkg/waiter"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -23,8 +23,8 @@ type clusterBucket struct {
 func newClusterBucket(dynamicCli dynamic.Interface, name string, waitTimeout time.Duration, logFn func(format string, args ...interface{})) *clusterBucket {
 	return &clusterBucket{
 		resCli: resource.New(dynamicCli, schema.GroupVersionResource{
-			Version:  v1alpha2.SchemeGroupVersion.Version,
-			Group:    v1alpha2.SchemeGroupVersion.Group,
+			Version:  v1beta1.SchemeGroupVersion.Version,
+			Group:    v1beta1.SchemeGroupVersion.Group,
 			Resource: "clusterbuckets",
 		}, "", logFn),
 		name:        name,
@@ -33,18 +33,18 @@ func newClusterBucket(dynamicCli dynamic.Interface, name string, waitTimeout tim
 }
 
 func (b *clusterBucket) Create() error {
-	clusterBucket := &v1alpha2.ClusterBucket{
+	clusterBucket := &v1beta1.ClusterBucket{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ClusterBucket",
-			APIVersion: v1alpha2.SchemeGroupVersion.String(),
+			APIVersion: v1beta1.SchemeGroupVersion.String(),
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      b.name,
 			Namespace: b.namespace,
 		},
-		Spec: v1alpha2.ClusterBucketSpec{
-			CommonBucketSpec: v1alpha2.CommonBucketSpec{
-				Policy: v1alpha2.BucketPolicyReadOnly,
+		Spec: v1beta1.ClusterBucketSpec{
+			CommonBucketSpec: v1beta1.CommonBucketSpec{
+				Policy: v1beta1.BucketPolicyReadOnly,
 			},
 		},
 	}
@@ -65,7 +65,7 @@ func (b *clusterBucket) WaitForStatusReady() error {
 			return false, err
 		}
 
-		if res.Status.Phase != v1alpha2.BucketReady {
+		if res.Status.Phase != v1beta1.BucketReady {
 			return false, nil
 		}
 
@@ -78,13 +78,13 @@ func (b *clusterBucket) WaitForStatusReady() error {
 	return err
 }
 
-func (b *clusterBucket) Get(name string) (*v1alpha2.ClusterBucket, error) {
+func (b *clusterBucket) Get(name string) (*v1beta1.ClusterBucket, error) {
 	u, err := b.resCli.Get(name)
 	if err != nil {
 		return nil, err
 	}
 
-	var res v1alpha2.ClusterBucket
+	var res v1beta1.ClusterBucket
 	err = runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &res)
 	if err != nil {
 		return nil, errors.Wrapf(err, "while converting ClusterBucket %s", name)

@@ -17,7 +17,7 @@ package main
 
 import (
 	"flag"
-	assetstore "github.com/kyma-project/kyma/components/asset-store-controller-manager/pkg/apis/assetstore/v1alpha2"
+	assetstore "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/controllers"
 	"github.com/kyma-project/kyma/components/cms-controller-manager/internal/webhookconfig"
 	cmsv1alpha1 "github.com/kyma-project/kyma/components/cms-controller-manager/pkg/apis/cms/v1alpha1"

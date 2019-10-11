@@ -1,0 +1,7 @@
+apiVersion: rafter.kyma-project.io/v1beta1
+kind: ClusterBucket
+metadata:
+  name: clusterbucket-sample
+spec:
+  region: "us-east-1"
+  policy: writeonly
