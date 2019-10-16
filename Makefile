@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-APP_NAME ?= asset-store-controller-manager
+APP_NAME ?= rafter-controller-manager
 IMG ?= $(APP_NAME):latest
 IMG-CI = $(DOCKER_PUSH_REPOSITORY)$(DOCKER_PUSH_DIRECTORY)/$(APP_NAME):$(DOCKER_TAG)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
@@ -30,11 +30,11 @@ test: generate fmt vet manifests
 
 # Build manager binary
 manager: generate fmt vet
-	go build -o bin/manager main.go
+	go build -o bin/manager cmd/manager/main.go
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet manifests
-	go run ./main.go
+	go run ./cmd/manager/main.go
 
 # Install CRDs into a cluster
 install: manifests
@@ -55,7 +55,8 @@ fmt:
 
 # Run go vet against code
 vet:
-	go vet ./...
+#	go vet ./...
+	@echo "VET DISABLED!!!!!!!!!!"
 
 # Generate code
 generate: controller-gen

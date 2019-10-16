@@ -11,9 +11,9 @@ import (
 )
 
 type Resource struct {
-	resCli dynamic.ResourceInterface
-	namespace  string
-	kind string
+	resCli    dynamic.ResourceInterface
+	namespace string
+	kind      string
 
 	log func(format string, args ...interface{})
 }
@@ -66,7 +66,7 @@ func (r *Resource) Delete(name string) error {
 			r.log("Cannot delete. Resource %s with name '%s' is not found.", r.kind, name)
 			return nil
 		}
-	 	return errors.Wrapf(err, "while deleting resource %s '%s'", r.kind, name)
+		return errors.Wrapf(err, "while deleting resource %s '%s'", r.kind, name)
 	}
 
 	return nil

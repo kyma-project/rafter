@@ -3,9 +3,9 @@ package testsuite
 import (
 	"time"
 
-	"github.com/kyma-project/kyma/tests/asset-store/pkg/resource"
-	"github.com/kyma-project/kyma/tests/asset-store/pkg/waiter"
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
+	"github.com/kyma-project/rafter/tests/asset-store/pkg/resource"
+	"github.com/kyma-project/rafter/tests/asset-store/pkg/waiter"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,8 +23,8 @@ type clusterAsset struct {
 func newClusterAsset(dynamicCli dynamic.Interface, clusterBucketName string, waitTimeout time.Duration, logFn func(format string, args ...interface{})) *clusterAsset {
 	return &clusterAsset{
 		resCli: resource.New(dynamicCli, schema.GroupVersionResource{
-			Version:  v1beta1.SchemeGroupVersion.Version,
-			Group:    v1beta1.SchemeGroupVersion.Group,
+			Version:  v1beta1.GroupVersion.Version,
+			Group:    v1beta1.GroupVersion.Group,
 			Resource: "clusterassets",
 		}, "", logFn),
 		waitTimeout:       waitTimeout,
@@ -37,7 +37,7 @@ func (a *clusterAsset) CreateMany(assets []assetData) error {
 		asset := &v1beta1.ClusterAsset{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "ClusterAsset",
-				APIVersion: v1beta1.SchemeGroupVersion.String(),
+				APIVersion: v1beta1.GroupVersion.String(),
 			},
 			ObjectMeta: metav1.ObjectMeta{
 				Name: asset.Name,

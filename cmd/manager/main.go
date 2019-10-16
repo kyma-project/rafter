@@ -1,18 +1,3 @@
-/*
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package manager
 
 import (
@@ -20,8 +5,13 @@ import (
 	"github.com/kyma-project/rafter/internal/assethook"
 	"github.com/kyma-project/rafter/internal/loader"
 	"github.com/kyma-project/rafter/internal/store"
+	"github.com/kyma-project/rafter/internal/webhookconfig"
 	"github.com/minio/minio-go"
+	"github.com/pkg/errors"
 	"github.com/vrischmann/envconfig"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/rest"
 	"net/http"
 	"os"
 
@@ -48,13 +38,18 @@ func init() {
 }
 
 type Config struct {
-	Store         store.Config
-	Loader        loader.Config
-	Webhook       assethook.Config
-	Asset         controllers.AssetConfig
-	ClusterAsset  controllers.ClusterAssetConfig
-	Bucket        controllers.BucketConfig
-	ClusterBucket controllers.ClusterBucketConfig
+	Store               store.Config
+	Loader              loader.Config
+	Webhook             assethook.Config
+	Asset               controllers.AssetConfig
+	ClusterAsset        controllers.ClusterAssetConfig
+	Bucket              controllers.BucketConfig
+	ClusterBucket       controllers.ClusterBucketConfig
+	DocsTopic           controllers.DocsTopicConfig
+	ClusterDocsTopic    controllers.ClusterDocsTopicConfig
+	WebhookConfigMap    webhookconfig.Config
+	BucketRegion        string `envconfig:"optional"`
+	ClusterBucketRegion string `envconfig:"optional"`
 }
 
 func main() {
@@ -80,11 +75,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+	restConfig := ctrl.GetConfigOrDie()
+	mgr, err := ctrl.NewManager(restConfig, ctrl.Options{
 		Scheme:             scheme,
 		MetricsBindAddress: metricsAddr,
 		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "assetstore-controller-leader-election-helper",
+		LeaderElectionID:   "rafter-controller-leader-election-helper",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
@@ -98,6 +94,12 @@ func main() {
 		Validator: assethook.NewValidator(httpClient, cfg.Webhook.ValidationTimeout, cfg.Webhook.ValidationWorkersCount),
 		Mutator:   assethook.NewMutator(httpClient, cfg.Webhook.MutationTimeout, cfg.Webhook.MutationWorkersCount),
 		Extractor: assethook.NewMetadataExtractor(httpClient, cfg.Webhook.MetadataExtractionTimeout),
+	}
+
+	webhookSvc, err := initWebhookConfigService(cfg.WebhookConfigMap, restConfig)
+	if err != nil {
+		setupLog.Error(err, "unable to initialize webhook service")
+		os.Exit(1)
 	}
 
 	if err = controllers.NewClusterAsset(cfg.ClusterAsset, ctrl.Log.WithName("controllers").WithName("ClusterAsset"), container).SetupWithManager(mgr); err != nil {
@@ -114,6 +116,14 @@ func main() {
 	}
 	if err = controllers.NewBucket(cfg.Bucket, ctrl.Log.WithName("controllers").WithName("Bucket"), container).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Bucket")
+		os.Exit(1)
+	}
+	if err = controllers.NewClusterDocsTopic(cfg.ClusterDocsTopic, ctrl.Log.WithName("controllers").WithName("ClusterDocsTopic"), mgr, webhookSvc).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ClusterDocsTopic")
+		os.Exit(1)
+	}
+	if err = controllers.NewDocsTopic(cfg.DocsTopic, ctrl.Log.WithName("controllers").WithName("DocsTopic"), mgr, webhookSvc).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "DocsTopic")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
@@ -133,5 +143,20 @@ func loadConfig(prefix string) (Config, error) {
 	}
 	cfg.Bucket.ExternalEndpoint = cfg.Store.ExternalEndpoint
 	cfg.ClusterBucket.ExternalEndpoint = cfg.Store.ExternalEndpoint
+	cfg.ClusterDocsTopic.BucketRegion = cfg.ClusterBucketRegion
+	cfg.DocsTopic.BucketRegion = cfg.BucketRegion
 	return cfg, nil
+}
+
+func initWebhookConfigService(webhookCfg webhookconfig.Config, config *rest.Config) (webhookconfig.AssetWebhookConfigService, error) {
+	dc, err := dynamic.NewForConfig(config)
+	if err != nil {
+		return nil, errors.Wrap(err, "while initializing dynamic client")
+	}
+
+	configmapsResource := schema.GroupVersionResource{Group: "", Version: "v1", Resource: "configmaps"}
+	resourceGetter := dc.Resource(configmapsResource).Namespace(webhookCfg.CfgMapNamespace)
+
+	webhookCfgService := webhookconfig.New(resourceGetter, webhookCfg.CfgMapName, webhookCfg.CfgMapNamespace)
+	return webhookCfgService, nil
 }

@@ -3,9 +3,9 @@ package testsuite
 import (
 	"time"
 
-	"github.com/kyma-project/kyma/tests/asset-store/pkg/resource"
-	"github.com/kyma-project/kyma/tests/asset-store/pkg/waiter"
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
+	"github.com/kyma-project/rafter/tests/asset-store/pkg/resource"
+	"github.com/kyma-project/rafter/tests/asset-store/pkg/waiter"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -23,8 +23,8 @@ type clusterBucket struct {
 func newClusterBucket(dynamicCli dynamic.Interface, name string, waitTimeout time.Duration, logFn func(format string, args ...interface{})) *clusterBucket {
 	return &clusterBucket{
 		resCli: resource.New(dynamicCli, schema.GroupVersionResource{
-			Version:  v1beta1.SchemeGroupVersion.Version,
-			Group:    v1beta1.SchemeGroupVersion.Group,
+			Version:  v1beta1.GroupVersion.Version,
+			Group:    v1beta1.GroupVersion.Group,
 			Resource: "clusterbuckets",
 		}, "", logFn),
 		name:        name,
@@ -36,7 +36,7 @@ func (b *clusterBucket) Create() error {
 	clusterBucket := &v1beta1.ClusterBucket{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ClusterBucket",
-			APIVersion: v1beta1.SchemeGroupVersion.String(),
+			APIVersion: v1beta1.GroupVersion.String(),
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      b.name,

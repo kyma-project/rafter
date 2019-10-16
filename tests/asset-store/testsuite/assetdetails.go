@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kyma-project/kyma/tests/asset-store/pkg/upload"
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
+	"github.com/kyma-project/rafter/tests/asset-store/pkg/upload"
 )
 
 type assetData struct {

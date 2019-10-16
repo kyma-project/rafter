@@ -2,15 +2,15 @@ package namespace
 
 import (
 	"github.com/pkg/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/api/core/v1"
-	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 type Namespace struct {
 	coreCli corev1.CoreV1Interface
-	name string
+	name    string
 }
 
 func New(coreCli corev1.CoreV1Interface, name string) *Namespace {
@@ -20,7 +20,7 @@ func New(coreCli corev1.CoreV1Interface, name string) *Namespace {
 func (n *Namespace) Create() error {
 	_, err := n.coreCli.Namespaces().Create(&v1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:  n.name,
+			Name: n.name,
 		},
 	})
 

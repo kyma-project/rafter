@@ -14,6 +14,53 @@ rules:
   - create
   - patch
 - apiGroups:
+  - cms.kyma-project.io
+  resources:
+  - clusterdocstopics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cms.kyma-project.io
+  resources:
+  - clusterdocstopics/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - cms.kyma-project.io
+  resources:
+  - docstopics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cms.kyma-project.io
+  resources:
+  - docstopics/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - watch
+- apiGroups:
   - rafter.kyma-project.io
   resources:
   - assets
@@ -31,6 +78,7 @@ rules:
   - assets/status
   verbs:
   - get
+  - list
   - patch
   - update
 - apiGroups:
@@ -72,6 +120,7 @@ rules:
   - clusterassets/status
   verbs:
   - get
+  - list
   - patch
   - update
 - apiGroups:

@@ -1,6 +1,10 @@
 package controllers
 
 import (
+	"github.com/kyma-project/rafter/internal/webhookconfig"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic"
 	"path/filepath"
 	"sync"
 	"testing"
@@ -29,6 +33,8 @@ import (
 var cfg *rest.Config
 var k8sClient client.Client
 var testEnv *envtest.Environment
+var webhookConfigSvc webhookconfig.AssetWebhookConfigService
+var fixParameters = runtime.RawExtension{Raw: []byte(`{"json":"true","complex":{"data":"true"}}`)}
 
 // StartTestManager adds recFn
 func StartTestManager(mgr manager.Manager, g *GomegaWithT) (chan struct{}, *sync.WaitGroup) {
@@ -66,20 +72,13 @@ var _ = BeforeSuite(func(done Done) {
 	err = assetstorev1beta1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = assetstorev1beta1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = assetstorev1beta1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
-	err = assetstorev1beta1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
-
 	// +kubebuilder:scaffold:scheme
 
 	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).ToNot(HaveOccurred())
 	Expect(k8sClient).ToNot(BeNil())
+
+	webhookConfigSvc = initWebhookConfigService(webhookconfig.Config{CfgMapName: "test", CfgMapNamespace: "test"}, cfg)
 
 	close(done)
 }, 60)
@@ -89,6 +88,17 @@ var _ = AfterSuite(func() {
 	err := testEnv.Stop()
 	Expect(err).ToNot(HaveOccurred())
 })
+
+func initWebhookConfigService(webhookCfg webhookconfig.Config, config *rest.Config) webhookconfig.AssetWebhookConfigService {
+	dc, err := dynamic.NewForConfig(config)
+	Expect(err).To(Succeed())
+
+	configmapsResource := schema.GroupVersionResource{Group: "", Version: "v1", Resource: "configmaps"}
+	resourceGetter := dc.Resource(configmapsResource)
+	webhookCfgService := webhookconfig.New(resourceGetter, webhookCfg.CfgMapName, webhookCfg.CfgMapNamespace)
+
+	return webhookCfgService
+}
 
 type MockContainer struct {
 	Store     *store.Store
@@ -128,4 +138,9 @@ func validateAsset(status assetstorev1beta1.CommonAssetStatus, meta controllerru
 	Expect(status.AssetRef.BaseURL).To(Equal(expectedBaseURL))
 	Expect(status.AssetRef.Files).To(HaveLen(len(files)))
 	Expect(meta.Finalizers).To(ContainElement("test"))
+}
+
+func validateDocsTopic(status assetstorev1beta1.CommonDocsTopicStatus, meta controllerruntime.ObjectMeta, expectedPhase assetstorev1beta1.DocsTopicPhase, expectedReason assetstorev1beta1.DocsTopicReason) {
+	Expect(status.Phase).To(Equal(expectedPhase))
+	Expect(status.Reason).To(Equal(expectedReason))
 }

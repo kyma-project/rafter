@@ -3,9 +3,9 @@ package testsuite
 import (
 	"time"
 
-	"github.com/kyma-project/kyma/tests/asset-store/pkg/resource"
-	"github.com/kyma-project/kyma/tests/asset-store/pkg/waiter"
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
+	"github.com/kyma-project/rafter/tests/asset-store/pkg/resource"
+	"github.com/kyma-project/rafter/tests/asset-store/pkg/waiter"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -24,8 +24,8 @@ type asset struct {
 func newAsset(dynamicCli dynamic.Interface, namespace string, bucketName string, waitTimeout time.Duration, logFn func(format string, args ...interface{})) *asset {
 	return &asset{
 		resCli: resource.New(dynamicCli, schema.GroupVersionResource{
-			Version:  v1beta1.SchemeGroupVersion.Version,
-			Group:    v1beta1.SchemeGroupVersion.Group,
+			Version:  v1beta1.GroupVersion.Version,
+			Group:    v1beta1.GroupVersion.Group,
 			Resource: "assets",
 		}, namespace, logFn),
 		waitTimeout: waitTimeout,
@@ -39,7 +39,7 @@ func (a *asset) CreateMany(assets []assetData) error {
 		asset := &v1beta1.Asset{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "Asset",
-				APIVersion: v1beta1.SchemeGroupVersion.String(),
+				APIVersion: v1beta1.GroupVersion.String(),
 			},
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      asset.Name,
@@ -106,7 +106,7 @@ func (a *asset) WaitForDeletedResources(assets []assetData) error {
 		return true, nil
 	}, a.waitTimeout)
 	if err != nil {
-		return errors.Wrapf(err, "while deleting Asset resources %s in namespace %s")
+		return errors.Wrap(err, "while deleting Asset resources")
 	}
 
 	return nil

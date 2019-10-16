@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/kyma-project/kyma/tests/asset-store/testsuite"
+	"github.com/kyma-project/rafter/tests/asset-store/testsuite"
 	"github.com/onsi/gomega"
 	"github.com/vrischmann/envconfig"
 	restclient "k8s.io/client-go/rest"
@@ -17,6 +17,7 @@ type config struct {
 }
 
 func TestAssetStore(t *testing.T) {
+	t.Skip("Disable, will be rewritten")
 	g := gomega.NewGomegaWithT(t)
 
 	cfg, err := loadConfig("APP")
