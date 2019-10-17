@@ -1,7 +1,7 @@
 apiVersion: cms.kyma-project.io/v1alpha1
-kind: DocsTopic
+kind: AssetGroup
 metadata:
-  name: docstopic-sample
+  name: assetgroup-sample
 spec:
   displayName: "Docs Topic Sample"
   description: "Docs Topic Description"

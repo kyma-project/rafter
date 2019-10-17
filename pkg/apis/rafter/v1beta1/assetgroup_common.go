@@ -5,7 +5,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
-type CommonDocsTopicSpec struct {
+type CommonAssetGroupSpec struct {
 	DisplayName string `json:"displayName,omitempty"`
 	Description string `json:"description,omitempty"`
 	// +kubebuilder:validation:MinItems=1
@@ -13,101 +13,101 @@ type CommonDocsTopicSpec struct {
 }
 
 // +kubebuilder:validation:Enum=single;package;index
-type DocsTopicSourceMode string
+type AssetGroupSourceMode string
 
 const (
-	DocsTopicSingle  DocsTopicSourceMode = "single"
-	DocsTopicPackage DocsTopicSourceMode = "package"
-	DocsTopicIndex   DocsTopicSourceMode = "index"
+	AssetGroupSingle  AssetGroupSourceMode = "single"
+	AssetGroupPackage AssetGroupSourceMode = "package"
+	AssetGroupIndex   AssetGroupSourceMode = "index"
 )
 
 // +kubebuilder:validation:Pattern=^[a-z][a-zA-Z0-9-]*[a-zA-Z0-9]$
-type DocsTopicSourceName string
+type AssetGroupSourceName string
 
 // +kubebuilder:validation:Pattern=^[a-z][a-zA-Z0-9\._-]*[a-zA-Z0-9]$
-type DocsTopicSourceType string
+type AssetGroupSourceType string
 
 type Source struct {
-	Name   DocsTopicSourceName `json:"name"`
-	Type   DocsTopicSourceType `json:"type"`
-	URL    string              `json:"url"`
-	Mode   DocsTopicSourceMode `json:"mode"`
-	Filter string              `json:"filter,omitempty"`
+	Name   AssetGroupSourceName `json:"name"`
+	Type   AssetGroupSourceType `json:"type"`
+	URL    string               `json:"url"`
+	Mode   AssetGroupSourceMode `json:"mode"`
+	Filter string               `json:"filter,omitempty"`
 	// +optional
 	Parameters *runtime.RawExtension `json:"parameters,omitempty"`
 }
 
 // +kubebuilder:validation:Enum=Pending;Ready;Failed
-type DocsTopicPhase string
+type AssetGroupPhase string
 
 const (
-	DocsTopicPending DocsTopicPhase = "Pending"
-	DocsTopicReady   DocsTopicPhase = "Ready"
-	DocsTopicFailed  DocsTopicPhase = "Failed"
+	AssetGroupPending AssetGroupPhase = "Pending"
+	AssetGroupReady   AssetGroupPhase = "Ready"
+	AssetGroupFailed  AssetGroupPhase = "Failed"
 )
 
-type CommonDocsTopicStatus struct {
-	Phase             DocsTopicPhase  `json:"phase"`
-	Reason            DocsTopicReason `json:"reason,omitempty"`
-	Message           string          `json:"message,omitempty"`
-	LastHeartbeatTime metav1.Time     `json:"lastHeartbeatTime"`
+type CommonAssetGroupStatus struct {
+	Phase             AssetGroupPhase  `json:"phase"`
+	Reason            AssetGroupReason `json:"reason,omitempty"`
+	Message           string           `json:"message,omitempty"`
+	LastHeartbeatTime metav1.Time      `json:"lastHeartbeatTime"`
 }
 
-type DocsTopicReason string
+type AssetGroupReason string
 
 const (
-	DocsTopicAssetCreated               DocsTopicReason = "AssetCreated"
-	DocsTopicAssetCreationFailed        DocsTopicReason = "AssetCreationFailed"
-	DocsTopicAssetsCreationFailed       DocsTopicReason = "AssetsCreationFailed"
-	DocsTopicAssetsListingFailed        DocsTopicReason = "AssetsListingFailed"
-	DocsTopicAssetDeleted               DocsTopicReason = "AssetDeleted"
-	DocsTopicAssetDeletionFailed        DocsTopicReason = "AssetDeletionFailed"
-	DocsTopicAssetsDeletionFailed       DocsTopicReason = "AssetsDeletionFailed"
-	DocsTopicAssetUpdated               DocsTopicReason = "AssetUpdated"
-	DocsTopicAssetUpdateFailed          DocsTopicReason = "AssetUpdateFailed"
-	DocsTopicAssetsUpdateFailed         DocsTopicReason = "AssetsUpdateFailed"
-	DocsTopicAssetsReady                DocsTopicReason = "AssetsReady"
-	DocsTopicWaitingForAssets           DocsTopicReason = "WaitingForAssets"
-	DocsTopicBucketError                DocsTopicReason = "BucketError"
-	DocsTopicAssetsWebhookGetFailed     DocsTopicReason = "AssetsWebhookGetFailed"
-	DocsTopicAssetsSpecValidationFailed DocsTopicReason = "AssetsSpecValidationFailed"
+	AssetGroupAssetCreated               AssetGroupReason = "AssetCreated"
+	AssetGroupAssetCreationFailed        AssetGroupReason = "AssetCreationFailed"
+	AssetGroupAssetsCreationFailed       AssetGroupReason = "AssetsCreationFailed"
+	AssetGroupAssetsListingFailed        AssetGroupReason = "AssetsListingFailed"
+	AssetGroupAssetDeleted               AssetGroupReason = "AssetDeleted"
+	AssetGroupAssetDeletionFailed        AssetGroupReason = "AssetDeletionFailed"
+	AssetGroupAssetsDeletionFailed       AssetGroupReason = "AssetsDeletionFailed"
+	AssetGroupAssetUpdated               AssetGroupReason = "AssetUpdated"
+	AssetGroupAssetUpdateFailed          AssetGroupReason = "AssetUpdateFailed"
+	AssetGroupAssetsUpdateFailed         AssetGroupReason = "AssetsUpdateFailed"
+	AssetGroupAssetsReady                AssetGroupReason = "AssetsReady"
+	AssetGroupWaitingForAssets           AssetGroupReason = "WaitingForAssets"
+	AssetGroupBucketError                AssetGroupReason = "BucketError"
+	AssetGroupAssetsWebhookGetFailed     AssetGroupReason = "AssetsWebhookGetFailed"
+	AssetGroupAssetsSpecValidationFailed AssetGroupReason = "AssetsSpecValidationFailed"
 )
 
-func (r DocsTopicReason) String() string {
+func (r AssetGroupReason) String() string {
 	return string(r)
 }
 
-func (r DocsTopicReason) Message() string {
+func (r AssetGroupReason) Message() string {
 	switch r {
-	case DocsTopicAssetCreated:
+	case AssetGroupAssetCreated:
 		return "Asset %s has been created"
-	case DocsTopicAssetCreationFailed:
+	case AssetGroupAssetCreationFailed:
 		return "Asset %s couldn't be created due to error %s"
-	case DocsTopicAssetsCreationFailed:
+	case AssetGroupAssetsCreationFailed:
 		return "Assets couldn't be created due to error %s"
-	case DocsTopicAssetsListingFailed:
+	case AssetGroupAssetsListingFailed:
 		return "Assets couldn't be listed due to error %s"
-	case DocsTopicAssetDeleted:
+	case AssetGroupAssetDeleted:
 		return "Assets %s has been deleted"
-	case DocsTopicAssetDeletionFailed:
+	case AssetGroupAssetDeletionFailed:
 		return "Assets %s couldn't be deleted due to error %s"
-	case DocsTopicAssetsDeletionFailed:
+	case AssetGroupAssetsDeletionFailed:
 		return "Assets couldn't be deleted due to error %s"
-	case DocsTopicAssetUpdated:
+	case AssetGroupAssetUpdated:
 		return "Asset %s has been updated"
-	case DocsTopicAssetUpdateFailed:
+	case AssetGroupAssetUpdateFailed:
 		return "Asset %s couldn't be updated due to error %s"
-	case DocsTopicAssetsUpdateFailed:
+	case AssetGroupAssetsUpdateFailed:
 		return "Assets couldn't be updated due to error %s"
-	case DocsTopicAssetsReady:
+	case AssetGroupAssetsReady:
 		return "Assets are ready to use"
-	case DocsTopicWaitingForAssets:
+	case AssetGroupWaitingForAssets:
 		return "Waiting for assets to be in Ready phase"
-	case DocsTopicBucketError:
+	case AssetGroupBucketError:
 		return "Couldn't ensure if bucket exist due to error %s"
-	case DocsTopicAssetsWebhookGetFailed:
+	case AssetGroupAssetsWebhookGetFailed:
 		return "Unable to get webhook configuration %s"
-	case DocsTopicAssetsSpecValidationFailed:
+	case AssetGroupAssetsSpecValidationFailed:
 		return "Invalid asset specification, %s"
 	default:
 		return ""

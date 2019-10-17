@@ -45,8 +45,8 @@ type Config struct {
 	ClusterAsset        controllers.ClusterAssetConfig
 	Bucket              controllers.BucketConfig
 	ClusterBucket       controllers.ClusterBucketConfig
-	DocsTopic           controllers.DocsTopicConfig
-	ClusterDocsTopic    controllers.ClusterDocsTopicConfig
+	AssetGroup          controllers.AssetGroupConfig
+	ClusterAssetGroup   controllers.ClusterAssetGroupConfig
 	WebhookConfigMap    webhookconfig.Config
 	BucketRegion        string `envconfig:"optional"`
 	ClusterBucketRegion string `envconfig:"optional"`
@@ -118,12 +118,12 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Bucket")
 		os.Exit(1)
 	}
-	if err = controllers.NewClusterDocsTopic(cfg.ClusterDocsTopic, ctrl.Log.WithName("controllers").WithName("ClusterDocsTopic"), mgr, webhookSvc).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "ClusterDocsTopic")
+	if err = controllers.NewClusterAssetGroup(cfg.ClusterAssetGroup, ctrl.Log.WithName("controllers").WithName("ClusterAssetGroup"), mgr, webhookSvc).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ClusterAssetGroup")
 		os.Exit(1)
 	}
-	if err = controllers.NewDocsTopic(cfg.DocsTopic, ctrl.Log.WithName("controllers").WithName("DocsTopic"), mgr, webhookSvc).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "DocsTopic")
+	if err = controllers.NewAssetGroup(cfg.AssetGroup, ctrl.Log.WithName("controllers").WithName("AssetGroup"), mgr, webhookSvc).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "AssetGroup")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
@@ -143,8 +143,8 @@ func loadConfig(prefix string) (Config, error) {
 	}
 	cfg.Bucket.ExternalEndpoint = cfg.Store.ExternalEndpoint
 	cfg.ClusterBucket.ExternalEndpoint = cfg.Store.ExternalEndpoint
-	cfg.ClusterDocsTopic.BucketRegion = cfg.ClusterBucketRegion
-	cfg.DocsTopic.BucketRegion = cfg.BucketRegion
+	cfg.ClusterAssetGroup.BucketRegion = cfg.ClusterBucketRegion
+	cfg.AssetGroup.BucketRegion = cfg.BucketRegion
 	return cfg, nil
 }
 

@@ -1,4 +1,4 @@
-package docstopic
+package assetgroup
 
 import (
 	"context"
@@ -26,7 +26,7 @@ type CommonAsset struct {
 }
 
 const (
-	docsTopicLabel           = "cms.kyma-project.io/docs-topic"
+	assetGroupLabel          = "cms.kyma-project.io/docs-topic"
 	accessLabel              = "cms.kyma-project.io/access"
 	assetShortNameAnnotation = "cms.kyma-project.io/asset-short-name"
 	typeLabel                = "cms.kyma-project.io/type"
@@ -39,7 +39,7 @@ var (
 //go:generate mockery -name=AssetService -output=automock -outpkg=automock -case=underscore
 type AssetService interface {
 	List(ctx context.Context, namespace string, labels map[string]string) ([]CommonAsset, error)
-	Create(ctx context.Context, docsTopic v1.Object, commonAsset CommonAsset) error
+	Create(ctx context.Context, assetGroup v1.Object, commonAsset CommonAsset) error
 	Update(ctx context.Context, commonAsset CommonAsset) error
 	Delete(ctx context.Context, commonAsset CommonAsset) error
 }
@@ -51,7 +51,7 @@ type BucketService interface {
 }
 
 type Handler interface {
-	Handle(ctx context.Context, instance ObjectMetaAccessor, spec v1beta1.CommonDocsTopicSpec, status v1beta1.CommonDocsTopicStatus) (*v1beta1.CommonDocsTopicStatus, error)
+	Handle(ctx context.Context, instance ObjectMetaAccessor, spec v1beta1.CommonAssetGroupSpec, status v1beta1.CommonAssetGroupStatus) (*v1beta1.CommonAssetGroupStatus, error)
 }
 
 type ObjectMetaAccessor interface {
@@ -60,7 +60,7 @@ type ObjectMetaAccessor interface {
 	DeepCopyObject() runtime.Object
 }
 
-type docstopicHandler struct {
+type assetgroupHandler struct {
 	log              logr.Logger
 	recorder         record.EventRecorder
 	assetSvc         AssetService
@@ -69,7 +69,7 @@ type docstopicHandler struct {
 }
 
 func New(log logr.Logger, recorder record.EventRecorder, assetSvc AssetService, bucketSvc BucketService, webhookConfigSvc webhookconfig.AssetWebhookConfigService) Handler {
-	return &docstopicHandler{
+	return &assetgroupHandler{
 		log:              log,
 		recorder:         recorder,
 		assetSvc:         assetSvc,
@@ -78,34 +78,34 @@ func New(log logr.Logger, recorder record.EventRecorder, assetSvc AssetService, 
 	}
 }
 
-func (h *docstopicHandler) Handle(ctx context.Context, instance ObjectMetaAccessor, spec v1beta1.CommonDocsTopicSpec, status v1beta1.CommonDocsTopicStatus) (*v1beta1.CommonDocsTopicStatus, error) {
-	h.logInfof("Start common DocsTopic handling")
-	defer h.logInfof("Finish common DocsTopic handling")
+func (h *assetgroupHandler) Handle(ctx context.Context, instance ObjectMetaAccessor, spec v1beta1.CommonAssetGroupSpec, status v1beta1.CommonAssetGroupStatus) (*v1beta1.CommonAssetGroupStatus, error) {
+	h.logInfof("Start common AssetGroup handling")
+	defer h.logInfof("Finish common AssetGroup handling")
 
 	err := h.validateSpec(spec)
 	if err != nil {
-		h.recordWarningEventf(instance, v1beta1.DocsTopicAssetsSpecValidationFailed, err.Error())
-		return h.onFailedStatus(h.buildStatus(v1beta1.DocsTopicFailed, v1beta1.DocsTopicAssetsSpecValidationFailed, err.Error()), status), err
+		h.recordWarningEventf(instance, v1beta1.AssetGroupAssetsSpecValidationFailed, err.Error())
+		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupAssetsSpecValidationFailed, err.Error()), status), err
 	}
 
 	bucketName, err := h.ensureBucketExits(ctx, instance.GetNamespace())
 	if err != nil {
-		h.recordWarningEventf(instance, v1beta1.DocsTopicBucketError, err.Error())
-		return h.onFailedStatus(h.buildStatus(v1beta1.DocsTopicFailed, v1beta1.DocsTopicBucketError, err.Error()), status), err
+		h.recordWarningEventf(instance, v1beta1.AssetGroupBucketError, err.Error())
+		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupBucketError, err.Error()), status), err
 	}
 
 	commonAssets, err := h.assetSvc.List(ctx, instance.GetNamespace(), h.buildLabels(instance.GetName(), ""))
 	if err != nil {
-		h.recordWarningEventf(instance, v1beta1.DocsTopicAssetsListingFailed, err.Error())
-		return h.onFailedStatus(h.buildStatus(v1beta1.DocsTopicFailed, v1beta1.DocsTopicAssetsListingFailed, err.Error()), status), err
+		h.recordWarningEventf(instance, v1beta1.AssetGroupAssetsListingFailed, err.Error())
+		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupAssetsListingFailed, err.Error()), status), err
 	}
 
 	commonAssetsMap := h.convertToAssetMap(commonAssets)
 
 	webhookCfg, err := h.webhookConfigSvc.Get(ctx)
 	if err != nil {
-		h.recordWarningEventf(instance, v1beta1.DocsTopicAssetsWebhookGetFailed, err.Error())
-		return h.onFailedStatus(h.buildStatus(v1beta1.DocsTopicFailed, v1beta1.DocsTopicAssetsWebhookGetFailed, err.Error()), status), err
+		h.recordWarningEventf(instance, v1beta1.AssetGroupAssetsWebhookGetFailed, err.Error())
+		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupAssetsWebhookGetFailed, err.Error()), status), err
 	}
 	h.logInfof("Webhook configuration loaded")
 
@@ -120,9 +120,9 @@ func (h *docstopicHandler) Handle(ctx context.Context, instance ObjectMetaAccess
 	}
 }
 
-func (h *docstopicHandler) validateSpec(spec v1beta1.CommonDocsTopicSpec) error {
-	h.logInfof("validating CommonDocsTopicSpec")
-	names := map[v1beta1.DocsTopicSourceName]map[v1beta1.DocsTopicSourceType]struct{}{}
+func (h *assetgroupHandler) validateSpec(spec v1beta1.CommonAssetGroupSpec) error {
+	h.logInfof("validating CommonAssetGroupSpec")
+	names := map[v1beta1.AssetGroupSourceName]map[v1beta1.AssetGroupSourceType]struct{}{}
 	for _, src := range spec.Sources {
 		if nameTypes, exists := names[src.Name]; exists {
 			if _, exists := nameTypes[src.Type]; exists {
@@ -131,15 +131,15 @@ func (h *docstopicHandler) validateSpec(spec v1beta1.CommonDocsTopicSpec) error 
 			names[src.Name][src.Type] = struct{}{}
 			continue
 		}
-		names[src.Name] = map[v1beta1.DocsTopicSourceType]struct{}{}
+		names[src.Name] = map[v1beta1.AssetGroupSourceType]struct{}{}
 		names[src.Name][src.Type] = struct{}{}
 	}
-	h.logInfof("CommonDocsTopicSpec validated")
+	h.logInfof("CommonAssetGroupSpec validated")
 
 	return nil
 }
 
-func (h *docstopicHandler) ensureBucketExits(ctx context.Context, namespace string) (string, error) {
+func (h *assetgroupHandler) ensureBucketExits(ctx context.Context, namespace string) (string, error) {
 	h.logInfof("Listing buckets")
 	labels := map[string]string{accessLabel: "public"}
 	names, err := h.bucketSvc.List(ctx, namespace, labels)
@@ -166,15 +166,15 @@ func (h *docstopicHandler) ensureBucketExits(ctx context.Context, namespace stri
 	return name, nil
 }
 
-func (h *docstopicHandler) isOnChange(existing map[v1beta1.DocsTopicSourceName]CommonAsset, spec v1beta1.CommonDocsTopicSpec, bucketName string, config webhookconfig.AssetWebhookConfigMap) bool {
+func (h *assetgroupHandler) isOnChange(existing map[v1beta1.AssetGroupSourceName]CommonAsset, spec v1beta1.CommonAssetGroupSpec, bucketName string, config webhookconfig.AssetWebhookConfigMap) bool {
 	return h.shouldCreateAssets(existing, spec) || h.shouldDeleteAssets(existing, spec) || h.shouldUpdateAssets(existing, spec, bucketName, config)
 }
 
-func (h *docstopicHandler) isOnPhaseChange(existing map[v1beta1.DocsTopicSourceName]CommonAsset, status v1beta1.CommonDocsTopicStatus) bool {
+func (h *assetgroupHandler) isOnPhaseChange(existing map[v1beta1.AssetGroupSourceName]CommonAsset, status v1beta1.CommonAssetGroupStatus) bool {
 	return status.Phase != h.calculateAssetPhase(existing)
 }
 
-func (h *docstopicHandler) shouldCreateAssets(existing map[v1beta1.DocsTopicSourceName]CommonAsset, spec v1beta1.CommonDocsTopicSpec) bool {
+func (h *assetgroupHandler) shouldCreateAssets(existing map[v1beta1.AssetGroupSourceName]CommonAsset, spec v1beta1.CommonAssetGroupSpec) bool {
 	for _, source := range spec.Sources {
 		if _, exists := existing[source.Name]; !exists {
 			return true
@@ -184,9 +184,9 @@ func (h *docstopicHandler) shouldCreateAssets(existing map[v1beta1.DocsTopicSour
 	return false
 }
 
-func (h *docstopicHandler) shouldUpdateAssets(existing map[v1beta1.DocsTopicSourceName]CommonAsset, spec v1beta1.CommonDocsTopicSpec, bucketName string, config webhookconfig.AssetWebhookConfigMap) bool {
+func (h *assetgroupHandler) shouldUpdateAssets(existing map[v1beta1.AssetGroupSourceName]CommonAsset, spec v1beta1.CommonAssetGroupSpec, bucketName string, config webhookconfig.AssetWebhookConfigMap) bool {
 	for key, existingAsset := range existing {
-		expectedSpec := findSource(spec.Sources, key, v1beta1.DocsTopicSourceType(existingAsset.Labels[typeLabel]))
+		expectedSpec := findSource(spec.Sources, key, v1beta1.AssetGroupSourceType(existingAsset.Labels[typeLabel]))
 		if expectedSpec == nil {
 			continue
 		}
@@ -201,9 +201,9 @@ func (h *docstopicHandler) shouldUpdateAssets(existing map[v1beta1.DocsTopicSour
 	return false
 }
 
-func (h *docstopicHandler) shouldDeleteAssets(existing map[v1beta1.DocsTopicSourceName]CommonAsset, spec v1beta1.CommonDocsTopicSpec) bool {
+func (h *assetgroupHandler) shouldDeleteAssets(existing map[v1beta1.AssetGroupSourceName]CommonAsset, spec v1beta1.CommonAssetGroupSpec) bool {
 	for key, existingAsset := range existing {
-		if findSource(spec.Sources, key, v1beta1.DocsTopicSourceType(existingAsset.Labels[typeLabel])) == nil {
+		if findSource(spec.Sources, key, v1beta1.AssetGroupSourceType(existingAsset.Labels[typeLabel])) == nil {
 			return true
 		}
 	}
@@ -211,37 +211,37 @@ func (h *docstopicHandler) shouldDeleteAssets(existing map[v1beta1.DocsTopicSour
 	return false
 }
 
-func (h *docstopicHandler) onPhaseChange(instance ObjectMetaAccessor, status v1beta1.CommonDocsTopicStatus, existing map[v1beta1.DocsTopicSourceName]CommonAsset) (*v1beta1.CommonDocsTopicStatus, error) {
+func (h *assetgroupHandler) onPhaseChange(instance ObjectMetaAccessor, status v1beta1.CommonAssetGroupStatus, existing map[v1beta1.AssetGroupSourceName]CommonAsset) (*v1beta1.CommonAssetGroupStatus, error) {
 	phase := h.calculateAssetPhase(existing)
 	h.logInfof("Updating phase to %s", phase)
 
-	if phase == v1beta1.DocsTopicPending {
-		h.recordNormalEventf(instance, v1beta1.DocsTopicWaitingForAssets)
-		return h.buildStatus(phase, v1beta1.DocsTopicWaitingForAssets), nil
+	if phase == v1beta1.AssetGroupPending {
+		h.recordNormalEventf(instance, v1beta1.AssetGroupWaitingForAssets)
+		return h.buildStatus(phase, v1beta1.AssetGroupWaitingForAssets), nil
 	}
 
-	h.recordNormalEventf(instance, v1beta1.DocsTopicAssetsReady)
-	return h.buildStatus(phase, v1beta1.DocsTopicAssetsReady), nil
+	h.recordNormalEventf(instance, v1beta1.AssetGroupAssetsReady)
+	return h.buildStatus(phase, v1beta1.AssetGroupAssetsReady), nil
 }
 
-func (h *docstopicHandler) onChange(ctx context.Context, instance ObjectMetaAccessor, spec v1beta1.CommonDocsTopicSpec, status v1beta1.CommonDocsTopicStatus, existing map[v1beta1.DocsTopicSourceName]CommonAsset, bucketName string, cfg webhookconfig.AssetWebhookConfigMap) (*v1beta1.CommonDocsTopicStatus, error) {
+func (h *assetgroupHandler) onChange(ctx context.Context, instance ObjectMetaAccessor, spec v1beta1.CommonAssetGroupSpec, status v1beta1.CommonAssetGroupStatus, existing map[v1beta1.AssetGroupSourceName]CommonAsset, bucketName string, cfg webhookconfig.AssetWebhookConfigMap) (*v1beta1.CommonAssetGroupStatus, error) {
 	if err := h.createMissingAssets(ctx, instance, existing, spec, bucketName, cfg); err != nil {
-		return h.onFailedStatus(h.buildStatus(v1beta1.DocsTopicFailed, v1beta1.DocsTopicAssetsCreationFailed, err.Error()), status), err
+		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupAssetsCreationFailed, err.Error()), status), err
 	}
 
 	if err := h.updateOutdatedAssets(ctx, instance, existing, spec, bucketName, cfg); err != nil {
-		return h.onFailedStatus(h.buildStatus(v1beta1.DocsTopicFailed, v1beta1.DocsTopicAssetsUpdateFailed, err.Error()), status), err
+		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupAssetsUpdateFailed, err.Error()), status), err
 	}
 
 	if err := h.deleteNotExisting(ctx, instance, existing, spec); err != nil {
-		return h.onFailedStatus(h.buildStatus(v1beta1.DocsTopicFailed, v1beta1.DocsTopicAssetsDeletionFailed, err.Error()), status), err
+		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupAssetsDeletionFailed, err.Error()), status), err
 	}
 
-	h.recordNormalEventf(instance, v1beta1.DocsTopicWaitingForAssets)
-	return h.buildStatus(v1beta1.DocsTopicPending, v1beta1.DocsTopicWaitingForAssets), nil
+	h.recordNormalEventf(instance, v1beta1.AssetGroupWaitingForAssets)
+	return h.buildStatus(v1beta1.AssetGroupPending, v1beta1.AssetGroupWaitingForAssets), nil
 }
 
-func (h *docstopicHandler) createMissingAssets(ctx context.Context, instance ObjectMetaAccessor, existing map[v1beta1.DocsTopicSourceName]CommonAsset, spec v1beta1.CommonDocsTopicSpec, bucketName string, cfg webhookconfig.AssetWebhookConfigMap) error {
+func (h *assetgroupHandler) createMissingAssets(ctx context.Context, instance ObjectMetaAccessor, existing map[v1beta1.AssetGroupSourceName]CommonAsset, spec v1beta1.CommonAssetGroupSpec, bucketName string, cfg webhookconfig.AssetWebhookConfigMap) error {
 	for _, spec := range spec.Sources {
 		name := spec.Name
 		if _, exists := existing[name]; exists {
@@ -256,7 +256,7 @@ func (h *docstopicHandler) createMissingAssets(ctx context.Context, instance Obj
 	return nil
 }
 
-func (h *docstopicHandler) createAsset(ctx context.Context, instance ObjectMetaAccessor, assetSpec v1beta1.Source, bucketName string, cfg webhookconfig.AssetWebhookConfig) error {
+func (h *assetgroupHandler) createAsset(ctx context.Context, instance ObjectMetaAccessor, assetSpec v1beta1.Source, bucketName string, cfg webhookconfig.AssetWebhookConfig) error {
 	commonAsset := CommonAsset{
 		ObjectMeta: v1.ObjectMeta{
 			Name:        h.generateFullAssetName(instance.GetName(), assetSpec.Name, assetSpec.Type),
@@ -269,18 +269,18 @@ func (h *docstopicHandler) createAsset(ctx context.Context, instance ObjectMetaA
 
 	h.logInfof("Creating asset %s", commonAsset.Name)
 	if err := h.assetSvc.Create(ctx, instance, commonAsset); err != nil {
-		h.recordWarningEventf(instance, v1beta1.DocsTopicAssetCreationFailed, commonAsset.Name, err.Error())
+		h.recordWarningEventf(instance, v1beta1.AssetGroupAssetCreationFailed, commonAsset.Name, err.Error())
 		return err
 	}
 	h.logInfof("Asset %s created", commonAsset.Name)
-	h.recordNormalEventf(instance, v1beta1.DocsTopicAssetCreated, commonAsset.Name)
+	h.recordNormalEventf(instance, v1beta1.AssetGroupAssetCreated, commonAsset.Name)
 
 	return nil
 }
 
-func (h *docstopicHandler) updateOutdatedAssets(ctx context.Context, instance ObjectMetaAccessor, existing map[v1beta1.DocsTopicSourceName]CommonAsset, spec v1beta1.CommonDocsTopicSpec, bucketName string, cfg webhookconfig.AssetWebhookConfigMap) error {
+func (h *assetgroupHandler) updateOutdatedAssets(ctx context.Context, instance ObjectMetaAccessor, existing map[v1beta1.AssetGroupSourceName]CommonAsset, spec v1beta1.CommonAssetGroupSpec, bucketName string, cfg webhookconfig.AssetWebhookConfigMap) error {
 	for key, existingAsset := range existing {
-		expectedSpec := findSource(spec.Sources, key, v1beta1.DocsTopicSourceType(existingAsset.Labels[typeLabel]))
+		expectedSpec := findSource(spec.Sources, key, v1beta1.AssetGroupSourceType(existingAsset.Labels[typeLabel]))
 		if expectedSpec == nil {
 			continue
 		}
@@ -294,17 +294,17 @@ func (h *docstopicHandler) updateOutdatedAssets(ctx context.Context, instance Ob
 
 		existingAsset.Spec = expected
 		if err := h.assetSvc.Update(ctx, existingAsset); err != nil {
-			h.recordWarningEventf(instance, v1beta1.DocsTopicAssetUpdateFailed, existingAsset.Name, err.Error())
+			h.recordWarningEventf(instance, v1beta1.AssetGroupAssetUpdateFailed, existingAsset.Name, err.Error())
 			return err
 		}
 		h.logInfof("Asset %s updated", existingAsset.Name)
-		h.recordNormalEventf(instance, v1beta1.DocsTopicAssetUpdated, existingAsset.Name)
+		h.recordNormalEventf(instance, v1beta1.AssetGroupAssetUpdated, existingAsset.Name)
 	}
 
 	return nil
 }
 
-func findSource(slice []v1beta1.Source, sourceName v1beta1.DocsTopicSourceName, sourceType v1beta1.DocsTopicSourceType) *v1beta1.Source {
+func findSource(slice []v1beta1.Source, sourceName v1beta1.AssetGroupSourceName, sourceType v1beta1.AssetGroupSourceType) *v1beta1.Source {
 	for _, source := range slice {
 		if source.Name == sourceName && source.Type == sourceType {
 			return &source
@@ -313,36 +313,36 @@ func findSource(slice []v1beta1.Source, sourceName v1beta1.DocsTopicSourceName, 
 	return nil
 }
 
-func (h *docstopicHandler) deleteNotExisting(ctx context.Context, instance ObjectMetaAccessor, existing map[v1beta1.DocsTopicSourceName]CommonAsset, spec v1beta1.CommonDocsTopicSpec) error {
+func (h *assetgroupHandler) deleteNotExisting(ctx context.Context, instance ObjectMetaAccessor, existing map[v1beta1.AssetGroupSourceName]CommonAsset, spec v1beta1.CommonAssetGroupSpec) error {
 	for key, commonAsset := range existing {
-		if findSource(spec.Sources, key, v1beta1.DocsTopicSourceType(commonAsset.Labels[typeLabel])) != nil {
+		if findSource(spec.Sources, key, v1beta1.AssetGroupSourceType(commonAsset.Labels[typeLabel])) != nil {
 			continue
 		}
 
 		h.logInfof("Deleting asset %s", commonAsset.Name)
 		if err := h.assetSvc.Delete(ctx, commonAsset); err != nil {
-			h.recordWarningEventf(instance, v1beta1.DocsTopicAssetDeletionFailed, commonAsset.Name, err.Error())
+			h.recordWarningEventf(instance, v1beta1.AssetGroupAssetDeletionFailed, commonAsset.Name, err.Error())
 			return err
 		}
 		h.logInfof("Asset %s deleted", commonAsset.Name)
-		h.recordNormalEventf(instance, v1beta1.DocsTopicAssetDeleted, commonAsset.Name)
+		h.recordNormalEventf(instance, v1beta1.AssetGroupAssetDeleted, commonAsset.Name)
 	}
 
 	return nil
 }
 
-func (h *docstopicHandler) convertToAssetMap(assets []CommonAsset) map[v1beta1.DocsTopicSourceName]CommonAsset {
-	result := make(map[v1beta1.DocsTopicSourceName]CommonAsset)
+func (h *assetgroupHandler) convertToAssetMap(assets []CommonAsset) map[v1beta1.AssetGroupSourceName]CommonAsset {
+	result := make(map[v1beta1.AssetGroupSourceName]CommonAsset)
 
 	for _, asset := range assets {
 		assetShortName := asset.Annotations[assetShortNameAnnotation]
-		result[v1beta1.DocsTopicSourceName(assetShortName)] = asset
+		result[v1beta1.AssetGroupSourceName(assetShortName)] = asset
 	}
 
 	return result
 }
 
-func (h *docstopicHandler) convertToCommonAssetSpec(spec v1beta1.Source, bucketName string, cfg webhookconfig.AssetWebhookConfig) v1beta1.CommonAssetSpec {
+func (h *assetgroupHandler) convertToCommonAssetSpec(spec v1beta1.Source, bucketName string, cfg webhookconfig.AssetWebhookConfig) v1beta1.CommonAssetSpec {
 	return v1beta1.CommonAssetSpec{
 		Source: v1beta1.AssetSource{
 			Mode:                     h.convertToAssetMode(spec.Mode),
@@ -396,10 +396,10 @@ func convertToAssetWebhookServices(services []webhookconfig.AssetWebhookService)
 	return result
 }
 
-func (h *docstopicHandler) buildLabels(topicName string, assetType v1beta1.DocsTopicSourceType) map[string]string {
+func (h *assetgroupHandler) buildLabels(topicName string, assetType v1beta1.AssetGroupSourceType) map[string]string {
 	labels := make(map[string]string)
 
-	labels[docsTopicLabel] = topicName
+	labels[assetGroupLabel] = topicName
 	if assetType != "" {
 		labels[typeLabel] = string(assetType)
 	}
@@ -408,35 +408,35 @@ func (h *docstopicHandler) buildLabels(topicName string, assetType v1beta1.DocsT
 
 }
 
-func (h *docstopicHandler) buildAnnotations(assetShortName v1beta1.DocsTopicSourceName) map[string]string {
+func (h *assetgroupHandler) buildAnnotations(assetShortName v1beta1.AssetGroupSourceName) map[string]string {
 	return map[string]string{
 		assetShortNameAnnotation: string(assetShortName),
 	}
 }
 
-func (h *docstopicHandler) convertToAssetMode(mode v1beta1.DocsTopicSourceMode) v1beta1.AssetMode {
+func (h *assetgroupHandler) convertToAssetMode(mode v1beta1.AssetGroupSourceMode) v1beta1.AssetMode {
 	switch mode {
-	case v1beta1.DocsTopicIndex:
+	case v1beta1.AssetGroupIndex:
 		return v1beta1.AssetIndex
-	case v1beta1.DocsTopicPackage:
+	case v1beta1.AssetGroupPackage:
 		return v1beta1.AssetPackage
 	default:
 		return v1beta1.AssetSingle
 	}
 }
 
-func (h *docstopicHandler) calculateAssetPhase(existing map[v1beta1.DocsTopicSourceName]CommonAsset) v1beta1.DocsTopicPhase {
+func (h *assetgroupHandler) calculateAssetPhase(existing map[v1beta1.AssetGroupSourceName]CommonAsset) v1beta1.AssetGroupPhase {
 	for _, asset := range existing {
 		if asset.Status.Phase != v1beta1.AssetReady {
-			return v1beta1.DocsTopicPending
+			return v1beta1.AssetGroupPending
 		}
 	}
 
-	return v1beta1.DocsTopicReady
+	return v1beta1.AssetGroupReady
 }
 
-func (h *docstopicHandler) buildStatus(phase v1beta1.DocsTopicPhase, reason v1beta1.DocsTopicReason, args ...interface{}) *v1beta1.CommonDocsTopicStatus {
-	return &v1beta1.CommonDocsTopicStatus{
+func (h *assetgroupHandler) buildStatus(phase v1beta1.AssetGroupPhase, reason v1beta1.AssetGroupReason, args ...interface{}) *v1beta1.CommonAssetGroupStatus {
+	return &v1beta1.CommonAssetGroupStatus{
 		Phase:             phase,
 		Reason:            reason,
 		Message:           fmt.Sprintf(reason.Message(), args...),
@@ -444,7 +444,7 @@ func (h *docstopicHandler) buildStatus(phase v1beta1.DocsTopicPhase, reason v1be
 	}
 }
 
-func (h *docstopicHandler) onFailedStatus(newStatus *v1beta1.CommonDocsTopicStatus, oldStatus v1beta1.CommonDocsTopicStatus) *v1beta1.CommonDocsTopicStatus {
+func (h *assetgroupHandler) onFailedStatus(newStatus *v1beta1.CommonAssetGroupStatus, oldStatus v1beta1.CommonAssetGroupStatus) *v1beta1.CommonAssetGroupStatus {
 	if newStatus.Phase == oldStatus.Phase && newStatus.Reason == oldStatus.Reason {
 		return nil
 	}
@@ -452,29 +452,29 @@ func (h *docstopicHandler) onFailedStatus(newStatus *v1beta1.CommonDocsTopicStat
 	return newStatus
 }
 
-func (h *docstopicHandler) logInfof(message string, args ...interface{}) {
+func (h *assetgroupHandler) logInfof(message string, args ...interface{}) {
 	h.log.Info(fmt.Sprintf(message, args...))
 }
 
-func (h *docstopicHandler) recordNormalEventf(object ObjectMetaAccessor, reason v1beta1.DocsTopicReason, args ...interface{}) {
+func (h *assetgroupHandler) recordNormalEventf(object ObjectMetaAccessor, reason v1beta1.AssetGroupReason, args ...interface{}) {
 	h.recordEventf(object, "Normal", reason, args...)
 }
 
-func (h *docstopicHandler) recordWarningEventf(object ObjectMetaAccessor, reason v1beta1.DocsTopicReason, args ...interface{}) {
+func (h *assetgroupHandler) recordWarningEventf(object ObjectMetaAccessor, reason v1beta1.AssetGroupReason, args ...interface{}) {
 	h.recordEventf(object, "Warning", reason, args...)
 }
 
-func (h *docstopicHandler) recordEventf(object ObjectMetaAccessor, eventType string, reason v1beta1.DocsTopicReason, args ...interface{}) {
+func (h *assetgroupHandler) recordEventf(object ObjectMetaAccessor, eventType string, reason v1beta1.AssetGroupReason, args ...interface{}) {
 	h.recorder.Eventf(object, eventType, reason.String(), reason.Message(), args...)
 }
 
-func (h *docstopicHandler) generateFullAssetName(docsTopicName string, assetShortName v1beta1.DocsTopicSourceName, assetType v1beta1.DocsTopicSourceType) string {
+func (h *assetgroupHandler) generateFullAssetName(assetGroupName string, assetShortName v1beta1.AssetGroupSourceName, assetType v1beta1.AssetGroupSourceType) string {
 	assetTypeLower := strings.ToLower(string(assetType))
 	assetShortNameLower := strings.ToLower(string(assetShortName))
-	return h.appendSuffix(fmt.Sprintf("%s-%s-%s", docsTopicName, assetShortNameLower, assetTypeLower))
+	return h.appendSuffix(fmt.Sprintf("%s-%s-%s", assetGroupName, assetShortNameLower, assetTypeLower))
 }
 
-func (h *docstopicHandler) generateBucketName(private bool) string {
+func (h *assetgroupHandler) generateBucketName(private bool) string {
 	access := "public"
 	if private {
 		access = "private"
@@ -483,7 +483,7 @@ func (h *docstopicHandler) generateBucketName(private bool) string {
 	return h.appendSuffix(fmt.Sprintf("cms-%s", access))
 }
 
-func (h *docstopicHandler) appendSuffix(name string) string {
+func (h *assetgroupHandler) appendSuffix(name string) string {
 	unixNano := time.Now().UnixNano()
 	suffix := strconv.FormatInt(unixNano, 32)
 

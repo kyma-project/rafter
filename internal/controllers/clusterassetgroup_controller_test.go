@@ -19,26 +19,26 @@ import (
 
 var _ = Describe("Asset", func() {
 	var (
-		docstopic  *v1beta1.ClusterDocsTopic
-		reconciler *ClusterDocsTopicReconciler
+		assetgroup *v1beta1.ClusterAssetGroup
+		reconciler *ClusterAssetGroupReconciler
 		request    ctrl.Request
 	)
 
 	BeforeEach(func() {
-		docstopic = newFixClusterDocsTopic()
-		Expect(k8sClient.Create(context.TODO(), docstopic)).To(Succeed())
+		assetgroup = newFixClusterAssetGroup()
+		Expect(k8sClient.Create(context.TODO(), assetgroup)).To(Succeed())
 
 		request = ctrl.Request{
 			NamespacedName: types.NamespacedName{
-				Name:      docstopic.Name,
-				Namespace: docstopic.Namespace,
+				Name:      assetgroup.Name,
+				Namespace: assetgroup.Namespace,
 			},
 		}
 
 		assetService := newClusterAssetService(k8sClient, scheme.Scheme)
 		bucketService := newClusterBucketService(k8sClient, scheme.Scheme, "us-east-1")
 
-		reconciler = &ClusterDocsTopicReconciler{
+		reconciler = &ClusterAssetGroupReconciler{
 			Client:           k8sClient,
 			Log:              ctrl.Log,
 			recorder:         record.NewFakeRecorder(100),
@@ -49,18 +49,18 @@ var _ = Describe("Asset", func() {
 		}
 	})
 
-	It("should successfully create, update and delete DocsTopic", func() {
-		By("creating the ClusterDocsTopic")
+	It("should successfully create, update and delete AssetGroup", func() {
+		By("creating the ClusterAssetGroup")
 		result, err := reconciler.Reconcile(request)
 		validateReconcilation(err, result)
-		docstopic = &v1beta1.ClusterDocsTopic{}
-		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, docstopic)).To(Succeed())
-		validateDocsTopic(docstopic.Status.CommonDocsTopicStatus, docstopic.ObjectMeta, v1beta1.DocsTopicPending, v1beta1.DocsTopicWaitingForAssets)
+		assetgroup = &v1beta1.ClusterAssetGroup{}
+		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, assetgroup)).To(Succeed())
+		validateAssetGroup(assetgroup.Status.CommonAssetGroupStatus, assetgroup.ObjectMeta, v1beta1.AssetGroupPending, v1beta1.AssetGroupWaitingForAssets)
 
 		By("ClusterAssets changes states to ready")
 		assets := &v1beta1.ClusterAssetList{}
 		Expect(k8sClient.List(context.TODO(), assets)).To(Succeed())
-		Expect(assets.Items).To(HaveLen(len(docstopic.Spec.Sources)))
+		Expect(assets.Items).To(HaveLen(len(assetgroup.Spec.Sources)))
 
 		for _, asset := range assets.Items {
 			asset.Status.Phase = v1beta1.AssetReady
@@ -77,26 +77,26 @@ var _ = Describe("Asset", func() {
 
 		result, err = reconciler.Reconcile(request)
 		validateReconcilation(err, result)
-		docstopic = &v1beta1.ClusterDocsTopic{}
-		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, docstopic)).To(Succeed())
-		validateDocsTopic(docstopic.Status.CommonDocsTopicStatus, docstopic.ObjectMeta, v1beta1.DocsTopicReady, v1beta1.DocsTopicAssetsReady)
+		assetgroup = &v1beta1.ClusterAssetGroup{}
+		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, assetgroup)).To(Succeed())
+		validateAssetGroup(assetgroup.Status.CommonAssetGroupStatus, assetgroup.ObjectMeta, v1beta1.AssetGroupReady, v1beta1.AssetGroupAssetsReady)
 
-		By("updating the ClusterDocsTopic")
-		docstopic.Spec.Sources = source.FilterByType(docstopic.Spec.Sources, "dita")
-		markdownIndex := source.IndexByType(docstopic.Spec.Sources, "markdown")
+		By("updating the ClusterAssetGroup")
+		assetgroup.Spec.Sources = source.FilterByType(assetgroup.Spec.Sources, "dita")
+		markdownIndex := source.IndexByType(assetgroup.Spec.Sources, "markdown")
 		Expect(markdownIndex).NotTo(Equal(-1))
-		docstopic.Spec.Sources[markdownIndex].Filter = "zyx"
-		Expect(k8sClient.Update(context.TODO(), docstopic)).To(Succeed())
+		assetgroup.Spec.Sources[markdownIndex].Filter = "zyx"
+		Expect(k8sClient.Update(context.TODO(), assetgroup)).To(Succeed())
 
 		result, err = reconciler.Reconcile(request)
 		validateReconcilation(err, result)
-		docstopic = &v1beta1.ClusterDocsTopic{}
-		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, docstopic)).To(Succeed())
-		validateDocsTopic(docstopic.Status.CommonDocsTopicStatus, docstopic.ObjectMeta, v1beta1.DocsTopicPending, v1beta1.DocsTopicWaitingForAssets)
+		assetgroup = &v1beta1.ClusterAssetGroup{}
+		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, assetgroup)).To(Succeed())
+		validateAssetGroup(assetgroup.Status.CommonAssetGroupStatus, assetgroup.ObjectMeta, v1beta1.AssetGroupPending, v1beta1.AssetGroupWaitingForAssets)
 
 		assets = &v1beta1.ClusterAssetList{}
 		Expect(k8sClient.List(context.TODO(), assets)).To(Succeed())
-		Expect(assets.Items).To(HaveLen(len(docstopic.Spec.Sources)))
+		Expect(assets.Items).To(HaveLen(len(assetgroup.Spec.Sources)))
 		for _, a := range assets.Items {
 			if a.Annotations["cms.kyma-project.io/asset-short-name"] != "source-two" {
 				continue
@@ -104,34 +104,34 @@ var _ = Describe("Asset", func() {
 			Expect(a.Spec.Source.Filter).To(Equal("zyx"))
 		}
 
-		By("deleting the ClusterDocsTopic")
-		Expect(k8sClient.Delete(context.TODO(), docstopic)).To(Succeed())
+		By("deleting the ClusterAssetGroup")
+		Expect(k8sClient.Delete(context.TODO(), assetgroup)).To(Succeed())
 
 		_, err = reconciler.Reconcile(request)
 		Expect(err).To(Succeed())
 
-		docstopic = &v1beta1.ClusterDocsTopic{}
-		err = k8sClient.Get(context.TODO(), request.NamespacedName, docstopic)
+		assetgroup = &v1beta1.ClusterAssetGroup{}
+		err = k8sClient.Get(context.TODO(), request.NamespacedName, assetgroup)
 		Expect(err).To(HaveOccurred())
 		Expect(apiErrors.IsNotFound(err)).To(BeTrue())
 
 	})
 })
 
-func newFixClusterDocsTopic() *v1beta1.ClusterDocsTopic {
-	return &v1beta1.ClusterDocsTopic{
+func newFixClusterAssetGroup() *v1beta1.ClusterAssetGroup {
+	return &v1beta1.ClusterAssetGroup{
 		ObjectMeta: ctrl.ObjectMeta{
 			Name: string(uuid.NewUUID()),
 		},
-		Spec: v1beta1.ClusterDocsTopicSpec{
-			CommonDocsTopicSpec: v1beta1.CommonDocsTopicSpec{
+		Spec: v1beta1.ClusterAssetGroupSpec{
+			CommonAssetGroupSpec: v1beta1.CommonAssetGroupSpec{
 				Description: "Test topic, have fun",
 				DisplayName: "Test Topic",
 				Sources: []v1beta1.Source{
 					{
 						Name:       "source-one",
 						Type:       "openapi",
-						Mode:       v1beta1.DocsTopicSingle,
+						Mode:       v1beta1.AssetGroupSingle,
 						URL:        "https://dummy.url/single",
 						Parameters: &fixParameters,
 					},
@@ -139,26 +139,26 @@ func newFixClusterDocsTopic() *v1beta1.ClusterDocsTopic {
 						Name:   "source-two",
 						Type:   "markdown",
 						Filter: "xyz",
-						Mode:   v1beta1.DocsTopicPackage,
+						Mode:   v1beta1.AssetGroupPackage,
 						URL:    "https://dummy.url/package",
 					},
 					{
 						Name:   "source-three",
 						Type:   "dita",
 						Filter: "xyz",
-						Mode:   v1beta1.DocsTopicIndex,
+						Mode:   v1beta1.AssetGroupIndex,
 						URL:    "https://dummy.url/index",
 					},
 					{
 						Name: "source-four",
 						Type: "openapi",
-						Mode: v1beta1.DocsTopicPackage,
+						Mode: v1beta1.AssetGroupPackage,
 						URL:  "https://dummy.url/single",
 					},
 				},
 			},
 		},
-		Status: v1beta1.ClusterDocsTopicStatus{CommonDocsTopicStatus: v1beta1.CommonDocsTopicStatus{
+		Status: v1beta1.ClusterAssetGroupStatus{CommonAssetGroupStatus: v1beta1.CommonAssetGroupStatus{
 			LastHeartbeatTime: v1.Now(),
 		}},
 	}

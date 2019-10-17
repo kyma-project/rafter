@@ -17,7 +17,7 @@ type Config struct {
 	CfgMapNamespace string `envconfig:"default=kyma-system"`
 }
 
-type AssetWebhookConfigMap = map[v1beta1.DocsTopicSourceType]AssetWebhookConfig
+type AssetWebhookConfigMap = map[v1beta1.AssetGroupSourceType]AssetWebhookConfig
 
 type WebhookService struct {
 	Name      string `json:"name"`
@@ -89,7 +89,7 @@ func toAssetWhsConfig(configMap v1.ConfigMap) (AssetWebhookConfigMap, error) {
 		if err := json.Unmarshal([]byte(v), &assetWhMap); err != nil {
 			return nil, errors.Wrapf(err, "invalid content for source type type: %s", k)
 		}
-		result[v1beta1.DocsTopicSourceType(k)] = assetWhMap
+		result[v1beta1.AssetGroupSourceType(k)] = assetWhMap
 	}
 	return result, nil
 }

@@ -16,7 +16,7 @@ rules:
 - apiGroups:
   - cms.kyma-project.io
   resources:
-  - clusterdocstopics
+  - assetgroups
   verbs:
   - create
   - delete
@@ -28,7 +28,7 @@ rules:
 - apiGroups:
   - cms.kyma-project.io
   resources:
-  - clusterdocstopics/status
+  - assetgroups/status
   verbs:
   - get
   - patch
@@ -36,7 +36,7 @@ rules:
 - apiGroups:
   - cms.kyma-project.io
   resources:
-  - docstopics
+  - clusterassetgroups
   verbs:
   - create
   - delete
@@ -48,7 +48,7 @@ rules:
 - apiGroups:
   - cms.kyma-project.io
   resources:
-  - docstopics/status
+  - clusterassetgroups/status
   verbs:
   - get
   - patch

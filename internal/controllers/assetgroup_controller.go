@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
-	"github.com/kyma-project/rafter/internal/handler/docstopic"
+	"github.com/kyma-project/rafter/internal/handler/assetgroup"
 	"github.com/kyma-project/rafter/internal/webhookconfig"
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	cmsv1alpha1 "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
@@ -16,53 +16,53 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// DocsTopicReconciler reconciles a DocsTopic object
-type DocsTopicReconciler struct {
+// AssetGroupReconciler reconciles a AssetGroup object
+type AssetGroupReconciler struct {
 	client.Client
 	Log logr.Logger
 
 	relistInterval   time.Duration
 	recorder         record.EventRecorder
-	assetSvc         docstopic.AssetService
-	bucketSvc        docstopic.BucketService
+	assetSvc         assetgroup.AssetService
+	bucketSvc        assetgroup.BucketService
 	webhookConfigSvc webhookconfig.AssetWebhookConfigService
 }
 
-type DocsTopicConfig struct {
+type AssetGroupConfig struct {
 	RelistInterval time.Duration `envconfig:"default=5m"`
 	BucketRegion   string        `envconfig:"-"`
 }
 
-func NewDocsTopic(config DocsTopicConfig, log logr.Logger, mgr ctrl.Manager, webhookConfigSvc webhookconfig.AssetWebhookConfigService) *DocsTopicReconciler {
+func NewAssetGroup(config AssetGroupConfig, log logr.Logger, mgr ctrl.Manager, webhookConfigSvc webhookconfig.AssetWebhookConfigService) *AssetGroupReconciler {
 	assetService := newAssetService(mgr.GetClient(), mgr.GetScheme())
 	bucketService := newBucketService(mgr.GetClient(), mgr.GetScheme(), config.BucketRegion)
 
-	return &DocsTopicReconciler{
+	return &AssetGroupReconciler{
 		Client:           mgr.GetClient(),
 		Log:              log,
 		relistInterval:   config.RelistInterval,
-		recorder:         mgr.GetEventRecorderFor("docstopic-controller"),
+		recorder:         mgr.GetEventRecorderFor("assetgroup-controller"),
 		assetSvc:         assetService,
 		bucketSvc:        bucketService,
 		webhookConfigSvc: webhookConfigSvc,
 	}
 }
 
-// Reconcile reads that state of the cluster for a DocsTopic object and makes changes based on the state read
-// Automatically generate RBAC rules to allow the Controller to read and write DocsTopics, Assets, and Buckets
-// +kubebuilder:rbac:groups=cms.kyma-project.io,resources=docstopics,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=cms.kyma-project.io,resources=docstopics/status,verbs=get;update;patch
+// Reconcile reads that state of the cluster for a AssetGroup object and makes changes based on the state read
+// Automatically generate RBAC rules to allow the Controller to read and write AssetGroups, Assets, and Buckets
+// +kubebuilder:rbac:groups=cms.kyma-project.io,resources=assetgroups,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=cms.kyma-project.io,resources=assetgroups/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=assets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=assets/status,verbs=get;list
 // +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=buckets,verbs=get;list;watch;create;update;patch
 // +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=buckets/status,verbs=get;list
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;watch
 
-func (r *DocsTopicReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *AssetGroupReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	instance := &cmsv1alpha1.DocsTopic{}
+	instance := &cmsv1alpha1.AssetGroup{}
 	err := r.Get(ctx, req.NamespacedName, instance)
 	if err != nil {
 		if apiErrors.IsNotFound(err) {
@@ -72,9 +72,9 @@ func (r *DocsTopicReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, err
 	}
 
-	docsTopicLogger := r.Log.WithValues("kind", instance.GetObjectKind().GroupVersionKind().Kind, "namespace", instance.GetNamespace(), "name", instance.GetName())
-	commonHandler := docstopic.New(docsTopicLogger, r.recorder, r.assetSvc, r.bucketSvc, r.webhookConfigSvc)
-	commonStatus, err := commonHandler.Handle(ctx, instance, instance.Spec.CommonDocsTopicSpec, instance.Status.CommonDocsTopicStatus)
+	assetGroupLogger := r.Log.WithValues("kind", instance.GetObjectKind().GroupVersionKind().Kind, "namespace", instance.GetNamespace(), "name", instance.GetName())
+	commonHandler := assetgroup.New(assetGroupLogger, r.recorder, r.assetSvc, r.bucketSvc, r.webhookConfigSvc)
+	commonStatus, err := commonHandler.Handle(ctx, instance, instance.Spec.CommonAssetGroupSpec, instance.Status.CommonAssetGroupStatus)
 	if updateErr := r.updateStatus(ctx, instance, commonStatus); updateErr != nil {
 		finalErr := updateErr
 		if err != nil {
@@ -91,20 +91,20 @@ func (r *DocsTopicReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	}, nil
 }
 
-func (r *DocsTopicReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *AssetGroupReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&cmsv1alpha1.DocsTopic{}).
+		For(&cmsv1alpha1.AssetGroup{}).
 		Owns(&v1beta1.Asset{}).
 		Complete(r)
 }
 
-func (r *DocsTopicReconciler) updateStatus(ctx context.Context, instance *cmsv1alpha1.DocsTopic, commonStatus *cmsv1alpha1.CommonDocsTopicStatus) error {
+func (r *AssetGroupReconciler) updateStatus(ctx context.Context, instance *cmsv1alpha1.AssetGroup, commonStatus *cmsv1alpha1.CommonAssetGroupStatus) error {
 	if commonStatus == nil {
 		return nil
 	}
 
 	copy := instance.DeepCopy()
-	copy.Status.CommonDocsTopicStatus = *commonStatus
+	copy.Status.CommonAssetGroupStatus = *commonStatus
 
 	return r.Status().Update(ctx, copy)
 }

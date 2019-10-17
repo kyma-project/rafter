@@ -4,7 +4,7 @@ apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
   creationTimestamp: null
-  name: clusterdocstopics.rafter.kyma-project.io
+  name: assetgroups.rafter.kyma-project.io
 spec:
   additionalPrinterColumns:
   - JSONPath: .status.phase
@@ -15,14 +15,14 @@ spec:
     type: date
   group: rafter.kyma-project.io
   names:
-    kind: ClusterDocsTopic
-    plural: clusterdocstopics
-  scope: Cluster
+    kind: AssetGroup
+    plural: assetgroups
+  scope: ""
   subresources:
     status: {}
   validation:
     openAPIV3Schema:
-      description: ClusterDocsTopic is the Schema for the clusterdocstopics API
+      description: AssetGroup is the Schema for the assetgroups API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
@@ -37,7 +37,7 @@ spec:
         metadata:
           type: object
         spec:
-          description: ClusterDocsTopicSpec defines the desired state of ClusterDocsTopic
+          description: AssetGroupSpec defines the desired state of AssetGroup
           properties:
             description:
               type: string
@@ -75,7 +75,7 @@ spec:
           - sources
           type: object
         status:
-          description: ClusterDocsTopicStatus defines the observed state of ClusterDocsTopic
+          description: AssetGroupStatus defines the observed state of AssetGroup
           properties:
             lastHeartbeatTime:
               format: date-time

@@ -1,7 +1,7 @@
 apiVersion: cms.kyma-project.io/v1alpha1
-kind: ClusterDocsTopic
+kind: ClusterAssetGroup
 metadata:
-  name: clusterdocstopic-sample
+  name: clusterassetgroup-sample
 spec:
   displayName: "Cluster Docs Topic Sample"
   description: "Cluster Docs Topic Description"

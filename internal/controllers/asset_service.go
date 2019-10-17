@@ -3,7 +3,7 @@ package controllers
 import (
 	"context"
 
-	"github.com/kyma-project/rafter/internal/handler/docstopic"
+	"github.com/kyma-project/rafter/internal/handler/assetgroup"
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -25,14 +25,14 @@ func newAssetService(client client.Client, scheme *runtime.Scheme) *assetService
 	}
 }
 
-func (s *assetService) List(ctx context.Context, namespace string, labels map[string]string) ([]docstopic.CommonAsset, error) {
+func (s *assetService) List(ctx context.Context, namespace string, labels map[string]string) ([]assetgroup.CommonAsset, error) {
 	instances := &v1beta1.AssetList{}
 	err := s.client.List(ctx, instances, client.MatchingLabels(labels))
 	if err != nil {
 		return nil, errors.Wrapf(err, "while listing Assets in namespace %s", namespace)
 	}
 
-	commons := make([]docstopic.CommonAsset, 0, len(instances.Items))
+	commons := make([]assetgroup.CommonAsset, 0, len(instances.Items))
 	for _, instance := range instances.Items {
 		if instance.Namespace != namespace {
 			continue
@@ -44,7 +44,7 @@ func (s *assetService) List(ctx context.Context, namespace string, labels map[st
 	return commons, nil
 }
 
-func (s *assetService) Create(ctx context.Context, docsTopic v1.Object, commonAsset docstopic.CommonAsset) error {
+func (s *assetService) Create(ctx context.Context, assetGroup v1.Object, commonAsset assetgroup.CommonAsset) error {
 	instance := &v1beta1.Asset{
 		ObjectMeta: commonAsset.ObjectMeta,
 		Spec: v1beta1.AssetSpec{
@@ -52,14 +52,14 @@ func (s *assetService) Create(ctx context.Context, docsTopic v1.Object, commonAs
 		},
 	}
 
-	if err := controllerutil.SetControllerReference(docsTopic, instance, s.scheme); err != nil {
+	if err := controllerutil.SetControllerReference(assetGroup, instance, s.scheme); err != nil {
 		return errors.Wrapf(err, "while creating Asset %s in namespace %s", commonAsset.Name, commonAsset.Namespace)
 	}
 
 	return s.client.Create(ctx, instance)
 }
 
-func (s *assetService) Update(ctx context.Context, commonAsset docstopic.CommonAsset) error {
+func (s *assetService) Update(ctx context.Context, commonAsset assetgroup.CommonAsset) error {
 	instance := &v1beta1.Asset{}
 	err := s.client.Get(ctx, types.NamespacedName{Name: commonAsset.Name, Namespace: commonAsset.Namespace}, instance)
 	if err != nil {
@@ -72,7 +72,7 @@ func (s *assetService) Update(ctx context.Context, commonAsset docstopic.CommonA
 	return s.client.Update(ctx, updated)
 }
 
-func (s *assetService) Delete(ctx context.Context, commonAsset docstopic.CommonAsset) error {
+func (s *assetService) Delete(ctx context.Context, commonAsset assetgroup.CommonAsset) error {
 	instance := &v1beta1.Asset{}
 	err := s.client.Get(ctx, types.NamespacedName{Name: commonAsset.Name, Namespace: commonAsset.Namespace}, instance)
 	if err != nil {
@@ -82,8 +82,8 @@ func (s *assetService) Delete(ctx context.Context, commonAsset docstopic.CommonA
 	return s.client.Delete(ctx, instance)
 }
 
-func (s *assetService) assetToCommon(instance v1beta1.Asset) docstopic.CommonAsset {
-	return docstopic.CommonAsset{
+func (s *assetService) assetToCommon(instance v1beta1.Asset) assetgroup.CommonAsset {
+	return assetgroup.CommonAsset{
 		ObjectMeta: instance.ObjectMeta,
 		Spec:       instance.Spec.CommonAssetSpec,
 		Status:     instance.Status.CommonAssetStatus,

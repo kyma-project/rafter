@@ -140,7 +140,7 @@ func validateAsset(status assetstorev1beta1.CommonAssetStatus, meta controllerru
 	Expect(meta.Finalizers).To(ContainElement("test"))
 }
 
-func validateDocsTopic(status assetstorev1beta1.CommonDocsTopicStatus, meta controllerruntime.ObjectMeta, expectedPhase assetstorev1beta1.DocsTopicPhase, expectedReason assetstorev1beta1.DocsTopicReason) {
+func validateAssetGroup(status assetstorev1beta1.CommonAssetGroupStatus, meta controllerruntime.ObjectMeta, expectedPhase assetstorev1beta1.AssetGroupPhase, expectedReason assetstorev1beta1.AssetGroupReason) {
 	Expect(status.Phase).To(Equal(expectedPhase))
 	Expect(status.Reason).To(Equal(expectedReason))
 }

@@ -7,40 +7,40 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// ClusterDocsTopicSpec defines the desired state of ClusterDocsTopic
-type ClusterDocsTopicSpec struct {
-	CommonDocsTopicSpec `json:",inline"`
+// ClusterAssetGroupSpec defines the desired state of ClusterAssetGroup
+type ClusterAssetGroupSpec struct {
+	CommonAssetGroupSpec `json:",inline"`
 }
 
-// ClusterDocsTopicStatus defines the observed state of ClusterDocsTopic
-type ClusterDocsTopicStatus struct {
-	CommonDocsTopicStatus `json:",inline"`
+// ClusterAssetGroupStatus defines the observed state of ClusterAssetGroup
+type ClusterAssetGroupStatus struct {
+	CommonAssetGroupStatus `json:",inline"`
 }
 
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:scope=Cluster
 
-// ClusterDocsTopic is the Schema for the clusterdocstopics API
+// ClusterAssetGroup is the Schema for the clusterassetgroups API
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
-type ClusterDocsTopic struct {
+type ClusterAssetGroup struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ClusterDocsTopicSpec   `json:"spec,omitempty"`
-	Status ClusterDocsTopicStatus `json:"status,omitempty"`
+	Spec   ClusterAssetGroupSpec   `json:"spec,omitempty"`
+	Status ClusterAssetGroupStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// ClusterDocsTopicList contains a list of ClusterDocsTopic
-type ClusterDocsTopicList struct {
+// ClusterAssetGroupList contains a list of ClusterAssetGroup
+type ClusterAssetGroupList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []ClusterDocsTopic `json:"items"`
+	Items           []ClusterAssetGroup `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&ClusterDocsTopic{}, &ClusterDocsTopicList{})
+	SchemeBuilder.Register(&ClusterAssetGroup{}, &ClusterAssetGroupList{})
 }

@@ -1,12 +1,12 @@
-package docstopic_test
+package assetgroup_test
 
 import (
 	"context"
 	"fmt"
 	"testing"
 
-	"github.com/kyma-project/rafter/internal/handler/docstopic"
-	"github.com/kyma-project/rafter/internal/handler/docstopic/automock"
+	"github.com/kyma-project/rafter/internal/handler/assetgroup"
+	"github.com/kyma-project/rafter/internal/handler/assetgroup/automock"
 	"github.com/kyma-project/rafter/internal/webhookconfig"
 	amcfg "github.com/kyma-project/rafter/internal/webhookconfig/automock"
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
@@ -20,10 +20,10 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 )
 
-var log = logf.Log.WithName("docstopic-test")
+var log = logf.Log.WithName("assetgroup-test")
 
 func Test_findSource(t *testing.T) {
-	findSource := docstopic.FindSource()
+	findSource := assetgroup.FindSource()
 	g := gomega.NewGomegaWithT(t)
 	testSource1 := v1beta1.Source{
 		Name:   "test",
@@ -36,8 +36,8 @@ func Test_findSource(t *testing.T) {
 	tests := []struct {
 		name     string
 		srcSlice []v1beta1.Source
-		srcName  v1beta1.DocsTopicSourceName
-		srcType  v1beta1.DocsTopicSourceType
+		srcName  v1beta1.AssetGroupSourceName
+		srcType  v1beta1.AssetGroupSourceType
 		matcher  types.GomegaMatcher
 	}{
 		{
@@ -94,14 +94,14 @@ func Test_findSource(t *testing.T) {
 }
 
 func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
-	sourceName := v1beta1.DocsTopicSourceName("t1")
-	assetType := v1beta1.DocsTopicSourceType("swag")
+	sourceName := v1beta1.AssetGroupSourceName("t1")
+	assetType := v1beta1.AssetGroupSourceType("swag")
 
 	t.Run("Create", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
 
 		assetSvc := new(automock.AssetService)
@@ -116,16 +116,16 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		assetSvc.On("Create", ctx, testData, mock.Anything).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).ToNot(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicPending))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicWaitingForAssets))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
 	})
 
 	t.Run("CreateWithMetadata", func(t *testing.T) {
@@ -133,7 +133,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		metadata := &runtime.RawExtension{Raw: []byte(`{"json":"true"}`)}
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, metadata)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, metadata)}
 		testData := testData("halo", sources)
 
 		assetSvc := new(automock.AssetService)
@@ -148,23 +148,23 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		assetSvc.On("Create", ctx, testData, mock.Anything).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).ToNot(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicPending))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicWaitingForAssets))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
 	})
 
 	t.Run("CreateError", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
 
 		assetSvc := new(automock.AssetService)
@@ -179,16 +179,16 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		assetSvc.On("Create", ctx, testData, mock.Anything).Return(errors.New("test-data")).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).To(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicFailed))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicAssetsCreationFailed))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupFailed))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupAssetsCreationFailed))
 	})
 
 	t.Run("Update", func(t *testing.T) {
@@ -197,14 +197,14 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		ctx := context.TODO()
 		bucketName := "test-bucket"
 		sources := []v1beta1.Source{
-			testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil),
-			testSource(sourceName, "markdown", "https://dummy.url", v1beta1.DocsTopicSingle, nil),
+			testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil),
+			testSource(sourceName, "markdown", "https://dummy.url", v1beta1.AssetGroupSingle, nil),
 		}
 		testData := testData("halo", sources)
 		source, _ := getSourceByType(sources, sourceName)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAsset.Spec.Source.Filter = "xyz"
-		existingAssets := []docstopic.CommonAsset{existingAsset}
+		existingAssets := []assetgroup.CommonAsset{existingAsset}
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -218,16 +218,16 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		assetSvc.On("Update", ctx, mock.Anything).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).ToNot(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicPending))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicWaitingForAssets))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
 	})
 
 	t.Run("UpdateErr2", func(t *testing.T) {
@@ -235,8 +235,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		sources := []v1beta1.Source{
-			testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil),
-			testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil),
+			testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil),
+			testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil),
 		}
 		testData := testData("halo", sources)
 
@@ -247,16 +247,16 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).To(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicFailed))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicAssetsSpecValidationFailed))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupFailed))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupAssetsSpecValidationFailed))
 	})
 
 	t.Run("UpdateError", func(t *testing.T) {
@@ -264,12 +264,12 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		bucketName := "test-bucket"
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
 		source, _ := getSourceByType(sources, sourceName)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAsset.Spec.Source.Filter = "xyz"
-		existingAssets := []docstopic.CommonAsset{existingAsset}
+		existingAssets := []assetgroup.CommonAsset{existingAsset}
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -283,16 +283,16 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		assetSvc.On("Update", ctx, mock.Anything).Return(errors.New("test-error")).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).To(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicFailed))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicAssetsUpdateFailed))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupFailed))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupAssetsUpdateFailed))
 	})
 
 	t.Run("Delete", func(t *testing.T) {
@@ -300,13 +300,13 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		bucketName := "test-bucket"
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		toRemove := commonAsset("papa", assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
-		existingAssets := []docstopic.CommonAsset{existingAsset, toRemove}
+		existingAssets := []assetgroup.CommonAsset{existingAsset, toRemove}
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -320,16 +320,16 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		assetSvc.On("Delete", ctx, toRemove).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).ToNot(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicPending))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicWaitingForAssets))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
 	})
 
 	t.Run("DeleteError", func(t *testing.T) {
@@ -337,13 +337,13 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		bucketName := "test-bucket"
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		toRemove := commonAsset("papa", assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
-		existingAssets := []docstopic.CommonAsset{existingAsset, toRemove}
+		existingAssets := []assetgroup.CommonAsset{existingAsset, toRemove}
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -357,23 +357,23 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		assetSvc.On("Delete", ctx, toRemove).Return(errors.New("test-error")).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).To(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicFailed))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicAssetsDeletionFailed))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupFailed))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupAssetsDeletionFailed))
 	})
 
 	t.Run("CreateWithBucket", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
 
 		assetSvc := new(automock.AssetService)
@@ -389,23 +389,23 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		assetSvc.On("Create", ctx, testData, mock.Anything).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).ToNot(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicPending))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicWaitingForAssets))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
 	})
 
 	t.Run("BucketCreationError", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
 
 		assetSvc := new(automock.AssetService)
@@ -418,23 +418,23 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return(nil, nil).Once()
 		bucketSvc.On("Create", ctx, mock.Anything, false, map[string]string{"cms.kyma-project.io/access": "public"}).Return(errors.New("test-error")).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).To(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicFailed))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicBucketError))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupFailed))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupBucketError))
 	})
 
 	t.Run("BucketListingError", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
 
 		assetSvc := new(automock.AssetService)
@@ -446,23 +446,23 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 
 		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return(nil, errors.New("test-error")).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).To(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicFailed))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicBucketError))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupFailed))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupBucketError))
 	})
 
 	t.Run("AssetsListingError", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
 
 		assetSvc := new(automock.AssetService)
@@ -475,35 +475,35 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{"test-bucket"}, nil).Once()
 		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(nil, errors.New("test-error")).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).To(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicFailed))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicAssetsListingFailed))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupFailed))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupAssetsListingFailed))
 	})
 }
 
 func TestDocstopicHandler_Handle_Status(t *testing.T) {
-	sourceName := v1beta1.DocsTopicSourceName("t1")
-	assetType := v1beta1.DocsTopicSourceType("swag")
+	sourceName := v1beta1.AssetGroupSourceName("t1")
+	assetType := v1beta1.AssetGroupSourceType("swag")
 
 	t.Run("NotChanged", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		bucketName := "test-bucket"
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
-		testData.Status.Phase = v1beta1.DocsTopicPending
+		testData.Status.Phase = v1beta1.AssetGroupPending
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
-		existingAssets := []docstopic.CommonAsset{existingAsset}
+		existingAssets := []assetgroup.CommonAsset{existingAsset}
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -516,10 +516,10 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).ToNot(gomega.HaveOccurred())
@@ -531,13 +531,13 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		bucketName := "test-bucket"
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
-		testData.Status.Phase = v1beta1.DocsTopicPending
+		testData.Status.Phase = v1beta1.AssetGroupPending
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetReady)
-		existingAssets := []docstopic.CommonAsset{existingAsset}
+		existingAssets := []assetgroup.CommonAsset{existingAsset}
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -550,16 +550,16 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).ToNot(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicReady))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicAssetsReady))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupReady))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupAssetsReady))
 	})
 
 	t.Run("AssetError", func(t *testing.T) {
@@ -567,13 +567,13 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		bucketName := "test-bucket"
-		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.DocsTopicSingle, nil)}
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
 		testData := testData("halo", sources)
-		testData.Status.Phase = v1beta1.DocsTopicReady
+		testData.Status.Phase = v1beta1.AssetGroupReady
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetFailed)
-		existingAssets := []docstopic.CommonAsset{existingAsset}
+		existingAssets := []assetgroup.CommonAsset{existingAsset}
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -586,16 +586,16 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
-		handler := docstopic.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
 		// When
-		status, err := handler.Handle(ctx, testData, testData.Spec.CommonDocsTopicSpec, testData.Status.CommonDocsTopicStatus)
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
 
 		// Then
 		g.Expect(err).ToNot(gomega.HaveOccurred())
 		g.Expect(status).ToNot(gomega.BeNil())
-		g.Expect(status.Phase).To(gomega.Equal(v1beta1.DocsTopicPending))
-		g.Expect(status.Reason).To(gomega.Equal(v1beta1.DocsTopicWaitingForAssets))
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
 	})
 }
 
@@ -603,7 +603,7 @@ func fakeRecorder() record.EventRecorder {
 	return record.NewFakeRecorder(20)
 }
 
-func testSource(sourceName v1beta1.DocsTopicSourceName, sourceType v1beta1.DocsTopicSourceType, url string, mode v1beta1.DocsTopicSourceMode, parameters *runtime.RawExtension) v1beta1.Source {
+func testSource(sourceName v1beta1.AssetGroupSourceName, sourceType v1beta1.AssetGroupSourceType, url string, mode v1beta1.AssetGroupSourceMode, parameters *runtime.RawExtension) v1beta1.Source {
 	return v1beta1.Source{
 		Name:       sourceName,
 		Type:       sourceType,
@@ -613,14 +613,14 @@ func testSource(sourceName v1beta1.DocsTopicSourceName, sourceType v1beta1.DocsT
 	}
 }
 
-func testData(name string, sources []v1beta1.Source) *v1beta1.DocsTopic {
-	return &v1beta1.DocsTopic{
+func testData(name string, sources []v1beta1.Source) *v1beta1.AssetGroup {
+	return &v1beta1.AssetGroup{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      name,
 			Namespace: "test",
 		},
-		Spec: v1beta1.DocsTopicSpec{
-			CommonDocsTopicSpec: v1beta1.CommonDocsTopicSpec{
+		Spec: v1beta1.AssetGroupSpec{
+			CommonAssetGroupSpec: v1beta1.CommonAssetGroupSpec{
 				DisplayName: fmt.Sprintf("%s Display", name),
 				Description: fmt.Sprintf("%s Description", name),
 				Sources:     sources,
@@ -629,8 +629,8 @@ func testData(name string, sources []v1beta1.Source) *v1beta1.DocsTopic {
 	}
 }
 
-func commonAsset(name v1beta1.DocsTopicSourceName, assetType v1beta1.DocsTopicSourceType, docsName, bucketName string, source v1beta1.Source, phase v1beta1.AssetPhase) docstopic.CommonAsset {
-	return docstopic.CommonAsset{
+func commonAsset(name v1beta1.AssetGroupSourceName, assetType v1beta1.AssetGroupSourceType, docsName, bucketName string, source v1beta1.Source, phase v1beta1.AssetPhase) assetgroup.CommonAsset {
+	return assetgroup.CommonAsset{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      string(name),
 			Namespace: "test",
@@ -658,7 +658,7 @@ func commonAsset(name v1beta1.DocsTopicSourceName, assetType v1beta1.DocsTopicSo
 	}
 }
 
-func getSourceByType(slice []v1beta1.Source, sourceName v1beta1.DocsTopicSourceName) (*v1beta1.Source, bool) {
+func getSourceByType(slice []v1beta1.Source, sourceName v1beta1.AssetGroupSourceName) (*v1beta1.Source, bool) {
 	for _, source := range slice {
 		if source.Name != sourceName {
 			continue
