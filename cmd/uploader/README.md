@@ -109,4 +109,4 @@ go test ./...
 
 ### Verify the code
 
-To check if the code is correct and you can push it, run the `before-commit.sh` script. It builds the service, runs tests, and checks the status of the vendored libraries. It also performs the static code analysis and ensures that the formatting of the code is correct.
+To check if the code is correct and you can push it, run the `before-commit.sh` script. It builds the service, runs tests, and checks the status of the vendored libraries. It also performs the static code analysis and ensures that code formatting is correct.
