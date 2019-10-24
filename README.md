@@ -2,13 +2,29 @@
 
 ## Overview
 
-Rafter is a Kubernetes-native solution for storing assets and managing content. The whole concept of Rafter relies on custom resources (CRs) such as AssetGroup CR, Bucket CR, or Asset CR. The custom resources can apply to a given Namespace or be cluster-wide. They are handled by the Rafter Controller Manager which consists of three seperate components:
+Rafter is a solution for storing and managing different types of files called assets. It uses [MinIO](https://min.io/) as object storage. The whole concept of Rafter relies on Kubernetes custom resources (CRs). The CRs include:
 
-- AssetGroup Controller
-- Asset Controller
-- Bucket Controller
+- Asset CR which manages a single asset or a package of assets
+- Bucket CR which manages buckets
+- AssetGroup CR which manages a group of assets of a specific type to make it easier to use and abstract webhook information
 
-Using Rafter, you can create AssetGroup CR for a particular content type, such as images, Markdown documents, AsyncAPI, OData, and OpenAPI specification files. Once the AssetsGroup Controller reads the AssetGroup CR definition, it creates a new Bucket CR and Asset CRs. Then, the controller monitors the status of the Asset CR and updates the status of the AssetsGroup CR accordingly.
+Rafter comes with the following set of services and extensions which are compatible with Rafter webhooks:
+
+- [Uploader](./cmd/uploader/README.md) (default service)
+- [Rafter Controller Manager](./cmd/manager/README.md) (default service)
+- [AsyncAPI Service](./cmd/extension/asyncapi/README.md) (extension)
+- [Front Matter Service](./cmd/extension/frontmatter/README.md) (extension)
+
+Rafter enables you also to manage assets using supported webhooks. For example, if you use Rafter to store a file such as a specification, you can additionally define webhooks that Rafer should call. The webhooks can:
+
+- validate the file
+- mutate the file
+- extract some of the file information and put it in the status of the custom resource
+
+To see the implementation of Rafter in [Kyma](https://kyma-project.io), follow these links:
+
+- [Asset Store](https://kyma-project.io/docs/components/asset-store/)
+- [Headless CMS](https://kyma-project.io/docs/components/headless-cms/)
 
 ## Project structure
 
