@@ -6,7 +6,7 @@ Rafter is a solution for storing and managing different types of files called as
 
 - Asset CR which manages a single asset or a package of assets
 - Bucket CR which manages buckets
-- AssetGroup CR which manages a group of assets of a specific type to make it easier to use and abstract webhook information
+- AssetGroup CR which manages a group of Asset CRs of a specific type to make it easier to use and abstract webhook information
 
 Rafter comes with the following set of services and extensions compatible with Rafter webhooks:
 
@@ -35,7 +35,7 @@ The repository has the following structure:
 ├── cmd                         # Rafter's applications
 ├── config                      # Configuration file templates
 ├── deploy                      # Dockerfiles for Rafter's applications
-├── hack                        # Information useful for development
+├── hack                        # Information, scripts and files useful for development
 ├── internal                    # Private application and library code
 ├── pkg                         # Library code ready-to-use by external applications
 └── tests                       # Integration tests
