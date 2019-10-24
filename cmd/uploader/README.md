@@ -1,8 +1,8 @@
-# Asset Upload Service
+# Uploader
 
 ## Overview
 
-The Asset Upload Service is an HTTP server used for hosting static files in Minio. It contains a simple HTTP endpoint which accepts `multipart/form-data` forms. It can upload files to the private and public system buckets so you can also use it for development purposes to host files, instead of relying on external providers.
+The Uploader is an HTTP server used for hosting static files in Minio. It contains a simple HTTP endpoint which accepts `multipart/form-data` forms. It can upload files to the private and public system buckets so you can also use it for development purposes to host files, instead of relying on external providers.
 
 ## Prerequisites
 
@@ -30,7 +30,7 @@ The service listens on port `3000`.
 
 ### Access the service on a cluster
 
-To run the Asset Upload Service on a cluster, use the command:
+To run the Uploader on a cluster, use the command:
 
 ```bash
 kubectl port-forward deployment/assetstore-asset-upload-service 3000:3000 -n kyma-system
@@ -90,14 +90,6 @@ go run main.go --stderrthreshold=INFO -logtostderr=false
 ```
 
 ## Development
-
-### Install dependencies
-
-This project uses `dep` as a dependency manager. To install all required dependencies, use this command:
-
-```bash
-dep ensure -vendor-only
-```
 
 ### Run tests
 

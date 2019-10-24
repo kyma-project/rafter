@@ -1,8 +1,8 @@
-# CMS AsyncAPI Service
+# AsyncAPI Service
 
 ## Overview
 
-The CMS AsyncAPI Service is an HTTP server used to process AsyncAPI specifications. It contains the `/validate` and `/convert` HTTP endpoints which accept `multipart/form-data` forms:
+The AsyncAPI Service is an HTTP server used to process AsyncAPI specifications. It contains the `/validate` and `/convert` HTTP endpoints which accept `multipart/form-data` forms:
 - The `/validate` endpoint validates the AsyncAPI specification against the AsyncAPI schema in version 2.0.0., using the [AsyncAPI Parser](https://github.com/asyncapi/parser).
 - The `/convert` endpoint converts the version and format of the AsyncAPI files.
 
@@ -25,7 +25,7 @@ See the [OpenAPI specification](openapi.yaml) for the full API documentation. Yo
 
 ### Run a local version
 
-To run the local version of the CMS AsyncAPI Service without building the binary, use this command:
+To run the local version of the AsyncAPI Service without building the binary, use this command:
 
 ```bash
 go run main.go

@@ -75,14 +75,6 @@ Use these environment variables to configure the controller manager:
 
 ## Development
 
-### Install dependencies
-
-This project uses `dep` as a dependency manager. To install all required dependencies, use this command:
-
-```bash
-make resolve
-```
-
 ### Run tests
 
 To run all unit tests, use this command:

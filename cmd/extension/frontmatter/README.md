@@ -77,14 +77,6 @@ go run main.go --stderrthreshold=INFO -logtostderr=false
 
 ## Development
 
-### Install dependencies
-
-This project uses `dep` as a dependency manager. To install all required dependencies, use this command:
-
-```bash
-dep ensure -vendor-only
-```
-
 ### Run tests
 
 To run all unit tests, use this command:
