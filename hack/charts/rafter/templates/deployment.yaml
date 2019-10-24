@@ -1,0 +1,160 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "rafter.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "rafter.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "rafter.chart" . }}
+  {{- if .Values.deployment.labels }}
+    {{ toYaml .Values.deployment.labels | nindent 4 }}
+  {{- end }}
+  {{- if .Values.deployment.annotations }}
+  annotations:
+    {{ toYaml .Values.deployment.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.deployment.spec.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "rafter.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      helm.sh/chart: {{ include "rafter.chart" . }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "rafter.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        helm.sh/chart: {{ include "rafter.chart" . }}
+      {{- if .Values.pod.labels }}
+        {{ toYaml .Values.pod.labels | nindent 8 }}
+      {{- end }}
+      {{- if .Values.metrics.pod.labels }}
+        {{ toYaml .Values.metrics.pod.labels | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.pod.annotations (and .Values.metrics.enabled .Values.metrics.pod.annotations) }}
+      annotations:
+      {{- if .Values.pod.annotations }}
+        {{ toYaml .Values.pod.annotations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.metrics.enabled }}
+        {{ toYaml .Values.metrics.pod.annotations | nindent 8 }}
+      {{- end }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "rafter.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.pod.terminationGracePeriodSeconds }}
+      {{- if .Values.pod.volumes }}
+      volumes:
+        {{ toYaml .Values.pod.volumes | nindent 8 }}
+      {{- end }}
+      {{- if .Values.pod.extraProperties }}
+      {{ toYaml .Values.pod.extraProperties | nindent 6 }}
+      {{- end }}
+      containers:
+        - name: {{ include "rafter.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- $replicas := int (toString (.Values.deployment.spec.replicas)) -}}
+          {{- if or .Values.metrics.enabled (gt $replicas 1) }}
+          command:
+            - /manager
+          args:
+            {{ if gt $replicas 1 }}
+            - --enable-leader-election
+            {{- end }}
+            {{- if .Values.metrics.enabled }}
+            - --metrics-addr
+            - :{{ .Values.metrics.service.port.internal }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.metrics.enabled }}
+          ports:
+            - name: {{ .Values.metrics.service.port.name }}
+              containerPort: {{ .Values.metrics.service.port.internal }}
+              protocol: {{ .Values.metrics.service.port.protocol }}
+          {{- end }}
+          {{- if .Values.pod.resources }}
+          resources:
+            {{ toYaml .Values.pod.resources | nindent 12 }}
+          {{- end }}
+          {{- if .Values.pod.volumeMounts }}
+          volumeMounts:
+            {{ toYaml .Values.pod.volumeMounts | nindent 12 }}
+          {{- end }}
+          env:
+            # ClusterAssetsGroup aka ClusterDocsTopic
+            - name: APP_CLUSTER_DOCS_TOPIC_RELIST_INTERVAL
+              value: {{ .Values.envs.clusterDocsTopic.relistInterval }}
+            # AssetsGroup aka DocsTopic
+            - name: APP_DOCS_TOPIC_RELIST_INTERVAL
+              value: {{ .Values.envs.docsTopic.relistInterval }}
+            # ClusterBuckets
+            - name: APP_CLUSTER_BUCKET_RELIST_INTERVAL
+              value: {{ .Values.envs.clusterBucket.relistInterval }}
+            - name: APP_CLUSTER_BUCKET_MAX_CONCURRENT_RECONCILES
+              value: {{ .Values.envs.clusterBucket.maxConcurrentReconciles }}
+            - name: APP_CLUSTER_BUCKET_REGION
+              value: {{ .Values.envs.clusterBucket.region }}
+            # Buckets
+            - name: APP_BUCKET_RELIST_INTERVAL
+              value: {{ .Values.envs.bucket.relistInterval }}
+            - name: APP_BUCKET_MAX_CONCURRENT_RECONCILES
+              value: {{ .Values.envs.bucket.maxConcurrentReconciles }}
+            - name: APP_BUCKET_REGION
+              value: {{ .Values.envs.bucket.region }}
+            # ClusterAssets
+            - name: APP_CLUSTER_ASSET_RELIST_INTERVAL
+              value: {{ .Values.envs.clusterAsset.relistInterval }}
+            - name: APP_CLUSTER_ASSET_MAX_CONCURRENT_RECONCILES
+              value: {{ .Values.envs.clusterAsset.maxConcurrentReconciles }}
+            # Assets
+            - name: APP_ASSET_RELIST_INTERVAL
+              value: {{ .Values.envs.asset.relistInterval }}
+            - name: APP_ASSET_MAX_CONCURRENT_RECONCILES
+              value: {{ .Values.envs.asset.maxConcurrentReconciles }}
+            # Store
+            - name: APP_STORE_ENDPOINT
+              value: {{ .Values.envs.store.endpoint }}
+            - name: APP_STORE_EXTERNAL_ENDPOINT
+              value: {{ .Values.envs.store.externalEndpoint }}
+            - name: APP_STORE_ACCESS_KEY
+              value: {{ .Values.envs.store.accessKey }}
+            - name: APP_STORE_SECRET_KEY
+              value: {{ .Values.envs.store.secretKey }}
+            - name: APP_STORE_USE_SSL
+              value: {{ .Values.envs.store.useSSL }}
+            - name: APP_STORE_UPLOAD_WORKERS_COUNT
+              value: {{ .Values.envs.store.uploadWorkers }}
+            # Loader
+            - name: APP_LOADER_VERIFY_SSL
+              value: {{ .Values.envs.loader.verifySSL }}
+            - name: APP_LOADER_TEMPORARY_DIRECTORY
+              value: {{ .Values.envs.loader.tempDir }}
+            # Webhooks
+            {{ if .Values.webhooks.enabled }}
+            - name: APP_WEBHOOK_VALIDATION_TIMEOUT
+              value: {{ .Values.envs.webhooks.validation.timeout }}
+            - name: APP_WEBHOOK_VALIDATION_WORKERS_COUNT
+              value: {{ .Values.envs.webhooks.validation.workers }}
+            - name: APP_WEBHOOK_MUTATION_TIMEOUT
+              value: {{ .Values.envs.webhooks.mutation.timeout }}
+            - name: APP_WEBHOOK_MUTATION_WORKERS_COUNT
+              value: {{ .Values.envs.webhooks.mutation.workers }}
+            - name: APP_WEBHOOK_METADATA_EXTRACTION_TIMEOUT
+              value: {{ .Values.envs.webhooks.metadata.timeout }}
+            - name: APP_WEBHOOK_CFG_MAP_NAME
+              value: {{ include "rafter.webhooksConfigMapName" . }}
+            - name: APP_WEBHOOK_CFG_MAP_NAMESPACE
+              value: {{ .Release.Namespace }}
+            {{- end }}
+            {{- if .Values.pod.extraEnvs }}
+            {{ toYaml .Values.pod.extraEnvs | nindent 12 }}
+            {{- end }}
+          {{- if .Values.pod.extraContainerProperties }}
+          {{ toYaml .Values.pod.extraContainerProperties | nindent 10 }}
+          {{- end }}

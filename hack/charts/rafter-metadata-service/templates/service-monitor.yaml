@@ -1,0 +1,28 @@
+{{- if .Values.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "rafterMetadataService.serviceMonitorName" . }}
+  labels:
+    prometheus: monitoring
+    app.kubernetes.io/name: {{ include "rafterMetadataService.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "rafterMetadataService.chart" . }}
+  {{- if .Values.metrics.serviceMonitor.labels }}
+    {{ toYaml .Values.metrics.serviceMonitor.labels | nindent 4 }}
+  {{- end }}
+  {{- if .Values.metrics.serviceMonitor.annotations }}
+  annotations:
+    {{ toYaml .Values.metrics.serviceMonitor.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  endpoints:
+    - interval: {{ .Values.metrics.scrapeInterval }}
+      port: {{ .Values.service.port.name }}
+      path: /metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "rafterMetadataService.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

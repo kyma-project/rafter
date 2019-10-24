@@ -1,0 +1,41 @@
+image:
+  repository: eu.gcr.io/kyma-project/rafter-asyncapi-service
+  tag: v1.0.0
+  pullPolicy: IfNotPresent
+
+deployment:
+  labels: {}
+  annotations: {}
+  spec:
+    replicas: 1
+
+pod:
+  labels: {}
+  annotations:
+    sidecar.istio.io/inject: "false"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+
+service:
+  name:
+  type: ClusterIP
+  verbose: true
+  host: "0.0.0.0"
+  port:
+    name: http
+    internal: 3000
+    external: 80
+    protocol: TCP
+  labels: {}
+  annotations:
+    auth.istio.io/80: NONE    
+
+metrics:
+  enabled: true
+  scrapeInterval: 30s
+  serviceMonitor:
+    name:
+    labels: {}
+    annotations: {}

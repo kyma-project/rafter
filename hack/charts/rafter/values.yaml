@@ -1,0 +1,187 @@
+installCRDs: false
+
+image:
+  repository: eu.gcr.io/kyma-project/rafter
+  tag: v1.0.0
+  pullPolicy: IfNotPresent
+
+deployment:
+  labels: {}
+  annotations: {}
+  spec:
+    replicas: 1
+
+pod:
+  labels: {}
+  annotations: {}
+    # sidecar.istio.io/inject: "false"
+    # recreate: {{ .Release.Time.Seconds | quote }}
+  resources:
+    limits:
+      cpu: 150m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+  terminationGracePeriodSeconds: 10
+  volumes:
+    - name: tmp-empty-dir
+      emptyDir: {}
+  volumeMounts:
+    - mountPath: /tmp
+      name: tmp-empty-dir
+  extraEnvs: {}
+  extraContainerProperties: {}
+  extraProperties: {}
+
+serviceAccount:
+  create: true
+  name:
+  labels: {}
+  annotations: {}
+
+rbac:
+  clusterScope:
+    create: true
+    role:
+      name:
+      labels: {}
+      annotations: {}
+      extraRules: []
+      # - apiGroups: []
+      #   resources: []
+      #   verbs: []
+      # - apiGroups:
+      #   - ""
+      #   resources:
+      #   - events
+      #   verbs:
+      #   - create
+    roleBinding:
+      name:
+      labels: {}
+      annotations: {}
+  namespaced:
+    create: true
+    role:
+      name:
+      labels: {}
+      annotations: {}
+      extraRules: []
+      # - apiGroups: []
+      #   resources: []
+      #   verbs: []
+      # - apiGroups:
+      #   - ""
+      #   resources:
+      #   - events
+      #   verbs:
+      #   - create
+    roleBinding:
+      name:
+      labels: {}
+      annotations: {}
+
+webhooks:
+  enabled: true
+  hooks:
+    markdown: |-
+      {
+        "metadataExtractors":[
+          {
+            "name": "assetstore-asset-metadata-service",
+            "namespace": "kyma-system",
+            "endpoint": "/v1/extract",
+            "filter": "\\.md$"
+          }
+        ]
+      }
+    asyncapi: |-
+      {
+        "validations":[
+          {
+            "name": "cms-cms-asyncapi-service",
+            "namespace": "kyma-system",
+            "endpoint": "/v1/validate"
+          }
+        ],
+      "mutations":[
+          {
+            "name": "cms-cms-asyncapi-service",
+            "namespace": "kyma-system",
+            "endpoint": "/v1/convert"
+          }
+        ]
+      }
+  configMap:
+    name:
+    labels: {}
+    annotations: {}
+
+metrics:
+  enabled: true
+  scrapeInterval: 30s
+  service:
+    name:
+    type: ClusterIP
+    port:
+      name: metrics
+      internal: 8080
+      targetPort: metrics
+      protocol: TCP
+    labels: {}
+    annotations: {}
+  pod:
+    labels: {}
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "8080"
+      prometheus.io/path: "/metrics"
+  serviceMonitor:
+    enabled: true
+    name:
+    labels: {}
+    annotations: {}
+
+envs:
+  clusterDocsTopic:
+    relistInterval: 5m
+  docsTopic:
+    relistInterval: 5m
+  clusterAssetGroup:
+    relistInterval: 5m
+  assetGroup:
+    relistInterval: 5m
+  clusterBucket:
+    relistInterval: 30s
+    maxConcurrentReconciles: 1
+    region: us-east-1
+  bucket:
+    relistInterval: 30s
+    maxConcurrentReconciles: 1
+    region: us-east-1
+  clusterAsset:
+    relistInterval: 30s
+    maxConcurrentReconciles: 1
+  asset:
+    relistInterval: 30s
+    maxConcurrentReconciles: 1
+  store:
+    endpoint: "minio.kyma.local"
+    externalEndpoint: "https://minio.kyma.loca"
+    accessKey:
+    secretKey:
+    useSSL: true
+    uploadWorkers: 10
+  loader:
+    verifySSL: true
+    tempDir: /tmp
+  webhooks:
+    validation:
+      timeout: 1m
+      workers: 10
+    mutation:
+      timeout: 1m
+      workers: 10
+    metadata:
+      timeout: 1m
