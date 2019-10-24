@@ -8,7 +8,7 @@ Rafter is a solution for storing and managing different types of files called as
 - Bucket CR which manages buckets
 - AssetGroup CR which manages a group of assets of a specific type to make it easier to use and abstract webhook information
 
-Rafter comes with the following set of services and extensions which are compatible with Rafter webhooks:
+Rafter comes with the following set of services and extensions compatible with Rafter webhooks:
 
 - [Uploader](./cmd/uploader/README.md) (default service)
 - [Rafter Controller Manager](./cmd/manager/README.md) (default service)
