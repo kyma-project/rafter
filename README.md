@@ -10,8 +10,8 @@ Rafter is a solution for storing and managing different types of files called as
 
 Rafter comes with the following set of services and extensions compatible with Rafter webhooks:
 
-- [Uploader](./cmd/uploader/README.md) (default service)
 - [Rafter Controller Manager](./cmd/manager/README.md) (default service)
+- [Uploader](./cmd/uploader/README.md) (optional service)
 - [AsyncAPI Service](./cmd/extension/asyncapi/README.md) (extension)
 - [Front Matter Service](./cmd/extension/frontmatter/README.md) (extension)
 
