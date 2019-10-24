@@ -1,6 +1,5 @@
-ROOT :=  $(shell pwd)
-COVERAGE_OUTPUT_PATH := ${ROOT}/cover.out
-LICENSES_PATH := ${ROOT}/licenses
+ROOT := .
+COVERAGE_OUTPUT_PATH := cover.out
 
 # Image URL to use all building/pushing image targets
 UPLOADER_IMG_NAME := rafter-upload-service
@@ -57,7 +56,7 @@ push-frontmatter:
 
 build-asyncapi:
 	docker build -t $(ASYNCAPI_IMG_NAME) -f ${ROOT}/deploy/extension/asyncapi/Dockerfile ${ROOT}
-.PHONY: build-asyncapi
+.PHONY: build-frontmatter
 
 push-asyncapi:
 	docker tag $(ASYNCAPI_IMG_NAME) $(ASYNCAPI-CI-IMG-NAME)
@@ -66,14 +65,13 @@ push-asyncapi:
 
 clean:
 	rm -f ${COVERAGE_OUTPUT_PATH}
-	rm -rf ${LICENSE_PATH}
 .PHONY: clean
 
 pull-licenses:
 ifdef LICENSE_PULLER_PATH
 	bash $(LICENSE_PULLER_PATH)
 else
-	mkdir -p ${LICENSE_PATH}
+	mkdir -p licenses
 endif
 .PHONY: pull-licenses
 
