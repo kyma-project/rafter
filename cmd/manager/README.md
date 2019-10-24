@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Rafter Controller Manager runs the AssetGroup, Asset, and Bucket Controllers that manage AssetGroup, Asset, and Bucket custom resources (CR) respectively.
+The Rafter Controller Manager runs the AssetGroup, Asset, and Bucket Controllers that manage AssetGroup, Asset, and Bucket custom resources (CR).
 
 ## Prerequisites
 
