@@ -1,4 +1,4 @@
-package asyncapi
+package main
 
 import (
 	"context"

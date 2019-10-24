@@ -2,6 +2,9 @@ package main
 
 import (
 	"flag"
+	"net/http"
+	"os"
+
 	"github.com/kyma-project/rafter/internal/assethook"
 	"github.com/kyma-project/rafter/internal/loader"
 	"github.com/kyma-project/rafter/internal/store"
@@ -12,8 +15,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
-	"net/http"
-	"os"
 
 	"github.com/kyma-project/rafter/internal/controllers"
 	assetstorev1beta1 "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"

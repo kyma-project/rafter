@@ -71,7 +71,7 @@ func Test_findSource(t *testing.T) {
 		{
 			name: "found2",
 			srcSlice: []v1beta1.Source{
-				v1beta1.Source{
+				{
 					Name:   "test",
 					Type:   "me2",
 					URL:    "test.it",

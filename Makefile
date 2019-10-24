@@ -1,8 +1,20 @@
+ROOT :=  $(shell pwd)
+COVERAGE_OUTPUT_PATH := ${ROOT}/cover.out
+LICENSES_PATH := ${ROOT}/licenses
 
 # Image URL to use all building/pushing image targets
-APP_NAME ?= rafter-controller-manager
-IMG ?= $(APP_NAME):latest
-IMG-CI = $(DOCKER_PUSH_REPOSITORY)$(DOCKER_PUSH_DIRECTORY)/$(APP_NAME):$(DOCKER_TAG)
+UPLOADER_IMG_NAME := rafter-upload-service
+MANAGER_IMG_NAME := rafter-controller-manager
+FRONTMATTER_IMG_NAME := rafter-frontmatter-service
+ASYNCAPI_IMG_NAME := rafter-asyncapi-service
+
+IMG-CI-NAME-PREFIX := $(DOCKER_PUSH_REPOSITORY)$(DOCKER_PUSH_DIRECTORY)
+
+UPLOADER-CI-IMG-NAME := $(IMG-CI-NAME-PREFIX)/$(UPLOADER_IMG_NAME):$(DOCKER_TAG)
+MANAGER-CI-IMG-NAME :=  $(IMG-CI-NAME-PREFIX)/$(MANAGER_IMG_NAME):$(DOCKER_TAG)
+FRONTMATTER-CI-IMG-NAME := $(IMG-CI-NAME-PREFIX)/$(FRONTMATTER_IMG_NAME):$(DOCKER_TAG)
+ASYNCAPI-CI-IMG-NAME :=  $(IMG-CI-NAME-PREFIX)/$(ASYNCAPI_IMG_NAME):$(DOCKER_TAG)
+
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
 
@@ -13,63 +25,103 @@ else
 GOBIN=$(shell go env GOBIN)
 endif
 
-all: test manager
+all: docker-build
+.PHONY: all
+
+build-uploader:
+	docker build -t $(UPLOADER_IMG_NAME) -f ${ROOT}/deploy/uploader/Dockerfile ${ROOT}
+.PHONY: build-uploader
+
+push-uploader:
+	docker tag $(UPLOADER_IMG_NAME) $(UPLOADER-CI-IMG-NAME)
+	docker push $(UPLOADER-CI-IMG-NAME)
+.PHONY: push-uploader
+
+build-manager:
+	docker build -t $(MANAGER_IMG_NAME) -f ${ROOT}/deploy/manager/Dockerfile ${ROOT}
+.PHONY: build-manager
+
+push-manager:
+	docker tag $(MANAGER_IMG_NAME) $(MANAGER-CI-IMG-NAME)
+	docker push $(MANAGER-CI-IMG-NAME)
+.PHONY: push-manager
+
+build-frontmatter:
+	docker build -t $(FRONTMATTER_IMG_NAME) -f ${ROOT}/deploy/extension/frontmatter/Dockerfile ${ROOT}
+.PHONY: build-frontmatter
+
+push-frontmatter:
+	docker tag $(FRONTMATTER_IMG_NAME) $(FRONTMATTER-CI-IMG-NAME)
+	docker push $(FRONTMATTER-CI-IMG-NAME)
+.PHONY: push-frontmatter
+
+build-asyncapi:
+	docker build -t $(ASYNCAPI_IMG_NAME) -f ${ROOT}/deploy/extension/asyncapi/Dockerfile ${ROOT}
+.PHONY: build-frontmatter
+
+push-asyncapi:
+	docker tag $(ASYNCAPI_IMG_NAME) $(ASYNCAPI-CI-IMG-NAME)
+	docker push $(ASYNCAPI-CI-IMG-NAME)
+.PHONY: push-asyncapi
+
+clean:
+	rm -f ${COVERAGE_OUTPUT_PATH}
+	rm -rf ${LICENSE_PATH}
+.PHONY: clean
 
 pull-licenses:
 ifdef LICENSE_PULLER_PATH
 	bash $(LICENSE_PULLER_PATH)
 else
-	mkdir -p licenses
+	mkdir -p ${LICENSE_PATH}
 endif
+.PHONY: pull-licenses
+
+fmt:
+	find ${ROOT} -type f -name "*.go" \
+	| egrep -v '_*/automock|_*/testdata|_*export_test.go' \
+	| xargs -L1 go fmt
+.PHONY: fmt
+
+vet:
+	@go list ${ROOT}/... \
+	| grep -v "automock" \
+	| xargs -L1 go vet
+.PHONY: vet
 
 # Run tests
-test: generate fmt vet manifests
-	go test -coverprofile=cover.out ./...
-	@echo "Total test coverage: $$(go tool cover -func=cover.out | grep total | awk '{print $$3}')"
-	@rm cover.out
-
-# Build manager binary
-manager: generate fmt vet
-	go build -o bin/manager cmd/manager/main.go
-
-# Run against the configured Kubernetes cluster in ~/.kube/config
-run: generate fmt vet manifests
-	go run ./cmd/manager/main.go
-
-# Install CRDs into a cluster
-install: manifests
-	kustomize build config/crd | kubectl apply -f -
-
-# Deploy controller in the configured Kubernetes cluster in ~/.kube/config
-deploy: manifests
-	cd config/manager && kustomize edit set image controller=${IMG}
-	kustomize build config/default | kubectl apply -f -
+test: clean manifests vet fmt
+	go test -short -coverprofile=${COVERAGE_OUTPUT_PATH} ${ROOT}/...
+	@go tool cover -func=${COVERAGE_OUTPUT_PATH} \
+		| grep total \
+		| awk '{print "Total test coverage: " $$3}'
+.PHONY: test
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests: controller-gen
-	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="${ROOT}/..." \
+		object:headerFile=${ROOT}/hack/boilerplate.go.txt \
+		output:crd:artifacts:config=${ROOT}/config/crd/bases \
+		output:rbac:artifacts:config=${ROOT}/config/rbac \
+		output:webhook:artifacts:config=${ROOT}/config/webhook
+.PHONY: manifests
 
-# Run go fmt against code
-fmt:
-	go fmt ./...
-
-# Run go vet against code
-vet:
-#	go vet ./...
-	@echo "VET DISABLED!!!!!!!!!!"
-
-# Generate code
-generate: controller-gen
-	$(CONTROLLER_GEN) object:headerFile=./hack/boilerplate.go.txt paths="./..."
-
-# Build the docker image
-docker-build: test pull-licenses
-	docker build . -t ${IMG}
+docker-build: \
+	test \
+	pull-licenses \
+	build-uploader \
+	build-frontmatter \
+	build-asyncapi \
+	build-manager
+.PHONY: docker-build
 
 # Push the docker image
-docker-push:
-	docker tag $(IMG) $(IMG-CI)
-	docker push $(IMG-CI)
+docker-push: \
+	push-uploader \
+	push-frontmatter \
+	push-asyncapi \
+	push-manager
+.PHONY: docker-push
 
 # find or download controller-gen
 # download controller-gen if necessary
@@ -80,7 +132,13 @@ CONTROLLER_GEN=$(GOBIN)/controller-gen
 else
 CONTROLLER_GEN=$(shell which controller-gen)
 endif
+.PHONY: controller-gen
 
 ci-pr: docker-build docker-push
+.PHONY: ci-pr
+
 ci-master: docker-build docker-push
+.PHONY: ci-master
+
 ci-release: docker-build docker-push
+.PHONY: ci-release
