@@ -23,7 +23,7 @@ Read how to run and use the service.
 
 See the [OpenAPI specification](openapi.yaml) for the full API documentation. You can use the [Swagger Editor](https://editor.swagger.io/) to preview and test the API service.
 
-### Run a local version
+### Run from sources
 
 To run the local version of the AsyncAPI Service without building the binary, use this command:
 

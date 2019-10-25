@@ -13,7 +13,9 @@ Use these tools to set up the service:
 
 ## Usage
 
-### Run a local version
+Read how to run and use the service.
+
+### Run from sources
 
 To run the service against the local installation on Minikube without building the binary, use this command:
 
@@ -27,16 +29,6 @@ Replace values in curly braces with proper details, where:
 - `{secretKey}` is the secret key required to sign in to the content storage server.
 
 The service listens on port `3000`.
-
-### Access the service on a cluster
-
-To run the Upload Service on a cluster, use the command:
-
-```bash
-kubectl port-forward deployment/assetstore-asset-upload-service 3000:3000 -n kyma-system
-```
-
-You can access the service on port `3000`.
 
 ### Build a production version
 

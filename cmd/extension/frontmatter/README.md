@@ -15,7 +15,7 @@ Use these tools to set up the service:
 
 Read how to run and use the service.
 
-### Run a local version
+### Run from sources
 
 To run the service against the local installation on Minikube without building the binary, use this command:
 
@@ -24,16 +24,6 @@ APP_VERBOSE=true go run main.go
 ```
 
 The service listens on port `3000`.
-
-### Access the service on a cluster
-
-To run the Front Matter Service on a cluster, use the command:
-
-```bash
-kubectl port-forward deployment/assetstore-asset-metadata-service 3000:3000 -n kyma-system
-```
-
-You can access the service on port `3000`.
 
 ### Build a production version
 

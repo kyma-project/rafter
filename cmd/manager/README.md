@@ -14,12 +14,11 @@ Use these tools to set up the controller:
 
 ## Usage
 
-
 Read how to run and use the controller manager.
 
-### Run a local version
+### Run from sources
 
-To run the controller manager outside the cluster, use this command:
+To run the controller manager from sources, use this command:
 
 ```bash
 GO111MODULE=on make run
