@@ -1,8 +1,8 @@
-# Uploader
+# Upload Service
 
 ## Overview
 
-The Uploader is an HTTP server used for hosting static files in Minio. It contains a simple HTTP endpoint which accepts `multipart/form-data` forms. It can upload files to the private and public system buckets so you can also use it for development purposes to host files, instead of relying on external providers.
+The Upload Service is an HTTP server used for hosting static files in Minio. It contains a simple HTTP endpoint which accepts `multipart/form-data` forms. It can upload files to the private and public system buckets so you can also use it for development purposes to host files, instead of relying on external providers.
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ Use these tools to set up the service:
 
 ### Run a local version
 
-To run the service against the local Kyma installation on Minikube without building the binary, use this command:
+To run the service against the local installation on Minikube without building the binary, use this command:
 
 ```bash
 APP_KUBECONFIG_PATH=/Users/$USER/.kube/config APP_VERBOSE=true APP_UPLOAD_ACCESS_KEY={accessKey} APP_UPLOAD_SECRET_KEY={secretKey} go run main.go
@@ -30,7 +30,7 @@ The service listens on port `3000`.
 
 ### Access the service on a cluster
 
-To run the Uploader on a cluster, use the command:
+To run the Upload Service on a cluster, use the command:
 
 ```bash
 kubectl port-forward deployment/assetstore-asset-upload-service 3000:3000 -n kyma-system

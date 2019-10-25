@@ -17,7 +17,7 @@ Read how to run and use the service.
 
 ### Run a local version
 
-To run the service against the local Kyma installation on Minikube without building the binary, use this command:
+To run the service against the local installation on Minikube without building the binary, use this command:
 
 ```bash
 APP_VERBOSE=true go run main.go
