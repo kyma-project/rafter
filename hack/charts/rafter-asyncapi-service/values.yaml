@@ -6,17 +6,19 @@ image:
 deployment:
   labels: {}
   annotations: {}
-  spec:
-    replicas: 1
+  replicas: 1
+  extraProperties: {}
 
 pod:
   labels: {}
-  annotations:
-    sidecar.istio.io/inject: "false"
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
+  annotations: {}
+    # sidecar.istio.io/inject: "false"
+  extraProperties: {}
+    # strategy:
+    #   type: RollingUpdate
+    #   rollingUpdate:
+    #     maxUnavailable: 0
+  extraContainerProperties: {}
 
 service:
   name:
@@ -29,13 +31,12 @@ service:
     external: 80
     protocol: TCP
   labels: {}
-  annotations:
-    auth.istio.io/80: NONE    
+  annotations: {}
+    # auth.istio.io/80: NONE    
 
-metrics:
-  enabled: true
+serviceMonitor:
+  enabled: false
+  name:
   scrapeInterval: 30s
-  serviceMonitor:
-    name:
-    labels: {}
-    annotations: {}
+  labels: {}
+  annotations: {}

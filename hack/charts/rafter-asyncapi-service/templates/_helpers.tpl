@@ -46,9 +46,9 @@ Create the name of the service
 Create the name of the service monitor
 */}}
 {{- define "rafterAsyncAPIService.serviceMonitorName" -}}
-{{- if and .Values.metrics.enabled }}
-    {{ default (include "rafterAsyncAPIService.fullname" .) .Values.metrics.serviceMonitor.name }}
+{{- if and .Values.serviceMonitor.enabled }}
+    {{ default (include "rafterAsyncAPIService.fullname" .) .Values.serviceMonitor.name }}
 {{- else -}}
-    {{ default "default" .Values.metrics.serviceMonitor.name }}
+    {{ default "default" .Values.serviceMonitor.name }}
 {{- end -}}
 {{- end -}}

@@ -15,7 +15,10 @@ metadata:
     {{ toYaml .Values.deployment.annotations | nindent 4 }}
   {{- end }}
 spec:
-  replicas: {{ .Values.deployment.spec.replicas }}
+  replicas: {{ .Values.deployment.replicas }}
+  {{- if .Values.deployment.extraProperties }}
+  {{ toYaml .Values.deployment.extraProperties | nindent 2 }}
+  {{- end }}
   template:
     metadata:
       labels:
@@ -31,14 +34,16 @@ spec:
         {{ toYaml .Values.pod.annotations | nindent 8 }}
       {{- end }}
     spec:
-      {{- if .Values.pod.strategy }}
-      strategy:
-        {{ toYaml .Values.pod.strategy | nindent 8 }}
+      {{- if .Values.pod.extraProperties }}
+      {{ toYaml .Values.pod.extraProperties | nindent 6 }}
       {{- end }}
       containers:
         - name: {{ include "rafterMetadataService.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.pod.extraContainerProperties }}
+          {{ toYaml .Values.pod.extraContainerProperties | nindent 10 }}
+          {{- end }}
           env:
             - name: APP_VERBOSE
               value: {{ .Values.service.verbose }}

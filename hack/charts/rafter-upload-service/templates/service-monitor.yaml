@@ -2,13 +2,13 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "rafterMetadataService.serviceMonitorName" . }}
+  name: {{ include "rafterUploadService.serviceMonitorName" . }}
   labels:
     prometheus: monitoring
-    app.kubernetes.io/name: {{ include "rafterMetadataService.name" . }}
+    app.kubernetes.io/name: {{ include "rafterUploadService.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ include "rafterMetadataService.chart" . }}
+    helm.sh/chart: {{ include "rafterUploadService.chart" . }}
   {{- if .Values.serviceMonitor.labels }}
     {{ toYaml .Values.serviceMonitor.labels | nindent 4 }}
   {{- end }}
@@ -23,6 +23,6 @@ spec:
       path: /metrics
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "rafterMetadataService.name" . }}
+      app.kubernetes.io/name: {{ include "rafterUploadService.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

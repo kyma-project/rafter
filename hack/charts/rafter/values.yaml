@@ -8,8 +8,8 @@ image:
 deployment:
   labels: {}
   annotations: {}
-  spec:
-    replicas: 1
+  replicas: 1
+  extraProperties: {}
 
 pod:
   labels: {}
@@ -17,22 +17,26 @@ pod:
     # sidecar.istio.io/inject: "false"
     # recreate: {{ .Release.Time.Seconds | quote }}
   resources:
-    limits:
-      cpu: 150m
-      memory: 128Mi
-    requests:
-      cpu: 10m
-      memory: 32Mi
+    limits: {}
+    #   cpu: 150m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 32Mi
   terminationGracePeriodSeconds: 10
-  volumes:
-    - name: tmp-empty-dir
-      emptyDir: {}
-  volumeMounts:
-    - mountPath: /tmp
-      name: tmp-empty-dir
+  volumes: []
+    # - name: tmp-empty-dir
+    #   emptyDir: {}
+  volumeMounts: []
+    # - mountPath: /tmp
+    #   name: tmp-empty-dir
   extraEnvs: {}
-  extraContainerProperties: {}
   extraProperties: {}
+    # hostAliases:
+    #   - ip: {{ .Values.global.minikubeIP }}
+    #     hostnames:
+    #       - "minio.{{ .Values.global.ingress.domainName }}"
+  extraContainerProperties: {}
 
 serviceAccount:
   create: true
@@ -48,15 +52,6 @@ rbac:
       labels: {}
       annotations: {}
       extraRules: []
-      # - apiGroups: []
-      #   resources: []
-      #   verbs: []
-      # - apiGroups:
-      #   - ""
-      #   resources:
-      #   - events
-      #   verbs:
-      #   - create
     roleBinding:
       name:
       labels: {}
@@ -68,59 +63,49 @@ rbac:
       labels: {}
       annotations: {}
       extraRules: []
-      # - apiGroups: []
-      #   resources: []
-      #   verbs: []
-      # - apiGroups:
-      #   - ""
-      #   resources:
-      #   - events
-      #   verbs:
-      #   - create
     roleBinding:
       name:
       labels: {}
       annotations: {}
 
 webhooks:
-  enabled: true
-  hooks:
-    markdown: |-
-      {
-        "metadataExtractors":[
-          {
-            "name": "assetstore-asset-metadata-service",
-            "namespace": "kyma-system",
-            "endpoint": "/v1/extract",
-            "filter": "\\.md$"
-          }
-        ]
-      }
-    asyncapi: |-
-      {
-        "validations":[
-          {
-            "name": "cms-cms-asyncapi-service",
-            "namespace": "kyma-system",
-            "endpoint": "/v1/validate"
-          }
-        ],
-      "mutations":[
-          {
-            "name": "cms-cms-asyncapi-service",
-            "namespace": "kyma-system",
-            "endpoint": "/v1/convert"
-          }
-        ]
-      }
+  enabled: false
+  hooks: {}
+    # markdown: |-
+    #   {
+    #     "metadataExtractors":[
+    #       {
+    #         "name": "assetstore-asset-metadata-service",
+    #         "namespace": "kyma-system",
+    #         "endpoint": "/v1/extract",
+    #         "filter": "\\.md$"
+    #       }
+    #     ]
+    #   }
+    # asyncapi: |-
+    #   {
+    #     "validations":[
+    #       {
+    #         "name": "cms-cms-asyncapi-service",
+    #         "namespace": "kyma-system",
+    #         "endpoint": "/v1/validate"
+    #       }
+    #     ],
+    #   "mutations":[
+    #       {
+    #         "name": "cms-cms-asyncapi-service",
+    #         "namespace": "kyma-system",
+    #         "endpoint": "/v1/convert"
+    #       }
+    #     ]
+    #   }
   configMap:
     name:
     labels: {}
     annotations: {}
 
 metrics:
-  enabled: true
-  scrapeInterval: 30s
+  enabled: false
   service:
     name:
     type: ClusterIP
@@ -133,13 +118,14 @@ metrics:
     annotations: {}
   pod:
     labels: {}
-    annotations:
-      prometheus.io/scrape: "true"
-      prometheus.io/port: "8080"
-      prometheus.io/path: "/metrics"
+    annotations: {}
+      # prometheus.io/scrape: "true"
+      # prometheus.io/port: "8080"
+      # prometheus.io/path: "/metrics"
   serviceMonitor:
-    enabled: true
+    enabled: false
     name:
+    scrapeInterval: 30s
     labels: {}
     annotations: {}
 

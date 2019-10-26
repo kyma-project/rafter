@@ -16,7 +16,10 @@ metadata:
     {{ toYaml .Values.deployment.annotations | nindent 4 }}
   {{- end }}
 spec:
-  replicas: {{ .Values.deployment.spec.replicas }}
+  replicas: {{ .Values.deployment.replicas }}
+  {{- if .Values.deployment.extraProperties }}
+  {{ toYaml .Values.deployment.extraProperties | nindent 2 }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "rafter.name" . }}
@@ -86,6 +89,9 @@ spec:
           volumeMounts:
             {{ toYaml .Values.pod.volumeMounts | nindent 12 }}
           {{- end }}
+          {{- if .Values.pod.extraContainerProperties }}
+          {{ toYaml .Values.pod.extraContainerProperties | nindent 10 }}
+          {{- end }}
           env:
             # ClusterAssetsGroup aka ClusterDocsTopic
             - name: APP_CLUSTER_DOCS_TOPIC_RELIST_INTERVAL
@@ -151,10 +157,6 @@ spec:
               value: {{ include "rafter.webhooksConfigMapName" . }}
             - name: APP_WEBHOOK_CFG_MAP_NAMESPACE
               value: {{ .Release.Namespace }}
-            {{- end }}
             {{- if .Values.pod.extraEnvs }}
             {{ toYaml .Values.pod.extraEnvs | nindent 12 }}
             {{- end }}
-          {{- if .Values.pod.extraContainerProperties }}
-          {{ toYaml .Values.pod.extraContainerProperties | nindent 10 }}
-          {{- end }}

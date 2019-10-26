@@ -1,18 +1,19 @@
 image:
-  repository: eu.gcr.io/kyma-project/rafter-metadata-service
+  repository: eu.gcr.io/kyma-project/rafter-upload-service
   tag: v1.0.0
   pullPolicy: IfNotPresent
 
 deployment:
   labels: {}
   annotations: {}
-  replicas: 1
-  extraProperties: {}
+  spec:
+    replicas: 1
 
 pod:
   labels: {}
   annotations: {}
     # sidecar.istio.io/inject: "false"
+    # recreate: {{ .Release.Time.Seconds | quote }}
   extraProperties: {}
     # strategy:
     #   type: RollingUpdate
@@ -32,7 +33,26 @@ service:
     protocol: TCP
   labels: {}
   annotations: {}
-    # auth.istio.io/80: NONE    
+    # auth.istio.io/80: NONE
+
+serviceAccount:
+  create: true
+  name: "dupa"
+  labels: {}
+  annotations: {}
+
+rbac:
+  clusterScope:
+    create: true
+    role:
+      name:
+      labels: {}
+      annotations: {}
+      extraRules: []
+    roleBinding:
+      name:
+      labels: {}
+      annotations: {}
 
 serviceMonitor:
   enabled: false

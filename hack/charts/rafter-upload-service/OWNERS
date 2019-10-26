@@ -1,0 +1,14 @@
+approvers:
+  - derberg
+  - michal-hudy
+  - m00g3n
+  - aerfio
+  - magicmatatjahu
+reviewers:
+  - derberg
+  - michal-hudy
+  - m00g3n
+  - aerfio
+  - magicmatatjahu
+labels:
+  - area/core-and-supporting
