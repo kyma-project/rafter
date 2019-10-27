@@ -60,7 +60,6 @@ The following table lists the configurable parameters of the Rafter chart and th
 | `pod.volumeMounts` | Volume mounts for the container. | `{}` |
 | `pod.extraProperties` | Extra properties injected in the `Pod`. | `{}` |
 | `pod.extraContainerProperties` | Extra properties injected in the container. | `{}` |
-| `pod.extraEnvs` | Extra environment variables passed to container. | `{}` |
 | `serviceAccount.create` | Whether a new `ServiceAccount` resource that the Rafter will use should be created. | `true` |
 | `serviceAccount.name` | `ServiceAccount` resource to be used for the Rafter. If not set and `serviceAccount.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `serviceAccount.create` is `false` a name is `default`. | `nil` |
 | `serviceAccount.labels` | Custom labels for the custom `ServiceAccount` resource. | `{}` |
@@ -105,6 +104,31 @@ The following table lists the configurable parameters of the Rafter chart and th
 | `metrics.serviceMonitor.annotations` | Custom annotations for the custom `ServiceMonitor` resource. | `{}` |
 | `metrics.pod.labels` | Custom labels for the Rafter `Pod`, when `metrics.enabled` is set to `true`. | `{}` |
 | `metrics.pod.annotations` | Custom annotations for the Rafter `Pod`, when `metrics.enabled` is set to `true` | `{}` |
+| `envs.clusterAssetGroup.relistInterval` | The period of time after which the controller refreshes the status of a `ClusterAssetGroup` CR. | `5m` |
+| `envs.assetGroup.relistInterval` | The period of time after which the controller refreshes the status of an `AssetGroup` CR. | `5m` |
+| `envs.clusterBucket.relistInterval` | The period of time after which the controller refreshes the status of a `ClusterBucket` CR. | `30s` |
+| `envs.clusterBucket.maxConcurrentReconciles` | The maximum number of `ClusterBucket` reconciles that can run in parallel. | `1` |
+| `envs.clusterBucket.region` | The location of the region in which the controller creates a `ClusterBucket` CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
+| `envs.bucket.relistInterval` | The period of time after which the controller refreshes the status of a `Bucket` CR. | `30s` |
+| `envs.bucket.maxConcurrentReconciles` | The maximum number of `Bucket` reconciles that can run in parallel. | `1` |
+| `envs.bucket.region` | The location of the region in which the controller creates a `Bucket` CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
+| `envs.clusterAsset.relistInterval` | The period of time after which the controller refreshes the status of a `ClusterAsset` CR. | `30s` |
+| `envs.clusterAsset.maxConcurrentReconciles` | The maximum number of `ClusterAsset` reconciles that can run in parallel. | `1` |
+| `envs.asset.relistInterval` | The period of time after which the controller refreshes the status of a `Asset` CR. | `30s` |
+| `envs.asset.maxConcurrentReconciles` | The maximum number of `Asset` reconciles that can run in parallel. | `1` |
+| `envs.store.endpoint` | The address of the content storage server. | `minio.kyma.local` |
+| `envs.store.externalEndpoint` | The external address of the content storage server. If not set, the system uses the `APP_UPLOAD_ENDPOINT` variable. | `https://minio.kyma.local` |
+| `envs.store.accessKey` | The access key required to sign in to the content storage server. | `nil` |
+| `envs.store.secretKey` | The secret key required to sign in to the content storage server. | `nil` |
+| `envs.store.useSSL` | The HTTPS connection with the content storage server. | `true` |
+| `envs.store.uploadWorkers` | The number of workers used in parallel to upload files to the storage server. | `true` |
+| `envs.loader.verifySSL` | The variable that verifies the SSL certificate before downloading source files. | `true` |
+| `envs.loader.tempDir` | The path to the directory used to store data temporarily. | `/tmp` |
+| `envs.webhooks.validation.timeout` | The period of time after which validation is canceled. | `1m` |
+| `envs.webhooks.validation.workers` | The number of workers used in parallel to validate files. | `10` |
+| `envs.webhooks.mutation.timeout` | The period of time after which mutation is canceled. | `1m` |
+| `envs.webhooks.mutation.workers` | The number of workers used in parallel to mutate files. | `10` |
+| `envs.webhooks.metadata.timeout` | The period of time after which metadata extraction is canceled. | `1m` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
 

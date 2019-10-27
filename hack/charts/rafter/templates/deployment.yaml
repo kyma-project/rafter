@@ -155,6 +155,3 @@ spec:
               value: {{ include "rafter.webhooksConfigMapName" . }}
             - name: APP_WEBHOOK_CFG_MAP_NAMESPACE
               value: {{ .Release.Namespace }}
-            {{- if .Values.pod.extraEnvs }}
-            {{ toYaml .Values.pod.extraEnvs | nindent 12 }}
-            {{- end }}

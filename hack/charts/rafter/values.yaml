@@ -36,7 +36,6 @@ pod:
     #     hostnames:
     #       - "minio.{{ .Values.global.ingress.domainName }}"
   extraContainerProperties: {}
-  extraEnvs: {}
 
 serviceAccount:
   create: true
@@ -188,7 +187,7 @@ envs:
     verifySSL: 
       value: true
     tempDir: 
-      value: /tmp
+      value: "/tmp"
   webhooks:
     validation:
       timeout: 

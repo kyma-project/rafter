@@ -63,11 +63,11 @@ serviceMonitor:
 
 envs:
   kubeconfigPath:
-  timeout:
-    value: 1m
-  workers:
-    value: 10
   upload:
+    timeout:
+      value: 30m
+    workers:
+      value: 10
     endpoint:
       valueFrom:
         configMapKeyRef:

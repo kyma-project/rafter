@@ -83,6 +83,21 @@ The following table lists the configurable parameters of the Rafter Upload servi
 | `serviceMonitor.scrapeInterval` | Scrape interval for the custom `ServiceMonitor` resource. | `30s` |
 | `serviceMonitor.labels` | Custom labels for the custom `ServiceMonitor` resource. | `{}` |
 | `serviceMonitor.annotations` | Custom annotations for the custom `ServiceMonitor` resource. | `{}` |
+| `envs.kubeconfigPath` | The path to the kubeconfig file, needed to run the service outside of a cluster. | `nil` |
+| `envs.upload.timeout` | The file upload timeout. | `30m` |
+| `envs.upload.workers` | The maximum number of concurrent upload workers. | `10` |
+| `envs.upload.endpoint` | The address of the content storage server. | `minio.kyma.local` |
+| `envs.upload.externalEndpoint` | The external address of the content storage server. If not set, the system uses the `APP_UPLOAD_ENDPOINT` variable. | `https://minio.kyma.local` |
+| `envs.upload.port` | The port on which the content storage server listens. | `443` |
+| `envs.upload.accessKey` | The access key required to sign in to the content storage server. | `nil` |
+| `envs.upload.secretKey` | The secret key required to sign in to the content storage server. | `nil` |
+| `envs.upload.secure` | The HTTPS connection with the content storage server. | `true` |
+| `envs.bucket.privatePrefix` | The prefix of the private system bucket. | `system-private` |
+| `envs.bucket.publicPrefix` | The prefix of the public system bucket. | `system-public` |
+| `envs.bucket.region` | 	The region of system buckets. | `true` |
+| `envs.configMap.enabled` | The toggle used to save and load the configuration using the ConfigMap resource. | `true` |
+| `envs.configMap.name` | The name of the ConfigMap resource. | `asset-upload-service` |
+| `envs.configMap.namespace` | The Namespace in which the ConfigMap resource is created. | `kyma-system` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
 

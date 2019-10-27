@@ -71,6 +71,8 @@ The following table lists the configurable parameters of the Rafter Metadata ser
 | `serviceMonitor.scrapeInterval` | Scrape interval for the custom `ServiceMonitor` resource. | `30s` |
 | `serviceMonitor.labels` | Custom labels for the custom `ServiceMonitor` resource. | `{}` |
 | `serviceMonitor.annotations` | Custom annotations for the custom `ServiceMonitor` resource. | `{}` |
+| `envs.timeout` | The file process timeout. | `10m` |
+| `envs.workers` | The maximum number of concurrent metadata extraction workers. | `10` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
 

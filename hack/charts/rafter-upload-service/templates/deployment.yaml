@@ -54,11 +54,11 @@ spec:
               {{ toYaml .Values.envs.kubeconfigPath | nindent 14 }}
             - name: APP_VERBOSE
               value: {{ .Values.service.verbose }}
-            - name: APP_PROCESS_TIMEOUT
-              {{ toYaml .Values.envs.timeout | nindent 14 }}
-            - name: APP_MAX_WORKERS
-              {{ toYaml .Values.envs.workers | nindent 14 }}
             # Upload
+            - name: APP_UPLOAD_TIMEOUT
+              {{ toYaml .Values.envs.timeout | nindent 14 }}
+            - name: APP_MAX_UPLOAD_WORKERS
+              {{ toYaml .Values.envs.workers | nindent 14 }}
             - name: APP_UPLOAD_ENDPOINT
               {{ toYaml .Values.envs.upload.endpoint | nindent 14 }}
             - name: APP_UPLOAD_EXTERNAL_ENDPOINT
