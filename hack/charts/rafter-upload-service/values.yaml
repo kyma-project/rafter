@@ -6,8 +6,8 @@ image:
 deployment:
   labels: {}
   annotations: {}
-  spec:
-    replicas: 1
+  replicas: 1
+  extraProperties: {}
 
 pod:
   labels: {}
@@ -37,7 +37,7 @@ service:
 
 serviceAccount:
   create: true
-  name: "dupa"
+  name:
   labels: {}
   annotations: {}
 
@@ -55,7 +55,7 @@ rbac:
       annotations: {}
 
 serviceMonitor:
-  enabled: false
+  create: false
   name:
   scrapeInterval: 30s
   labels: {}

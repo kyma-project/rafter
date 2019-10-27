@@ -2,6 +2,12 @@
 
 This helm chart installs Rafter version v1.0.0 https://github.com/kyma-project/rafter/tree/v1.0.0
 
+## TL;DR;
+
+``` bash
+$ helm install incubator/rafter
+```
+
 ## Overview
 
 This project contains the chart for the Rafter Controller Manager.
@@ -35,34 +41,30 @@ The command removes all the Kubernetes components associated with the chart and 
 
 The following table lists the configurable parameters of the Rafter chart and their default values.
 
-| Parameter                         | Description                                | Default                                                   |
-| --------------------------------- | ------------------------------------------ | --------------------------------------------------------- |
-| `image.repository`                | Rafter image repository.                    | `eu.gcr.io/kyma-project/rafter`                           |
-| `image.tag`                       | Rafter image tag.                           | `{TAG_NAME}`                                              |
-| `image.pullPolicy`                | Rafter image pull policy.                   | `IfNotPresent`                                            |
-| `nameOverride`                    | String to partially override `rafter.name` template with a string (will prepend the release name). | `nil` |
-| `fullnameOverride`                | String to fully override `rafter.fullname` template with a string.                                     | `nil` |
-| `installCRDs`                     | If true, create CRDs managed by the Rafter. | `true` |
-
+| Parameter | Description | Default |
+| --- | ---| ---|
+| `image.repository` | Rafter image repository. | `eu.gcr.io/kyma-project/rafter`  |
+| `image.tag` | Rafter image tag. | `{TAG_NAME}` |
+| `image.pullPolicy` | Rafter image pull policy. | `IfNotPresent` |
+| `nameOverride` | String to partially override `rafter.name` template with a string (will prepend the release name). | `nil` |
+| `fullnameOverride` | String to fully override `rafter.fullname` template with a string. | `nil` |
+| `installCRDs` | If true, create CRDs managed by the Rafter. | `true` |
 | `deployment.labels` | Custom labels for the `Deployment`. | `{}` |
 | `deployment.annotations` | Custom annotations for the `Deployment`. | `{}` |
 | `deployment.replicas` | Number of nodes. If value is great than 1, then controllers have enabled `leader-election`. | `1` |
 | `deployment.extraProperties` | Extra properties injected in the `Deployment`. | `{}` |
-
-| `pod.labels` | Custom labels for the Rafter `Pod`. | `{}` |
-| `pod.annotations` | Custom annotations for the Rafter `Pod`. | `{}` |
+| `pod.labels` | Custom labels for the `Pod`. | `{}` |
+| `pod.annotations` | Custom annotations for the `Pod`. | `{}` |
 | `pod.resources` | Pod's resource requests and limits. | `{}` |
-| `pod.volumes` | Volumes for the Rafter `Pod`. | `{}` |
+| `pod.volumes` | Volumes for the `Pod`. | `{}` |
 | `pod.volumeMounts` | Volume mounts for the container. | `{}` |
-| `pod.extraProperties` | Extra properties injected in pods. | `{}` |
+| `pod.extraProperties` | Extra properties injected in the `Pod`. | `{}` |
 | `pod.extraContainerProperties` | Extra properties injected in the container. | `{}` |
 | `pod.extraEnvs` | Extra environment variables passed to container. | `{}` |
-
 | `serviceAccount.create` | Whether a new `ServiceAccount` resource that the Rafter will use should be created. | `true` |
 | `serviceAccount.name` | `ServiceAccount` resource to be used for the Rafter. If not set and `serviceAccount.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `serviceAccount.create` is `false` a name is `default`. | `nil` |
 | `serviceAccount.labels` | Custom labels for the custom `ServiceAccount` resource. | `{}` |
 | `serviceAccount.annotations` | Custom annotations for the custom `ServiceAccount` resource. | `{}` |
-
 | `rbac.clusterScope.create` | Whether a new `ClusterRole` and `ClusterRoleBinding` resources that the Rafter will use should be created. | `true` |
 | `rbac.clusterScope.role.name` | `ClusterRole` resource to be used for the Rafter. If not set and `rbac.clusterScope.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `rbac.clusterScope.create` is `false` a name is `default`. | `nil` |
 | `rbac.clusterScope.role.labels` | Custom labels for the custom `ClusterRole` resource. | `{}` |
@@ -71,7 +73,6 @@ The following table lists the configurable parameters of the Rafter chart and th
 | `rbac.clusterScope.roleBinding.name` | `ClusterRoleBinding` resource to be used for the Rafter. If not set and `rbac.clusterScope.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `rbac.clusterScope.create` is `false` a name is `default`. | `nil` |
 | `rbac.clusterScope.roleBinding.labels` | Custom labels for the custom `ClusterRoleBinding` resource. | `{}` |
 | `rbac.clusterScope.roleBinding.annotations` | Custom annotations for the custom `ClusterRoleBinding` resource. | `{}` |
-
 | `rbac.namespaced.create` | Whether a new `Role` and `RoleBinding` resources that the Rafter will use should be created. | `true` |
 | `rbac.namespaced.role.name` | `Role` resource to be used for the Rafter. If not set and `rbac.namespaced.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `rbac.namespaced.create` is `false` a name is `default`. | `nil` |
 | `rbac.namespaced.role.labels` | Custom labels for the custom `Role` resource. | `{}` |
@@ -83,30 +84,25 @@ The following table lists the configurable parameters of the Rafter chart and th
 | `rbac.namespaced.roleBinding.name` | `RoleBinding` resource to be used for the Rafter. If not set and `rbac.namespaced.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `rbac.namespaced.create` is `false` a name is `default`. | `nil` |
 | `rbac.namespaced.roleBinding.labels` | Custom labels for the custom `RoleBinding` resource. | `{}` |
 | `rbac.namespaced.roleBinding.annotations` | Custom annotations for the custom `RoleBinding` resource. | `{}` |
-
 | `webhooksConfigMap.create` | Whether a new `ConfigMap` resource that the Rafter will use should be created. | `false` |
 | `webhooksConfigMap.name` | `ConfigMap` resource to be used for the Rafter. If not set and `webhooksConfigMap.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `webhooksConfigMap.create` is `false` a name is `default`. | `nil` |
 | `webhooksConfigMap.hooks` | Data passed to custom `ConfigMap` resource. | `{}` |
 | `webhooksConfigMap.labels` | Custom labels for the custom `ConfigMap` resource. | `{}` |
 | `webhooksConfigMap.annotations` | Custom annotations for the custom `ConfigMap` resource. | `{}` |
-
 | `metrics.enabled` | Set this to `true` to enable exporting the Prometheus monitoring metrics. | `true` |
-
 | `metrics.service.name` | `Service` to be used for the exposing metrics. If not set and `metrics.enabled` is `true` a name is generated using the `rafter.fullname` template. If not set and `metrics.enabled` is `false` a name is `default`. | `nil` |
 | `metrics.service.type` | `Service` type. | `ClusterIP` |
 | `metrics.service.port.name` | Name of the port on the metrics `Service`. | `metrics` |
-| `metrics.service.port.internal` | Port where metrics `Service` is exposed. | `8080` |
-| `metrics.service.port.targetPort` | Internal pod's port on the metrics `Service`. | `metrics` |
+| `metrics.service.port.external` | Port where the metrics `Service` is exposed. | `8080` |
+| `metrics.service.port.internal` | Internal pod's port on the metrics `Service`. | `metrics` |
 | `metrics.service.port.protocol` | Protocol of the port on the metrics `Service`. | `TCP` |
 | `metrics.service.annotations` | Custom annotations for the metrics `Service`. | `{}` |
-| `metrics.service.labels` | Custom labels for the metrics `Service` resource. | `{}` |
-
+| `metrics.service.labels` | Custom labels for the metrics `Service`. | `{}` |
 | `metrics.serviceMonitor.create` | Whether a new `ServiceMonitor` resource that the Prometheus operator will use should be created. | `false` |
 | `metrics.serviceMonitor.name` | `ServiceMonitor` resource to be used for the Prometheus operator. If not set and `metrics.serviceMonitor.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `metrics.serviceMonitor.create` is `false` a name is `default`. | `nil` |
 | `metrics.serviceMonitor.scrapeInterval` | Scrape interval for the custom `ServiceMonitor` resource. | `30s` |
 | `metrics.serviceMonitor.labels` | Custom labels for the custom `ServiceMonitor` resource. | `{}` |
 | `metrics.serviceMonitor.annotations` | Custom annotations for the custom `ServiceMonitor` resource. | `{}` |
-
 | `metrics.pod.labels` | Custom labels for the Rafter `Pod`, when `metrics.enabled` is set to `true`. | `{}` |
 | `metrics.pod.annotations` | Custom annotations for the Rafter `Pod`, when `metrics.enabled` is set to `true` | `{}` |
 
@@ -118,9 +114,9 @@ $ helm install --name rafter-release \
     incubator/rafter
 ```
 
-The above command install release with custom `ServiceAccount` resource with `rafter-service-account` name. Additionally.
+The above command install release with custom `ServiceAccount` resource with `rafter-service-account` name.
 
-Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
+Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example:
 
 ``` bash
 $ helm install --name rafter-release -f values.yaml incubator/rafter

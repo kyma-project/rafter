@@ -36,9 +36,9 @@ Create the name of the service
 */}}
 {{- define "rafterAsyncAPIService.serviceName" -}}
 {{- if .Values.service.name -}}
-{{- printf "%s-%s" (include "rafterAsyncAPIService.fullname" .) .Values.service.name | trunc 63 | trimSuffix "-" -}}
+{{- include .Values.service.name . | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- include "rafterAsyncAPIService.fullname" . | trunc 63 | trimSuffix "-" -}}
+{{- include "rafterAsyncAPIService.fullname" . -}}
 {{- end -}}
 {{- end -}}
 
@@ -46,7 +46,7 @@ Create the name of the service
 Create the name of the service monitor
 */}}
 {{- define "rafterAsyncAPIService.serviceMonitorName" -}}
-{{- if and .Values.serviceMonitor.enabled }}
+{{- if and .Values.serviceMonitor.create }}
     {{ default (include "rafterAsyncAPIService.fullname" .) .Values.serviceMonitor.name }}
 {{- else -}}
     {{ default "default" .Values.serviceMonitor.name }}

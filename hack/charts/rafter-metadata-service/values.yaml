@@ -35,7 +35,7 @@ service:
     # auth.istio.io/80: NONE    
 
 serviceMonitor:
-  enabled: false
+  create: false
   name:
   scrapeInterval: 30s
   labels: {}

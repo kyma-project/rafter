@@ -1,4 +1,4 @@
-{{- if .Values.serviceMonitor.enabled }}
+{{- if .Values.serviceMonitor.create }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:

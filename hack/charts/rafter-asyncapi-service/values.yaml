@@ -27,15 +27,15 @@ service:
   host: "0.0.0.0"
   port:
     name: http
-    internal: 3000
     external: 80
+    internal: 3000
     protocol: TCP
   labels: {}
   annotations: {}
     # auth.istio.io/80: NONE    
 
 serviceMonitor:
-  enabled: false
+  create: false
   name:
   scrapeInterval: 30s
   labels: {}

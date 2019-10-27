@@ -36,9 +36,9 @@ Create the name of the service
 */}}
 {{- define "rafterUploadService.serviceName" -}}
 {{- if .Values.service.name -}}
-{{- printf "%s-%s" (include "rafterUploadService.fullname" .) .Values.service.name | trunc 63 | trimSuffix "-" -}}
+{{- include .Values.service.name . | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- include "rafterUploadService.fullname" . | trunc 63 | trimSuffix "-" -}}
+{{- include "rafterUploadService.fullname" . -}}
 {{- end -}}
 {{- end -}}
 
@@ -79,7 +79,7 @@ Create the name of the rbac cluster role binding
 Create the name of the service monitor
 */}}
 {{- define "rafterUploadService.serviceMonitorName" -}}
-{{- if and .Values.serviceMonitor.enabled }}
+{{- if and .Values.serviceMonitor.create }}
     {{ default (include "rafterUploadService.fullname" .) .Values.serviceMonitor.name }}
 {{- else -}}
     {{ default "default" .Values.serviceMonitor.name }}

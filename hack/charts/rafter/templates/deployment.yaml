@@ -71,15 +71,15 @@ spec:
             {{- end }}
             {{- if .Values.metrics.enabled }}
             - --metrics-addr
-            - :{{ .Values.metrics.service.port.internal }}
+            - :{{ .Values.metrics.service.port.external }}
             {{- end }}
           {{- end }}
-          {{- if .Values.metrics.enabled }}
-          ports:
-            - name: {{ .Values.metrics.service.port.name }}
-              containerPort: {{ .Values.metrics.service.port.internal }}
-              protocol: {{ .Values.metrics.service.port.protocol }}
-          {{- end }}
+          # {{- if .Values.metrics.enabled }}
+          # ports:
+          #   - name: {{ .Values.metrics.service.port.name }}
+          #     containerPort: {{ .Values.metrics.service.port.external }}
+          #     protocol: {{ .Values.metrics.service.port.protocol }}
+          # {{- end }}
           {{- if .Values.pod.resources }}
           resources:
             {{ toYaml .Values.pod.resources | nindent 12 }}

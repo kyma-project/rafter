@@ -19,9 +19,9 @@ spec:
   type: {{ .Values.metrics.service.type }}
   ports:
     - name: {{ .Values.metrics.service.port.name }}
-      port: {{ .Values.metrics.service.port.internal }}
+      port: {{ .Values.metrics.service.port.external }}
       protocol: {{ .Values.metrics.service.port.protocol }}
-      targetPort: {{ .Values.metrics.service.port.targetPort }}
+      targetPort: {{ .Values.metrics.service.port.internal }}
   selector:
     app.kubernetes.io/name: {{ include "rafter.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

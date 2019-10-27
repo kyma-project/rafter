@@ -36,9 +36,9 @@ Create the name of the service
 */}}
 {{- define "rafterMetadataService.serviceName" -}}
 {{- if .Values.service.name -}}
-{{- printf "%s-%s" (include "rafterMetadataService.fullname" .) .Values.service.name | trunc 63 | trimSuffix "-" -}}
+{{- include .Values.service.name . | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- include "rafterMetadataService.fullname" . | trunc 63 | trimSuffix "-" -}}
+{{- include "rafterMetadataService.fullname" . -}}
 {{- end -}}
 {{- end -}}
 
@@ -46,7 +46,7 @@ Create the name of the service
 Create the name of the service monitor
 */}}
 {{- define "rafterMetadataService.serviceMonitorName" -}}
-{{- if and .Values.serviceMonitor.enabled }}
+{{- if and .Values.serviceMonitor.create }}
     {{ default (include "rafterMetadataService.fullname" .) .Values.serviceMonitor.name }}
 {{- else -}}
     {{ default "default" .Values.serviceMonitor.name }}
