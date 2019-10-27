@@ -129,44 +129,77 @@ metrics:
       # prometheus.io/path: "/metrics"
 
 envs:
-  clusterDocsTopic:
-    relistInterval: 5m
-  docsTopic:
-    relistInterval: 5m
   clusterAssetGroup:
-    relistInterval: 5m
+    relistInterval: 
+      value: 5m
   assetGroup:
-    relistInterval: 5m
+    relistInterval: 
+      value: 5m
   clusterBucket:
-    relistInterval: 30s
-    maxConcurrentReconciles: 1
-    region: us-east-1
+    relistInterval: 
+      value: 30s
+    maxConcurrentReconciles: 
+      value: 1
+    region: 
+      value: us-east-1
   bucket:
-    relistInterval: 30s
-    maxConcurrentReconciles: 1
-    region: us-east-1
+    relistInterval: 
+      value: 30s
+    maxConcurrentReconciles: 
+      value: 1
+    region: 
+      value: us-east-1
   clusterAsset:
-    relistInterval: 30s
-    maxConcurrentReconciles: 1
+    relistInterval: 
+      value: 30s
+    maxConcurrentReconciles: 
+      value: 1
   asset:
-    relistInterval: 30s
-    maxConcurrentReconciles: 1
+    relistInterval: 
+      value: 30s
+    maxConcurrentReconciles: 
+      value: 1
   store:
-    endpoint: "minio.kyma.local"
-    externalEndpoint: "https://minio.kyma.loca"
+    endpoint: 
+      valueFrom:
+        configMapKeyRef:
+          name: assetstore-minio-docs-upload
+          key: APP_UPLOAD_ENDPOINT_WITH_PORT
+    externalEndpoint: 
+      value: {{ if .Values.global.minioExternalEndpoint }}{{ .Values.global.minioExternalEndpoint }}{{ else }}'https://minio.{{ .Values.global.ingress.domainName }}'{{ end }}
     accessKey:
+      valueFrom:
+        secretKeyRef:
+          name: assetstore-minio
+          key: accesskey
     secretKey:
-    useSSL: true
-    uploadWorkers: 10
+      valueFrom:
+        secretKeyRef:
+          name: assetstore-minio
+          key: secretkey
+    useSSL: 
+      valueFrom:
+        configMapKeyRef:
+          name: assetstore-minio-docs-upload
+          key: APP_UPLOAD_SECURE
+    uploadWorkers: 
+      value: 10
   loader:
-    verifySSL: true
-    tempDir: /tmp
+    verifySSL: 
+      value: true
+    tempDir: 
+      value: /tmp
   webhooks:
     validation:
-      timeout: 1m
-      workers: 10
+      timeout: 
+        value: 1m
+      workers: 
+        value: 10
     mutation:
-      timeout: 1m
-      workers: 10
+      timeout: 
+        value: 1m
+      workers: 
+        value: 10
     metadata:
-      timeout: 1m
+      timeout: 
+        value: 1m

@@ -40,3 +40,9 @@ serviceMonitor:
   scrapeInterval: 30s
   labels: {}
   annotations: {}
+
+envs:
+  timeout:
+    value: 1m
+  workers:
+    value: 10

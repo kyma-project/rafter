@@ -45,9 +45,9 @@ spec:
           {{ toYaml .Values.pod.extraContainerProperties | nindent 10 }}
           {{- end }}
           env:
-            - name: APP_VERBOSE
-              value: "{{ .Values.service.verbose }}"
             - name: APP_SERVICE_PORT
               value: "{{ .Values.service.port.internal }}"
             - name: APP_SERVICE_HOST
-              value: "{{ .Values.service.host }}"
+              value: "{{ .Values.service.host | quote }}"
+            - name: APP_VERBOSE
+              value: "{{ .Values.service.verbose }}"

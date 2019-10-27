@@ -46,9 +46,42 @@ spec:
           {{ toYaml .Values.pod.extraContainerProperties | nindent 10 }}
           {{- end }}
           env:
+            - name: APP_PORT
+              value: {{ .Values.service.port.internal }}
+            - name: APP_HOST
+              value: {{ .Values.service.host }}
+            - name: APP_KUBECONFIG_PATH
+              {{ toYaml .Values.envs.kubeconfigPath | nindent 14 }}
             - name: APP_VERBOSE
               value: {{ .Values.service.verbose }}
-            - name: APP_SERVICE_PORT
-              value: {{ .Values.service.port.internal }}
-            - name: APP_SERVICE_HOST
-              value: {{ .Values.service.host }}
+            - name: APP_PROCESS_TIMEOUT
+              {{ toYaml .Values.envs.timeout | nindent 14 }}
+            - name: APP_MAX_WORKERS
+              {{ toYaml .Values.envs.workers | nindent 14 }}
+            # Upload
+            - name: APP_UPLOAD_ENDPOINT
+              {{ toYaml .Values.envs.upload.endpoint | nindent 14 }}
+            - name: APP_UPLOAD_EXTERNAL_ENDPOINT
+              {{ toYaml .Values.envs.upload.port | nindent 14 }}
+            - name: APP_UPLOAD_PORT
+              {{ toYaml .Values.envs.upload.port | nindent 14 }}
+            - name: APP_UPLOAD_ACCESS_KEY
+              {{ toYaml .Values.envs.upload.accessKey | nindent 14 }}
+            - name: APP_UPLOAD_SECRET_KEY
+              {{ toYaml .Values.envs.upload.secretKey | nindent 14 }}
+            - name: APP_UPLOAD_SECURE
+              {{ toYaml .Values.envs.upload.port | nindent 14 }}
+            # Bucket
+            - name: APP_BUCKET_PRIVATE_PREFIX
+              {{ toYaml .Values.envs.bucket.privatePrefix | nindent 14 }}
+            - name: APP_BUCKET_PUBLIC_PREFIX
+              {{ toYaml .Values.envs.bucket.publicPrefix | nindent 14 }}
+            - name: APP_BUCKET_REGION
+              {{ toYaml .Values.envs.bucket.region | nindent 14 }}
+            # Config map
+            - name: APP_CONFIG_ENABLED
+              {{ toYaml .Values.envs.configMap.enabled | nindent 14 }}
+            - name: APP_CONFIG_MAP_NAME
+              {{ toYaml .Values.envs.configMap.name | nindent 14 }}
+            - name: APP_CONFIG_MAP_NAMESPACE
+              {{ toYaml .Values.envs.configMap.namespace | nindent 14 }}
