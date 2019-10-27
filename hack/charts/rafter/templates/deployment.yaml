@@ -50,7 +50,6 @@ spec:
       {{- end }}
     spec:
       serviceAccountName: {{ include "rafter.serviceAccountName" . }}
-      terminationGracePeriodSeconds: {{ .Values.pod.terminationGracePeriodSeconds }}
       {{- if .Values.pod.volumes }}
       volumes:
         {{ toYaml .Values.pod.volumes | nindent 8 }}
@@ -62,7 +61,7 @@ spec:
         - name: {{ include "rafter.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- $replicas := int (toString (.Values.deployment.spec.replicas)) -}}
+          {{- $replicas := int (toString (.Values.deployment.replicas)) -}}
           {{- if or .Values.metrics.enabled (gt $replicas 1) }}
           command:
             - /manager
@@ -142,7 +141,6 @@ spec:
             - name: APP_LOADER_TEMPORARY_DIRECTORY
               value: {{ .Values.envs.loader.tempDir }}
             # Webhooks
-            {{ if .Values.webhooks.enabled }}
             - name: APP_WEBHOOK_VALIDATION_TIMEOUT
               value: {{ .Values.envs.webhooks.validation.timeout }}
             - name: APP_WEBHOOK_VALIDATION_WORKERS_COUNT

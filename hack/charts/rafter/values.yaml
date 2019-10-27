@@ -1,9 +1,9 @@
-installCRDs: false
-
 image:
   repository: eu.gcr.io/kyma-project/rafter
   tag: v1.0.0
   pullPolicy: IfNotPresent
+
+installCRDs: true
 
 deployment:
   labels: {}
@@ -16,27 +16,27 @@ pod:
   annotations: {}
     # sidecar.istio.io/inject: "false"
     # recreate: {{ .Release.Time.Seconds | quote }}
-  resources:
-    limits: {}
+  resources: {}
+    # limits:
     #   cpu: 150m
     #   memory: 128Mi
     # requests:
     #   cpu: 10m
     #   memory: 32Mi
-  terminationGracePeriodSeconds: 10
   volumes: []
     # - name: tmp-empty-dir
     #   emptyDir: {}
   volumeMounts: []
     # - mountPath: /tmp
     #   name: tmp-empty-dir
-  extraEnvs: {}
   extraProperties: {}
+    # terminationGracePeriodSeconds: 10
     # hostAliases:
     #   - ip: {{ .Values.global.minikubeIP }}
     #     hostnames:
     #       - "minio.{{ .Values.global.ingress.domainName }}"
   extraContainerProperties: {}
+  extraEnvs: {}
 
 serviceAccount:
   create: true
@@ -68,8 +68,9 @@ rbac:
       labels: {}
       annotations: {}
 
-webhooks:
-  enabled: false
+webhooksConfigMap:
+  create: false
+  name:
   hooks: {}
     # markdown: |-
     #   {
@@ -91,7 +92,7 @@ webhooks:
     #         "endpoint": "/v1/validate"
     #       }
     #     ],
-    #   "mutations":[
+    #     "mutations":[
     #       {
     #         "name": "cms-cms-asyncapi-service",
     #         "namespace": "kyma-system",
@@ -99,13 +100,11 @@ webhooks:
     #       }
     #     ]
     #   }
-  configMap:
-    name:
-    labels: {}
-    annotations: {}
+  labels: {}
+  annotations: {}
 
 metrics:
-  enabled: false
+  enabled: true
   service:
     name:
     type: ClusterIP
@@ -116,18 +115,18 @@ metrics:
       protocol: TCP
     labels: {}
     annotations: {}
+  serviceMonitor:
+    create: false
+    name:
+    scrapeInterval: 30s
+    labels: {}
+    annotations: {}
   pod:
     labels: {}
     annotations: {}
       # prometheus.io/scrape: "true"
       # prometheus.io/port: "8080"
       # prometheus.io/path: "/metrics"
-  serviceMonitor:
-    enabled: false
-    name:
-    scrapeInterval: 30s
-    labels: {}
-    annotations: {}
 
 envs:
   clusterDocsTopic:

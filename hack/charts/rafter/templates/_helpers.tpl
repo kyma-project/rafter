@@ -43,28 +43,6 @@ Create the name of the service account
 {{- end -}}
 
 {{/*
-Create the name of the rbac role
-*/}}
-{{- define "rafter.rbacRoleName" -}}
-{{- if .Values.rbac.namespaced.create -}}
-    {{ default (include "rafter.fullname" .) .Values.rbac.namespaced.role.name }}
-{{- else -}}
-    {{ default "default" .Values.rbac.namespaced.role.name }}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Create the name of the rbac role binding
-*/}}
-{{- define "rafter.rbacRoleBindingName" -}}
-{{- if .Values.rbac.namespaced.create -}}
-    {{ default (include "rafter.fullname" .) .Values.rbac.namespaced.roleBinding.name }}
-{{- else -}}
-    {{ default "default" .Values.rbac.namespaced.roleBinding.name }}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Create the name of the rbac cluster role
 */}}
 {{- define "rafter.rbacClusterRoleName" -}}
@@ -87,13 +65,35 @@ Create the name of the rbac cluster role binding
 {{- end -}}
 
 {{/*
+Create the name of the rbac role
+*/}}
+{{- define "rafter.rbacRoleName" -}}
+{{- if .Values.rbac.namespaced.create -}}
+    {{ default (include "rafter.fullname" .) .Values.rbac.namespaced.role.name }}
+{{- else -}}
+    {{ default "default" .Values.rbac.namespaced.role.name }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create the name of the rbac role binding
+*/}}
+{{- define "rafter.rbacRoleBindingName" -}}
+{{- if .Values.rbac.namespaced.create -}}
+    {{ default (include "rafter.fullname" .) .Values.rbac.namespaced.roleBinding.name }}
+{{- else -}}
+    {{ default "default" .Values.rbac.namespaced.roleBinding.name }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create the name of the config map with webhooks
 */}}
 {{- define "rafter.webhooksConfigMapName" -}}
-{{- if and .Values.webhooks.enabled -}}
-    {{ default (printf "%s-%s" (include "rafter.fullname" .) "webhooks") .Values.webhooks.configMap.name }}
+{{- if .Values.webhooksConfigMap.create -}}
+    {{ default (include "rafter.fullname" .) .Values.webhooksConfigMap.name }}
 {{- else -}}
-    {{ default "default" .Values.webhooks.configMap.name }}
+    {{ default "default" .Values.webhooksConfigMap.name }}
 {{- end -}}
 {{- end -}}
 
@@ -112,7 +112,7 @@ Create the name of the metrics service
 Create the name of the service monitor
 */}}
 {{- define "rafter.serviceMonitorName" -}}
-{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled }}
+{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.create }}
     {{ default (include "rafter.fullname" .) .Values.metrics.serviceMonitor.name }}
 {{- else -}}
     {{ default "default" .Values.metrics.serviceMonitor.name }}

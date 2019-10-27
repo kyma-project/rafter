@@ -1,4 +1,4 @@
-{{ if .Values.webhooks.enabled }}
+{{ if .Values.webhooksConfigMap.create }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,13 +9,13 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "rafter.chart" . }}
-  {{- if .Values.webhooks.configMap.labels }}
-    {{ toYaml .Values.webhooks.configMap.labels | nindent 4 }}
+  {{- if .Values.webhooksConfigMap.labels }}
+    {{ toYaml .Values.webhooksConfigMap.labels | nindent 4 }}
   {{- end }}
-  {{- if .Values.webhooks.configMap.annotations }}
+  {{- if .Values.webhooksConfigMap.annotations }}
   annotations:
-    {{ toYaml .Values.webhooks.configMap.annotations | nindent 4 }}
+    {{ toYaml .Values.webhooksConfigMap.annotations | nindent 4 }}
   {{- end }}
 data:
-  {{ toYaml .Values.webhooks.hooks | nindent 2 }}
+  {{ toYaml .Values.webhooksConfigMap.hooks | nindent 2 }}
 {{- end }}
