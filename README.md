@@ -2,11 +2,11 @@
 
 ## Overview
 
-Rafter is a solution for storing and managing different types of files called assets. It uses [MinIO](https://min.io/) as object storage. The whole concept of Rafter relies on Kubernetes custom resources (CRs) managed by the [Rafter Controller Manager](./cmd/manager/README.md). The CRs include:
+Rafter is a solution for storing and managing different types of files called assets. It uses [MinIO](https://min.io/) as object storage. The whole concept of Rafter relies on Kubernetes custom resources (CRs) managed by the [Rafter Controller Manager](./cmd/manager/README.md). These CRs include:
 
 - Asset CR which manages a single asset or a package of assets
 - Bucket CR which manages buckets
-- AssetGroup CR which manages a group of Asset CRs of a specific type to make it easier to use and abstract webhook information
+- AssetGroup CR which manages a group of Asset CRs of a specific type to make it easier to use and extract webhook information
 
 Rafter enables you to manage assets using supported webhooks. For example, if you use Rafter to store a file such as a specification, you can additionally define a webhook service that Rafer should call before the file is sent to storage. The webhook service can:
 
@@ -34,8 +34,8 @@ The repository has the following structure:
 ├── cmd                         # Rafter's applications
 ├── config                      # Configuration file templates
 ├── deploy                      # Dockerfiles for Rafter's applications
-├── hack                        # Information, scripts and files useful for development
+├── hack                        # Information, scripts, and files useful for development
 ├── internal                    # Private application and library code
-├── pkg                         # Library code ready-to-use by external applications
+├── pkg                         # Library code to be used by external applications
 └── tests                       # Integration tests
 ```
