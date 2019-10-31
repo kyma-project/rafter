@@ -1,0 +1,57 @@
+---
+# Source: rafter/templates/cluster-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: release-name-rafter
+  labels:
+    app.kubernetes.io/name: rafter
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Tiller
+    helm.sh/chart: rafter-1.0.0
+rules:
+- apiGroups:
+  - rafter.kyma-project.io
+  resources:
+  - assetgroups
+  - clusterassetgroups
+  - assets
+  - clusterassets
+  - buckets
+  - clusterbuckets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rafter.kyma-project.io
+  resources:
+  - assetgroups/status
+  - clusterassetgroups/status
+  - assets/status
+  - clusterassets/status
+  - buckets/status
+  - clusterbuckets/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch

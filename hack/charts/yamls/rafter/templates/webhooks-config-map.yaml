@@ -1,0 +1,45 @@
+---
+# Source: rafter/templates/webhooks-config-map.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-name-rafter
+  namespace: default
+  labels:
+    app.kubernetes.io/name: rafter
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Tiller
+    helm.sh/chart: rafter-1.0.0
+data:
+  
+  asyncapi: |-
+    {
+      "validations":[
+        {
+          "name": "cms-cms-asyncapi-service",
+          "namespace": "kyma-system",
+          "endpoint": "/v1/validate",
+          "filter": "1572466665"
+        }
+      ],
+      "mutations":[
+        {
+          "name": "cms-cms-asyncapi-service",
+          "namespace": "kyma-system",
+          "endpoint": "/v1/convert"
+        }
+      ]
+    }
+  markdown: |-
+    {
+      "metadataExtractors":[
+        {
+          "name": "assetstore-asset-metadata-service",
+          "namespace": "kyma-system",
+          "endpoint": "/v1/extract",
+          "filter": "\\.md$"
+        }
+      ]
+    }
+  

@@ -15,7 +15,7 @@ pod:
   labels: {}
   annotations: {}
     # sidecar.istio.io/inject: "false"
-    # recreate: {{ .Release.Time.Seconds | quote }}
+    # recreate: "{{ .Release.Time.Seconds }}"
   resources: {}
     # limits:
     #   cpu: 150m
@@ -36,6 +36,7 @@ pod:
     #     hostnames:
     #       - "minio.{{ .Values.global.ingress.domainName }}"
   extraContainerProperties: {}
+  extraEnvs: {}
 
 serviceAccount:
   create: true
@@ -68,37 +69,37 @@ rbac:
       annotations: {}
 
 webhooksConfigMap:
-  create: false
+  create: true
   name:
-  hooks: {}
-    # markdown: |-
-    #   {
-    #     "metadataExtractors":[
-    #       {
-    #         "name": "assetstore-asset-metadata-service",
-    #         "namespace": "kyma-system",
-    #         "endpoint": "/v1/extract",
-    #         "filter": "\\.md$"
-    #       }
-    #     ]
-    #   }
-    # asyncapi: |-
-    #   {
-    #     "validations":[
-    #       {
-    #         "name": "cms-cms-asyncapi-service",
-    #         "namespace": "kyma-system",
-    #         "endpoint": "/v1/validate"
-    #       }
-    #     ],
-    #     "mutations":[
-    #       {
-    #         "name": "cms-cms-asyncapi-service",
-    #         "namespace": "kyma-system",
-    #         "endpoint": "/v1/convert"
-    #       }
-    #     ]
-    #   }
+  hooks:
+    markdown: |-
+      {
+        "metadataExtractors":[
+          {
+            "name": "assetstore-asset-metadata-service",
+            "namespace": "kyma-system",
+            "endpoint": "/v1/extract",
+            "filter": "\\.md$"
+          }
+        ]
+      }
+    asyncapi: |-
+      {
+        "validations":[
+          {
+            "name": "cms-cms-asyncapi-service",
+            "namespace": "kyma-system",
+            "endpoint": "/v1/validate"
+          }
+        ],
+        "mutations":[
+          {
+            "name": "cms-cms-asyncapi-service",
+            "namespace": "kyma-system",
+            "endpoint": "/v1/convert"
+          }
+        ]
+      }
   labels: {}
   annotations: {}
 
@@ -115,7 +116,7 @@ metrics:
     labels: {}
     annotations: {}
   serviceMonitor:
-    create: false
+    create: true
     name:
     scrapeInterval: 30s
     labels: {}
@@ -165,7 +166,8 @@ envs:
           name: assetstore-minio-docs-upload
           key: APP_UPLOAD_ENDPOINT_WITH_PORT
     externalEndpoint: 
-      value: {{ if .Values.global.minioExternalEndpoint }}{{ .Values.global.minioExternalEndpoint }}{{ else }}'https://minio.{{ .Values.global.ingress.domainName }}'{{ end }}
+      value: 'dupa'
+      # value: '{{ if .Values.global.minioExternalEndpoint }}{{ .Values.global.minioExternalEndpoint }}{{ else }}https://minio{{ end }}'
     accessKey:
       valueFrom:
         secretKeyRef:

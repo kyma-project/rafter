@@ -27,6 +27,8 @@ $ helm install --name rafter-release incubator/rafter
 
 The command deploys Rafter on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
 
+> **Tip**: List all releases using `helm list`
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `rafter-release` deployment:
@@ -37,7 +39,18 @@ $ helm delete rafter-release
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
-## Configuration
+CRDs created by this chart are not removed by default and should be manually cleaned up:
+
+``` bash
+kubectl delete crd clusterassetgroups.rafter.kyma-project.io
+kubectl delete crd assetgroups.rafter.kyma-project.io
+kubectl delete crd clusterbuckets.rafter.kyma-project.io
+kubectl delete crd buckets.rafter.kyma-project.io
+kubectl delete crd clusterassets.rafter.kyma-project.io
+kubectl delete crd assets.rafter.kyma-project.io
+```
+
+## Parameters
 
 The following table lists the configurable parameters of the Rafter chart and their default values.
 

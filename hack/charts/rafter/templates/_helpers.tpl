@@ -118,3 +118,28 @@ Create the name of the service monitor
     {{ default "default" .Values.metrics.serviceMonitor.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Renders a value that contains template.
+Usage:
+{{ include "rafter.tplValue" ( dict "value" .Values.path.to.the.Value "context" $ ) }}
+*/}}
+{{- define "rafter.tplValue" -}}
+    {{- if typeIs "string" .value }}
+        {{- tpl .value .context }}
+    {{- else }}
+        {{- tpl (.value | toYaml) .context }}
+    {{- end }}
+{{- end -}}
+
+{{/*
+Renders a proper env in container
+Usage:
+{{ include "rafter.createEnv" ( dict "name" "APP_FOO_BAR" "value" .Values.path.to.the.Value "context" $ ) }}
+*/}}
+{{- define "rafter.createEnv" -}}
+{{- if and .name .value }}
+{{- printf "- name: %s" .name -}}
+{{- include "rafter.tplValue" ( dict "value" .value "context" .context ) | nindent 2 }}
+{{- end }}
+{{- end -}}

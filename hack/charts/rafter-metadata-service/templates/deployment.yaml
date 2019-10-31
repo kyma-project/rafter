@@ -8,16 +8,16 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "rafterMetadataService.chart" . }}
   {{- if .Values.deployment.labels }}
-    {{ toYaml .Values.deployment.labels | nindent 4 }}
+    {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.deployment.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.deployment.annotations }}
   annotations:
-    {{ toYaml .Values.deployment.annotations | nindent 4 }}
+    {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.deployment.annotations "context" . ) | nindent 4 }}
   {{- end }}
 spec:
   replicas: {{ .Values.deployment.replicas }}
   {{- if .Values.deployment.extraProperties }}
-  {{ toYaml .Values.deployment.extraProperties | nindent 2 }}
+  {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.deployment.extraProperties "context" . ) | nindent 2 }}
   {{- end }}
   template:
     metadata:
@@ -27,31 +27,29 @@ spec:
         app.kubernetes.io/managed-by: {{ .Release.Service }}
         helm.sh/chart: {{ include "rafterMetadataService.chart" . }}
       {{- if .Values.pod.labels }}
-        {{ toYaml .Values.pod.labels | nindent 8 }}
+        {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.pod.labels "context" . ) | nindent 8 }}
       {{- end }}
       {{- if .Values.pod.annotations }}
       annotations:
-        {{ toYaml .Values.pod.annotations | nindent 8 }}
+        {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.pod.annotations "context" . ) | nindent 8 }}
       {{- end }}
     spec:
       {{- if .Values.pod.extraProperties }}
-      {{ toYaml .Values.pod.extraProperties | nindent 6 }}
+      {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.pod.extraProperties "context" . ) | nindent 6 }}
       {{- end }}
       containers:
         - name: {{ include "rafterMetadataService.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.pod.extraContainerProperties }}
-          {{ toYaml .Values.pod.extraContainerProperties | nindent 10 }}
+          {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.pod.extraContainerProperties "context" . ) | nindent 10 }}
           {{- end }}
           env:
             - name: APP_PORT
               value: {{ .Values.service.port.internal }}
             - name: APP_HOST
               value: {{ .Values.service.host | quote }}
-            - name: APP_PROCESS_TIMEOUT
-              {{ toYaml .Values.envs.timeout | nindent 14 }}
-            - name: APP_MAX_WORKERS
-              {{ toYaml .Values.envs.workers | nindent 14 }}
+            {{ include "rafterMetadataService.createEnv" ( dict "name" "APP_PROCESS_TIMEOUT" "value" .Values.envs.timeout "context" . ) | nindent 12 }}
+            {{ include "rafterMetadataService.createEnv" ( dict "name" "APP_MAX_WORKERS" "value" .Values.envs.workers "context" . ) | nindent 12 }}
             - name: APP_VERBOSE
               value: {{ .Values.service.verbose }}

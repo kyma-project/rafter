@@ -10,11 +10,11 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "rafter.chart" . }}
   {{- if .Values.rbac.namespaced.role.labels }}
-    {{ toYaml .Values.rbac.namespaced.role.labels | nindent 4 }}
+    {{ include "rafter.tplValue" ( dict "value" .Values.rbac.namespaced.role.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.rbac.namespaced.role.annotations }}
   annotations:
-    {{ toYaml .Values.rbac.namespaced.role.annotations | nindent 4 }}
+    {{ include "rafter.tplValue" ( dict "value" .Values.rbac.namespaced.role.annotations "context" . ) | nindent 4 }}
   {{- end }}
 rules:
 - apiGroups:

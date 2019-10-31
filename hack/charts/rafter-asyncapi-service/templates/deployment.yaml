@@ -8,16 +8,16 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "rafterAsyncAPIService.chart" . }}
   {{- if .Values.deployment.labels }}
-    {{ toYaml .Values.deployment.labels | nindent 4 }}
+    {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.deployment.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.deployment.annotations }}
   annotations:
-    {{ toYaml .Values.deployment.annotations | nindent 4 }}
+    {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.deployment.annotations "context" . ) | nindent 4 }}
   {{- end }}
 spec:
   replicas: {{ .Values.deployment.replicas }}
   {{- if .Values.deployment.extraProperties }}
-  {{ toYaml .Values.deployment.extraProperties | nindent 2 }}
+  {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.deployment.extraProperties "context" . ) | nindent 2 }}
   {{- end }}
   template:
     metadata:
@@ -27,27 +27,27 @@ spec:
         app.kubernetes.io/managed-by: {{ .Release.Service }}
         helm.sh/chart: {{ include "rafterAsyncAPIService.chart" . }}
       {{- if .Values.pod.labels }}
-        {{ toYaml .Values.pod.labels | nindent 8 }}
+        {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.pod.labels "context" . ) | nindent 8 }}
       {{- end }}
       {{- if .Values.pod.annotations }}
       annotations:
-        {{ toYaml .Values.pod.annotations | nindent 8 }}
+        {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.pod.annotations "context" . ) | nindent 8 }}
       {{- end }}
     spec:
       {{- if .Values.pod.extraProperties }}
-      {{ toYaml .Values.pod.extraProperties | nindent 6 }}
+      {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.pod.extraProperties "context" . ) | nindent 6 }}
       {{- end }}
       containers:
         - name: {{ include "rafterAsyncAPIService.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.pod.extraContainerProperties }}
-          {{ toYaml .Values.pod.extraContainerProperties | nindent 10 }}
+          {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.pod.extraContainerProperties "context" . ) | nindent 10 }}
           {{- end }}
           env:
             - name: APP_SERVICE_PORT
-              value: "{{ .Values.service.port.internal }}"
+              value: {{ .Values.service.port.internal | quote }}
             - name: APP_SERVICE_HOST
-              value: "{{ .Values.service.host | quote }}"
+              value: {{ .Values.service.host | quote }}
             - name: APP_VERBOSE
-              value: "{{ .Values.service.verbose }}"
+              value: {{ .Values.service.verbose | quote }}

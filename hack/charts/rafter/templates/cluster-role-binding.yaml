@@ -9,11 +9,11 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "rafter.chart" . }}
   {{- if .Values.rbac.clusterScope.roleBinding.labels }}
-    {{ toYaml .Values.rbac.clusterScope.roleBinding.labels | nindent 4 }}
+    {{ include "rafter.tplValue" ( dict "value" .Values.rbac.clusterScope.roleBinding.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.rbac.clusterScope.roleBinding.annotations }}
   annotations:
-    {{ toYaml .Values.rbac.clusterScope.roleBinding.annotations | nindent 4 }}
+    {{ include "rafter.tplValue" ( dict "value" .Values.rbac.clusterScope.roleBinding.annotations "context" . ) | nindent 4 }}
   {{- end }}
 subjects:
   - kind: ServiceAccount

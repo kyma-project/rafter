@@ -52,3 +52,16 @@ Create the name of the service monitor
     {{ default "default" .Values.serviceMonitor.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Renders a value that contains template.
+Usage:
+{{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.path.to.the.Value "context" $ ) }}
+*/}}
+{{- define "rafterAsyncAPIService.tplValue" -}}
+    {{- if typeIs "string" .value }}
+        {{- tpl .value .context }}
+    {{- else }}
+        {{- tpl (.value | toYaml) .context }}
+    {{- end }}
+{{- end -}}

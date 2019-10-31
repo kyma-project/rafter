@@ -52,3 +52,28 @@ Create the name of the service monitor
     {{ default "default" .Values.serviceMonitor.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Renders a value that contains template.
+Usage:
+{{ include "rafterMetadataService.tplValue" ( dict "value" .Values.path.to.the.Value "context" $ ) }}
+*/}}
+{{- define "rafterMetadataService.tplValue" -}}
+    {{- if typeIs "string" .value }}
+        {{- tpl .value .context }}
+    {{- else }}
+        {{- tpl (.value | toYaml) .context }}
+    {{- end }}
+{{- end -}}
+
+{{/*
+Renders a proper env in container
+Usage:
+{{ include "rafterMetadataService.createEnv" ( dict "name" "APP_FOO_BAR" "value" .Values.path.to.the.Value "context" $ ) }}
+*/}}
+{{- define "rafterMetadataService.createEnv" -}}
+{{- if and .name .value }}
+{{- printf "- name: %s" .name -}}
+{{- include "rafterMetadataService.tplValue" ( dict "value" .value "context" .context ) | nindent 2 }}
+{{- end }}
+{{- end -}}
