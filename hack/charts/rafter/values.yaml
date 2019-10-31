@@ -116,7 +116,7 @@ metrics:
     labels: {}
     annotations: {}
   serviceMonitor:
-    create: true
+    create: false
     name:
     scrapeInterval: 30s
     labels: {}
