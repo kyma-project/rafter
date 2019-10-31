@@ -27,6 +27,8 @@ $ helm install --name rafter-release incubator/rafter-upload-service
 
 The command deploys Rafter Upload service on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
 
+> **Tip**: List all releases using `helm list`.
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `rafter-release` deployment:
@@ -115,4 +117,36 @@ Alternatively, a YAML file that specifies the values for the above parameters ca
 $ helm install --name rafter-release -f values.yaml incubator/rafter-upload-service
 ```
 
-> **Tip**: You can use the default [values.yaml](./values.yaml)
+> **Tip**: You can use the default [values.yaml](./values.yaml).
+
+### Templating values.yaml
+
+The Rafter Upload service chart has possibility to templating `values.yaml`. This means that you can use, for example, `.Chart.*`, `.Values.*` or other defined by Helm variables. For example:
+
+``` yaml
+pod:
+  annotations:
+    sidecar.istio.io/inject: "false"
+    recreate: "{{ .Release.Time.Seconds }}"
+``` 
+
+### Change values for `envs.*` parameters
+
+All `envs.*` parameters have possibility to define their values as object, so parameters can be provided as inline `value` or `valueFrom`. For example:
+
+``` yaml
+envs:
+  upload:
+    timeout:
+      value: 30m
+    port:
+      valueFrom:
+        configMapKeyRef:
+          name: assetstore-minio-docs-upload
+          key: APP_UPLOAD_PORT
+    accessKey:
+      valueFrom:
+        secretKeyRef:
+          name: assetstore-minio
+          key: accesskey
+```

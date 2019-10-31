@@ -14,8 +14,8 @@ This project contains the chart for the Rafter Controller Manager.
 
 ## Prerequisites
 
-- Kubernetes 1.12+
-- Helm 2.11+ or Helm 3.0-beta3+
+- Kubernetes 1.15+
+- Helm 2.15+ or Helm 3.0-beta3+
 
 ## Installing the Chart
 
@@ -25,9 +25,9 @@ To install the chart with the release name `rafter-release`:
 $ helm install --name rafter-release incubator/rafter
 ```
 
-The command deploys Rafter on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
+The command deploys Rafter on the Kubernetes cluster in the default configuration. The [parameters](#[arameters) section lists the parameters that can be configured during installation.
 
-> **Tip**: List all releases using `helm list`
+> **Tip**: List all releases using `helm list`.
 
 ## Uninstalling the Chart
 
@@ -159,4 +159,37 @@ Alternatively, a YAML file that specifies the values for the above parameters ca
 $ helm install --name rafter-release -f values.yaml incubator/rafter
 ```
 
-> **Tip**: You can use the default [values.yaml](./values.yaml)
+> **Tip**: You can use the default [values.yaml](./values.yaml).
+
+### Templating values.yaml
+
+The Rafter chart has possibility to templating `values.yaml`. This means that you can use, for example, `.Chart.*`, `.Values.*` or other defined by Helm variables. For example:
+
+``` yaml
+pod:
+  annotations:
+    sidecar.istio.io/inject: "false"
+    recreate: "{{ .Release.Time.Seconds }}"
+``` 
+
+### Change values for `envs.*` parameters
+
+All `envs.*` parameters have possibility to define their values as object, so parameters can be provided as inline `value` or `valueFrom`. For example:
+
+``` yaml
+envs:
+  clusterAssetGroup:
+    relistInterval: 
+      value: 5m
+  store:
+    endpoint: 
+      valueFrom:
+        configMapKeyRef:
+          name: assetstore-minio-docs-upload
+          key: APP_UPLOAD_ENDPOINT_WITH_PORT
+    accessKey:
+      valueFrom:
+        secretKeyRef:
+          name: assetstore-minio
+          key: accesskey
+```

@@ -1,11 +1,11 @@
-# Rafter Metadata service
+# Rafter Frontmatter service
 
-This helm chart installs Rafter Metadata service version v1.0.0 https://github.com/kyma-project/rafter/tree/v1.0.0
+This helm chart installs Rafter Frontmatter service version v1.0.0 https://github.com/kyma-project/rafter/tree/v1.0.0
 
 ## TL;DR;
 
 ``` bash
-$ helm install incubator/rafter-metadata-service
+$ helm install incubator/rafter-frontmatter-service
 ```
 
 ## Overview
@@ -22,10 +22,12 @@ This project contains the chart for the Rafter Metadata service.
 To install the chart with the release name `rafter-release`:
 
 ``` bash
-$ helm install --name rafter-release incubator/rafter-metadata-service
+$ helm install --name rafter-release incubator/rafter-frontmatter-service
 ```
 
-The command deploys Rafter Metadata service on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
+The command deploys Rafter Frontmatter service on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
+
+> **Tip**: List all releases using `helm list`.
 
 ## Uninstalling the Chart
 
@@ -39,15 +41,15 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-The following table lists the configurable parameters of the Rafter Metadata service chart and their default values.
+The following table lists the configurable parameters of the Rafter Frontmatter service chart and their default values.
 
 | Parameter | Description | Default |
 | --- | ---| ---|
-| `image.repository` | Rafter Metadata service image repository. | `eu.gcr.io/kyma-project/rafter`  |
-| `image.tag` | Rafter Metadata service image tag. | `{TAG_NAME}` |
-| `image.pullPolicy` | Rafter Metadata service image pull policy. | `IfNotPresent` |
-| `nameOverride` | String to partially override `rafterMetadataService.name` template with a string (will prepend the release name). | `nil` |
-| `fullnameOverride` | String to fully override `rafterMetadataService.fullname` template with a string. | `nil` |
+| `image.repository` | Rafter Frontmatter service image repository. | `eu.gcr.io/kyma-project/rafter`  |
+| `image.tag` | Rafter Frontmatter service image tag. | `{TAG_NAME}` |
+| `image.pullPolicy` | Rafter Frontmatter service image pull policy. | `IfNotPresent` |
+| `nameOverride` | String to partially override `rafterFrontmatterService.name` template with a string (will prepend the release name). | `nil` |
+| `fullnameOverride` | String to fully override `rafterFrontmatterService.fullname` template with a string. | `nil` |
 | `deployment.labels` | Custom labels for the `Deployment`. | `{}` |
 | `deployment.annotations` | Custom annotations for the `Deployment`. | `{}` |
 | `deployment.replicas` | Number of nodes. | `1` |
@@ -56,7 +58,7 @@ The following table lists the configurable parameters of the Rafter Metadata ser
 | `pod.annotations` | Custom annotations for the `Pod`. | `{}` |
 | `pod.extraProperties` | Extra properties injected in the `Pod`. | `{}` |
 | `pod.extraContainerProperties` | Extra properties injected in the container. | `{}` |
-| `service.name` | `Service` name. If not set a name is generated using the `rafterMetadataService.fullname` template. | `nil` |
+| `service.name` | `Service` name. If not set a name is generated using the `rafterFrontmatterService.fullname` template. | `nil` |
 | `service.type` | `Service` type. | `ClusterIP` |
 | `service.verbose` | Whether a logs from `Service` should be visible. | `true` |
 | `service.host` | `Service` host. | `0.0.0.0` |
@@ -67,7 +69,7 @@ The following table lists the configurable parameters of the Rafter Metadata ser
 | `service.annotations` | Custom annotations for the `Service`. | `{}` |
 | `service.labels` | Custom labels for the `Service`. | `{}` |
 | `serviceMonitor.create` | Whether a new `ServiceMonitor` resource that the Prometheus operator will use should be created. | `false` |
-| `serviceMonitor.name` | `ServiceMonitor` resource to be used for the Prometheus operator. If not set and `serviceMonitor.create` is `true` a name is generated using the `rafterMetadataService.fullname` template. If not set and `serviceMonitor.create` is `false` a name is `default`. | `nil` |
+| `serviceMonitor.name` | `ServiceMonitor` resource to be used for the Prometheus operator. If not set and `serviceMonitor.create` is `true` a name is generated using the `rafterFrontmatterService.fullname` template. If not set and `serviceMonitor.create` is `false` a name is `default`. | `nil` |
 | `serviceMonitor.scrapeInterval` | Scrape interval for the custom `ServiceMonitor` resource. | `30s` |
 | `serviceMonitor.labels` | Custom labels for the custom `ServiceMonitor` resource. | `{}` |
 | `serviceMonitor.annotations` | Custom annotations for the custom `ServiceMonitor` resource. | `{}` |
@@ -79,7 +81,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ``` bash
 $ helm install --name rafter-release \
   --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
-    incubator/rafter-metadata-service
+    incubator/rafter-frontmatter-service
 ```
 
 The above command install release with custom `ServiceMonitor` resource with `rafter-service-monitor` name.
@@ -87,7 +89,33 @@ The above command install release with custom `ServiceMonitor` resource with `ra
 Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example:
 
 ``` bash
-$ helm install --name rafter-release -f values.yaml incubator/rafter-metadata-service
+$ helm install --name rafter-release -f values.yaml incubator/rafter-frontmatter-service
 ```
 
-> **Tip**: You can use the default [values.yaml](./values.yaml)
+> **Tip**: You can use the default [values.yaml](./values.yaml).
+
+### Templating values.yaml
+
+The Rafter Frontmatter service chart has possibility to templating `values.yaml`. This means that you can use, for example, `.Chart.*`, `.Values.*` or other defined by Helm variables. For example:
+
+``` yaml
+pod:
+  annotations:
+    sidecar.istio.io/inject: "false"
+    recreate: "{{ .Release.Time.Seconds }}"
+``` 
+
+### Change values for `envs.*` parameters
+
+All `envs.*` parameters have possibility to define their values as object, so parameters can be provided as inline `value` or `valueFrom`. For example:
+
+``` yaml
+envs:
+  timeout:
+    value: 1m
+  workers:
+    valueFrom:
+      configMapKeyRef:
+        name: rafter-frontmatter-service-config
+        key: RAFTER_FRONTMATTER_SERVICE_WORKERS
+```

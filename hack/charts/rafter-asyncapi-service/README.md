@@ -27,6 +27,8 @@ $ helm install --name rafter-release incubator/rafter-asyncapi-service
 
 The command deploys Rafter AsyncAPI service on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
 
+> **Tip**: List all releases using `helm list`.
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `rafter-release` deployment:
@@ -88,4 +90,15 @@ Alternatively, a YAML file that specifies the values for the above parameters ca
 $ helm install --name rafter-release -f values.yaml incubator/rafter-asyncapi-service
 ```
 
-> **Tip**: You can use the default [values.yaml](./values.yaml)
+> **Tip**: You can use the default [values.yaml](./values.yaml).
+
+### Templating values.yaml
+
+The Rafter AsyncAPI service chart has possibility to templating `values.yaml`. This means that you can use, for example, `.Chart.*`, `.Values.*` or other defined by Helm variables. For example:
+
+``` yaml
+pod:
+  annotations:
+    sidecar.istio.io/inject: "false"
+    recreate: "{{ .Release.Time.Seconds }}"
+``` 

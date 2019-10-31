@@ -1,5 +1,12 @@
+# Default values for rafter-frontmatter-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride:
+fullnameOverride:
+
 image:
-  repository: eu.gcr.io/kyma-project/rafter-metadata-service
+  repository: eu.gcr.io/kyma-project/rafter-frontmatter-service
   tag: v1.0.0
   pullPolicy: IfNotPresent
 
