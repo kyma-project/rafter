@@ -48,10 +48,10 @@ spec:
           {{- end }}
           env:
             - name: APP_PORT
-              value: {{ .Values.service.port.internal }}
+              value: {{ .Values.service.port.internal | quote }}
             - name: APP_HOST
               value: {{ .Values.service.host | quote }}
             {{ include "rafterFrontmatterService.createEnv" ( dict "name" "APP_PROCESS_TIMEOUT" "value" .Values.envs.timeout "context" . ) | nindent 12 }}
             {{ include "rafterFrontmatterService.createEnv" ( dict "name" "APP_MAX_WORKERS" "value" .Values.envs.workers "context" . ) | nindent 12 }}
             - name: APP_VERBOSE
-              value: {{ .Values.service.verbose }}
+              value: {{ .Values.service.verbose | quote }}
