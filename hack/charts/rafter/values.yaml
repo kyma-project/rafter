@@ -6,9 +6,9 @@ nameOverride:
 fullnameOverride:
 
 image:
-  repository: eu.gcr.io/kyma-project/rafter
-  tag: v1.0.0
-  pullPolicy: IfNotPresent
+  repository: rafter-controller-manager
+  tag: latest
+  pullPolicy: Never
 
 installCRDs: true
 
@@ -30,12 +30,12 @@ pod:
     requests:
       cpu: 10m
       memory: 32Mi
-  volumes: {}
-    # - name: tmp-empty-dir
-    #   emptyDir: {}
-  volumeMounts: {}
-    # - mountPath: /tmp
-    #   name: tmp-empty-dir
+  volumes:
+    - name: tmp-empty-dir
+      emptyDir: {}
+  volumeMounts:
+    - mountPath: /tmp
+      name: tmp-empty-dir
   extraProperties:
     terminationGracePeriodSeconds: 10
     # hostAliases:
@@ -77,35 +77,35 @@ rbac:
 webhooksConfigMap:
   create: true
   name:
-  hooks:
-    markdown: |-
-      {
-        "metadataExtractors":[
-          {
-            "name": "rafter-frontmatter-service",
-            "namespace": "kyma-system",
-            "endpoint": "/v1/extract",
-            "filter": "\\.md$"
-          }
-        ]
-      }
-    asyncapi: |-
-      {
-        "validations":[
-          {
-            "name": "rafter-asyncapi-service",
-            "namespace": "kyma-system",
-            "endpoint": "/v1/validate"
-          }
-        ],
-        "mutations":[
-          {
-            "name": "rafter-asyncapi-service",
-            "namespace": "kyma-system",
-            "endpoint": "/v1/convert"
-          }
-        ]
-      }
+  hooks: {}
+    # markdown: |-
+    #   {
+    #     "metadataExtractors":[
+    #       {
+    #         "name": "rafter-frontmatter-service",
+    #         "namespace": "kyma-system",
+    #         "endpoint": "/v1/extract",
+    #         "filter": "\\.md$"
+    #       }
+    #     ]
+    #   }
+    # asyncapi: |-
+    #   {
+    #     "validations":[
+    #       {
+    #         "name": "rafter-asyncapi-service",
+    #         "namespace": "kyma-system",
+    #         "endpoint": "/v1/validate"
+    #       }
+    #     ],
+    #     "mutations":[
+    #       {
+    #         "name": "rafter-asyncapi-service",
+    #         "namespace": "kyma-system",
+    #         "endpoint": "/v1/convert"
+    #       }
+    #     ]
+    #   }
   labels: {}
   annotations: {}
 
@@ -167,35 +167,37 @@ envs:
       value: "1"
   store:
     endpoint: 
-      valueFrom:
-        configMapKeyRef:
-          name: assetstore-minio-docs-upload
-          key: APP_UPLOAD_ENDPOINT_WITH_PORT
+      value: '{{ include "rafter.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000'
+      # valueFrom:
+      #   configMapKeyRef:
+      #     name: '{{ include "rafter.fullname" . }}-minio'
+      #     key: APP_UPLOAD_ENDPOINT_WITH_PORT
     externalEndpoint: 
       value: dupa
       # value: '{{ if .Values.global.minioExternalEndpoint }}{{ .Values.global.minioExternalEndpoint }}{{ else }}https://minio{{ end }}'
     accessKey:
       valueFrom:
         secretKeyRef:
-          name: assetstore-minio
+          name: '{{ include "rafter.fullname" . }}-minio'
           key: accesskey
     secretKey:
       valueFrom:
         secretKeyRef:
-          name: assetstore-minio
+          name: '{{ include "rafter.fullname" . }}-minio'
           key: secretkey
     useSSL: 
-      valueFrom:
-        configMapKeyRef:
-          name: assetstore-minio-docs-upload
-          key: APP_UPLOAD_SECURE
+      value: "false"
+      # valueFrom:
+      #   configMapKeyRef:
+      #     name: '{{ include "rafter.fullname" . }}-minio'
+      #     key: APP_UPLOAD_SECURE
     uploadWorkers: 
       value: "10"
   loader:
     verifySSL: 
-      value: true
+      value: "true"
     tempDir: 
-      value: /tmp
+      value: "/tmp"
   webhooks:
     validation:
       timeout: 

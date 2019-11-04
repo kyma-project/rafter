@@ -50,6 +50,6 @@ serviceMonitor:
 
 envs:
   timeout:
-    value: 1m
+    value: "1m"
   workers:
-    value: 10
+    value: "10"
