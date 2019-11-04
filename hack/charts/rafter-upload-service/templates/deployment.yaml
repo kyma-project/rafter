@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/name: {{ include "rafterUploadService.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: rafter
     helm.sh/chart: {{ include "rafterUploadService.chart" . }}
   {{- if .Values.deployment.labels }}
     {{ include "rafter.rafterUploadService" ( dict "value" .Values.deployment.labels "context" . ) | nindent 4 }}
@@ -25,6 +26,7 @@ spec:
         app.kubernetes.io/name: {{ include "rafterUploadService.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/part-of: rafter
         helm.sh/chart: {{ include "rafterUploadService.chart" . }}
       {{- if .Values.pod.labels }}
         {{ include "rafter.rafterUploadService" ( dict "value" .Values.pod.labels "context" . ) | nindent 8 }}

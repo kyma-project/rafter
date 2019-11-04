@@ -1,0 +1,33 @@
+---
+# Source: rafter/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: release-name-rafter
+  namespace: default
+  labels:
+    app.kubernetes.io/name: rafter
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Tiller
+    helm.sh/chart: rafter-1.0.0
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - configmaps/status
+  verbs:
+  - get
+  - update
+  - patch

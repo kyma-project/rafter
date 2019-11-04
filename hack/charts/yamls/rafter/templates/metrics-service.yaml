@@ -1,0 +1,22 @@
+---
+# Source: rafter/templates/metrics-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-rafter
+  labels:
+    app.kubernetes.io/name: rafter
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Tiller
+    helm.sh/chart: rafter-1.0.0
+spec:
+  type: ClusterIP
+  ports:
+    - name: metrics
+      port: 8080
+      protocol: TCP
+      targetPort: metrics
+  selector:
+    app.kubernetes.io/name: rafter
+    app.kubernetes.io/instance: release-name

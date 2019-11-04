@@ -4,13 +4,13 @@ appVersion: 1.0.0
 name: rafter-asyncapi-service
 description: A Helm chart for Rafter AsyncAPI service
 home: https://github.com/kyma-project/rafter
-icon: https://cdn-images-1.medium.com/max/1600/1*-9mb3AKnKdcL_QD3CMnthQ.png
 sources:
   - https://github.com/kyma-project/rafter
 keywords:
-  - metrics
-  - elasticsearch
-  - monitoring
+  - storage
+  - assets
+  - buckets
+  - minio
 maintainers:
   - name: derberg
     email: ""

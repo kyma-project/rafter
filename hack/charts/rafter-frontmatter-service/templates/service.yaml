@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/name: {{ include "rafterMetadataService.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: rafter
     helm.sh/chart: {{ include "rafterMetadataService.chart" . }}
   {{- if .Values.service.labels }}
     {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.metrics.service.labels "context" . ) | nindent 4 }}

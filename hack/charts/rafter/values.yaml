@@ -23,27 +23,26 @@ pod:
   annotations: {}
     # sidecar.istio.io/inject: "false"
     # recreate: "{{ .Release.Time.Seconds }}"
-  resources: {}
-    # limits:
-    #   cpu: 150m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 10m
-    #   memory: 32Mi
-  volumes: []
+  resources:
+    limits:
+      cpu: 150m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+  volumes: {}
     # - name: tmp-empty-dir
     #   emptyDir: {}
-  volumeMounts: []
+  volumeMounts: {}
     # - mountPath: /tmp
     #   name: tmp-empty-dir
-  extraProperties: {}
-    # terminationGracePeriodSeconds: 10
+  extraProperties:
+    terminationGracePeriodSeconds: 10
     # hostAliases:
     #   - ip: {{ .Values.global.minikubeIP }}
     #     hostnames:
     #       - "minio.{{ .Values.global.ingress.domainName }}"
   extraContainerProperties: {}
-  extraEnvs: {}
 
 serviceAccount:
   create: true
@@ -83,7 +82,7 @@ webhooksConfigMap:
       {
         "metadataExtractors":[
           {
-            "name": "assetstore-asset-metadata-service",
+            "name": "rafter-frontmatter-service",
             "namespace": "kyma-system",
             "endpoint": "/v1/extract",
             "filter": "\\.md$"
@@ -94,14 +93,14 @@ webhooksConfigMap:
       {
         "validations":[
           {
-            "name": "cms-cms-asyncapi-service",
+            "name": "rafter-asyncapi-service",
             "namespace": "kyma-system",
             "endpoint": "/v1/validate"
           }
         ],
         "mutations":[
           {
-            "name": "cms-cms-asyncapi-service",
+            "name": "rafter-asyncapi-service",
             "namespace": "kyma-system",
             "endpoint": "/v1/convert"
           }
@@ -111,7 +110,7 @@ webhooksConfigMap:
   annotations: {}
 
 metrics:
-  enabled: false
+  enabled: true
   service:
     name:
     type: ClusterIP
@@ -146,26 +145,26 @@ envs:
     relistInterval: 
       value: 30s
     maxConcurrentReconciles: 
-      value: 1
+      value: "1"
     region: 
       value: us-east-1
   bucket:
     relistInterval: 
       value: 30s
     maxConcurrentReconciles: 
-      value: 1
+      value: "1"
     region: 
       value: us-east-1
   clusterAsset:
     relistInterval: 
       value: 30s
     maxConcurrentReconciles: 
-      value: 1
+      value: "1"
   asset:
     relistInterval: 
       value: 30s
     maxConcurrentReconciles: 
-      value: 1
+      value: "1"
   store:
     endpoint: 
       valueFrom:
@@ -173,7 +172,7 @@ envs:
           name: assetstore-minio-docs-upload
           key: APP_UPLOAD_ENDPOINT_WITH_PORT
     externalEndpoint: 
-      value: 'dupa'
+      value: dupa
       # value: '{{ if .Values.global.minioExternalEndpoint }}{{ .Values.global.minioExternalEndpoint }}{{ else }}https://minio{{ end }}'
     accessKey:
       valueFrom:
@@ -191,23 +190,23 @@ envs:
           name: assetstore-minio-docs-upload
           key: APP_UPLOAD_SECURE
     uploadWorkers: 
-      value: 10
+      value: "10"
   loader:
     verifySSL: 
       value: true
     tempDir: 
-      value: "/tmp"
+      value: /tmp
   webhooks:
     validation:
       timeout: 
         value: 1m
       workers: 
-        value: 10
+        value: "10"
     mutation:
       timeout: 
         value: 1m
       workers: 
-        value: 10
+        value: "10"
     metadata:
       timeout: 
         value: 1m
