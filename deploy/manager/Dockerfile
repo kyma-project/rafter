@@ -25,11 +25,9 @@ COPY . ${BASE_APP_DIR}/
 RUN go build -a -o main cmd/manager/main.go \
     && mkdir /app \
     && mv ./main /app/main \
-    && mv ${BASE_APP_DIR}/licenses /app/licenses
+    && if [ -f ${BASE_APP_DIR}/licenses ]; then mv ${BASE_APP_DIR}/licenses /app/licenses; fi
 
-# Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:latest
+FROM scratch
 
 LABEL source = git@github.com:kyma-project/kyma.git
 

@@ -27,12 +27,12 @@ COPY . ${BASE_APP_DIR}/
 RUN go build -a -o main cmd/extension/asyncapi/main.go \
     && mkdir /app \
     && mv ./main /app/main \
-    && mv ${BASE_APP_DIR}/licenses /app/licenses
+    && if [ -f ${BASE_APP_DIR}/licenses ]; then mv ${BASE_APP_DIR}/licenses /app/licenses; fi
 
-FROM gcr.io/distroless/static:latest
+FROM scratch
 
 LABEL source = git@github.com:kyma-project/kyma.git
 
 COPY --from=builder /app /app
 
-CMD ["/app/main"]
+ENTRYPOINT ["/app/main"]

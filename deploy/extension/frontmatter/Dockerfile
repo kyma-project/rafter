@@ -27,28 +27,12 @@ COPY . ${BASE_APP_DIR}/
 RUN go build -a -o main cmd/extension/frontmatter/main.go \
     && mkdir /app \
     && mv ./main /app/main \
-    && mv ${BASE_APP_DIR}/licenses /app/licenses
+    && if [ -f ${BASE_APP_DIR}/licenses ]; then mv ${BASE_APP_DIR}/licenses /app/licenses; fi
 
-FROM alpine:3.8
+FROM scratch
+
 LABEL source = git@github.com:kyma-project/kyma.git
-WORKDIR /app
-
-#
-# Install certificates
-#
-
-RUN apk update \
-    && apk add ca-certificates \
-    && rm -rf /var/cache/apk/*
-
-#
-# Copy binary
-#
 
 COPY --from=builder /app /app
 
-#
-# Run app
-#
-
-CMD ["/app/main"]
+CMD ["/app/main","-logtostderr","=false"]
