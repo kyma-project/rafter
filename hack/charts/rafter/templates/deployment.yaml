@@ -64,7 +64,7 @@ spec:
           {{- $replicas := int (toString (.Values.deployment.replicas)) -}}
           {{- if or .Values.metrics.enabled (gt $replicas 1) }}
           command:
-            - /main
+            - /app/main
           args:
             {{ if gt $replicas 1 }}
             - --enable-leader-election
