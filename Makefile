@@ -57,7 +57,7 @@ push-frontmatter:
 
 build-asyncapi:
 	docker build -t $(ASYNCAPI_IMG_NAME) -f ${ROOT}/deploy/extension/asyncapi/Dockerfile ${ROOT}
-.PHONY: build-frontmatter
+.PHONY: build-asyncapi
 
 push-asyncapi:
 	docker tag $(ASYNCAPI_IMG_NAME) $(ASYNCAPI-CI-IMG-NAME)
