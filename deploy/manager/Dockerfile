@@ -33,8 +33,6 @@ FROM gcr.io/distroless/static:latest
 
 LABEL source = git@github.com:kyma-project/kyma.git
 
-WORKDIR /app
-
 COPY --from=builder /app /app
 
-ENTRYPOINT ["/main"]
+ENTRYPOINT ["/app/main"]
