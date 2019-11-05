@@ -60,8 +60,6 @@ The following table lists the configurable parameters of the Rafter Frontmatter 
 | `pod.extraContainerProperties` | Extra properties injected in the container. | `{}` |
 | `service.name` | `Service` name. If not set a name is generated using the `rafterFrontmatterService.fullname` template. | `nil` |
 | `service.type` | `Service` type. | `ClusterIP` |
-| `service.verbose` | Whether a logs from `Service` should be visible. | `true` |
-| `service.host` | `Service` host. | `0.0.0.0` |
 | `service.port.name` | Name of the port on the `Service`. | `http` |
 | `service.port.external` | Port where the `Service` is exposed. | `80` |
 | `service.port.internal` | Internal pod's port on the `Service`. | `3000` |
@@ -73,6 +71,8 @@ The following table lists the configurable parameters of the Rafter Frontmatter 
 | `serviceMonitor.scrapeInterval` | Scrape interval for the custom `ServiceMonitor` resource. | `30s` |
 | `serviceMonitor.labels` | Custom labels for the custom `ServiceMonitor` resource. | `{}` |
 | `serviceMonitor.annotations` | Custom annotations for the custom `ServiceMonitor` resource. | `{}` |
+| `envs.host` | App host. | `0.0.0.0` |
+| `envs.verbose` | Whether a logs from app should be visible. | `true` |
 | `envs.timeout` | The file process timeout. | `10m` |
 | `envs.workers` | The maximum number of concurrent metadata extraction workers. | `10` |
 

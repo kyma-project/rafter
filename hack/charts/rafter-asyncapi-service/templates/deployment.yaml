@@ -49,7 +49,5 @@ spec:
           env:
             - name: APP_SERVICE_PORT
               value: {{ .Values.service.port.internal | quote }}
-            - name: APP_SERVICE_HOST
-              value: {{ .Values.service.host | quote }}
-            - name: APP_VERBOSE
-              value: {{ .Values.service.verbose | quote }}
+            {{ include "rafterAsyncAPIService.createEnv" ( dict "name" "APP_SERVICE_HOST" "value" .Values.envs.host "context" . ) | nindent 12 }}
+            {{ include "rafterAsyncAPIService.createEnv" ( dict "name" "APP_VERBOSE" "value" .Values.envs.verbose "context" . ) | nindent 12 }}

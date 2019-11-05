@@ -9,11 +9,11 @@ metadata:
     app.kubernetes.io/part-of: rafter
     helm.sh/chart: {{ include "rafterUploadService.chart" . }}
   {{- if .Values.service.labels }}
-    {{ include "rafter.rafterUploadService" ( dict "value" .Values.service.labels "context" . ) | nindent 4 }}
+    {{ include "rafterUploadService.tplValue" ( dict "value" .Values.service.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.service.annotations }}
   annotations:
-    {{ include "rafter.rafterUploadService" ( dict "value" .Values.service.annotations "context" . ) | nindent 4 }}
+    {{ include "rafterUploadService.tplValue" ( dict "value" .Values.service.annotations "context" . ) | nindent 4 }}
   {{- end }}
 spec:
   type: {{ .Values.service.type }}

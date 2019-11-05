@@ -9,16 +9,16 @@ metadata:
     app.kubernetes.io/part-of: rafter
     helm.sh/chart: {{ include "rafterUploadService.chart" . }}
   {{- if .Values.deployment.labels }}
-    {{ include "rafter.rafterUploadService" ( dict "value" .Values.deployment.labels "context" . ) | nindent 4 }}
+    {{ include "rafterUploadService.tplValue" ( dict "value" .Values.deployment.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.deployment.annotations }}
   annotations:
-    {{ include "rafter.rafterUploadService" ( dict "value" .Values.deployment.annotations "context" . ) | nindent 4 }}
+    {{ include "rafterUploadService.tplValue" ( dict "value" .Values.deployment.annotations "context" . ) | nindent 4 }}
   {{- end }}
 spec:
   replicas: {{ .Values.deployment.replicas }}
   {{- if .Values.deployment.extraProperties }}
-  {{ include "rafter.rafterUploadService" ( dict "value" .Values.deployment.extraProperties "context" . ) | nindent 2 }}
+  {{ include "rafterUploadService.tplValue" ( dict "value" .Values.deployment.extraProperties "context" . ) | nindent 2 }}
   {{- end }}
   template:
     metadata:
@@ -29,46 +29,44 @@ spec:
         app.kubernetes.io/part-of: rafter
         helm.sh/chart: {{ include "rafterUploadService.chart" . }}
       {{- if .Values.pod.labels }}
-        {{ include "rafter.rafterUploadService" ( dict "value" .Values.pod.labels "context" . ) | nindent 8 }}
+        {{ include "rafterUploadService.tplValue" ( dict "value" .Values.pod.labels "context" . ) | nindent 8 }}
       {{- end }}
       {{- if .Values.pod.annotations }}
       annotations:
-        {{ include "rafter.rafterUploadService" ( dict "value" .Values.pod.annotations "context" . ) | nindent 8 }}
+        {{ include "rafterUploadService.tplValue" ( dict "value" .Values.pod.annotations "context" . ) | nindent 8 }}
       {{- end }}
     spec:
       serviceAccountName: {{ include "rafterUploadService.serviceAccountName" . }}
       {{- if .Values.pod.extraProperties }}
-      {{ include "rafter.rafterUploadService" ( dict "value" .Values.pod.extraProperties "context" . ) | nindent 6 }}
+      {{ include "rafterUploadService.tplValue" ( dict "value" .Values.pod.extraProperties "context" . ) | nindent 6 }}
       {{- end }}
       containers:
         - name: {{ include "rafterUploadService.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.pod.extraContainerProperties }}
-          {{ include "rafter.rafterUploadService" ( dict "value" .Values.pod.extraContainerProperties "context" . ) | nindent 10 }}
+          {{ include "rafterUploadService.tplValue" ( dict "value" .Values.pod.extraContainerProperties "context" . ) | nindent 10 }}
           {{- end }}
           env:
             - name: APP_PORT
               value: {{ .Values.service.port.internal | quote }}
-            - name: APP_HOST
-              value: {{ .Values.service.host | quote }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_KUBECONFIG_PATH" "value" .Values.envs.kubeconfigPath "context" . ) | nindent 12 }}
-            - name: APP_VERBOSE
-              value: {{ .Values.service.verbose | quote }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_HOST" "value" .Values.envs.host "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_VERBOSE" "value" .Values.envs.verbose "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_KUBECONFIG_PATH" "value" .Values.envs.kubeconfigPath "context" . ) | nindent 12 }}
             # Upload
-            {{ include "rafter.createEnv" ( dict "name" "APP_UPLOAD_TIMEOUT" "value" .Values.envs.timeout "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_MAX_UPLOAD_WORKERS" "value" .Values.envs.workers "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_UPLOAD_ENDPOINT" "value" .Values.envs.upload.endpoint "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_UPLOAD_EXTERNAL_ENDPOINT" "value" .Values.envs.upload.externalEndpoint "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_UPLOAD_PORT" "value" .Values.envs.upload.port "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_UPLOAD_ACCESS_KEY" "value" .Values.envs.upload.accessKey "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_UPLOAD_SECRET_KEY" "value" .Values.envs.upload.secretKey "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_UPLOAD_SECURE" "value" .Values.envs.upload.secure "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_UPLOAD_TIMEOUT" "value" .Values.envs.timeout "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_MAX_UPLOAD_WORKERS" "value" .Values.envs.workers "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_UPLOAD_ENDPOINT" "value" .Values.envs.upload.endpoint "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_UPLOAD_EXTERNAL_ENDPOINT" "value" .Values.envs.upload.externalEndpoint "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_UPLOAD_PORT" "value" .Values.envs.upload.port "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_UPLOAD_ACCESS_KEY" "value" .Values.envs.upload.accessKey "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_UPLOAD_SECRET_KEY" "value" .Values.envs.upload.secretKey "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_UPLOAD_SECURE" "value" .Values.envs.upload.secure "context" . ) | nindent 12 }}
             # Bucket
-            {{ include "rafter.createEnv" ( dict "name" "APP_BUCKET_PRIVATE_PREFIX" "value" .Values.envs.bucket.privatePrefix "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_BUCKET_PUBLIC_PREFIX" "value" .Values.envs.bucket.publicPrefix "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_BUCKET_REGION" "value" .Values.envs.bucket.region "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_BUCKET_PRIVATE_PREFIX" "value" .Values.envs.bucket.privatePrefix "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_BUCKET_PUBLIC_PREFIX" "value" .Values.envs.bucket.publicPrefix "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_BUCKET_REGION" "value" .Values.envs.bucket.region "context" . ) | nindent 12 }}
             # Config map
-            {{ include "rafter.createEnv" ( dict "name" "APP_CONFIG_ENABLED" "value" .Values.envs.configMap.enabled "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_CONFIG_MAP_NAME" "value" .Values.envs.configMap.name "context" . ) | nindent 12 }}
-            {{ include "rafter.createEnv" ( dict "name" "APP_CONFIG_MAP_NAMESPACE" "value" .Values.envs.configMap.namespace "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_CONFIG_ENABLED" "value" .Values.envs.configMap.enabled "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_CONFIG_MAP_NAME" "value" .Values.envs.configMap.name "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_CONFIG_MAP_NAMESPACE" "value" .Values.envs.configMap.namespace "context" . ) | nindent 12 }}

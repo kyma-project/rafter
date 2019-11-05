@@ -31,8 +31,6 @@ pod:
 service:
   name:
   type: ClusterIP
-  verbose: true
-  host: "0.0.0.0"
   port:
     name: http
     internal: 3000
@@ -69,6 +67,8 @@ serviceMonitor:
   annotations: {}
 
 envs:
+  host: "0.0.0.0"
+  verbose: "true"
   kubeconfigPath:
   upload:
     timeout:

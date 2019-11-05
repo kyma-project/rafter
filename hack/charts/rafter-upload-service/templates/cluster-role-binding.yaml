@@ -10,11 +10,11 @@ metadata:
     app.kubernetes.io/part-of: rafter
     helm.sh/chart: {{ include "rafterUploadService.chart" . }}
   {{- if .Values.rbac.clusterScope.roleBinding.labels }}
-    {{ include "rafter.rafterUploadService" ( dict "value" .Values.rbac.clusterScope.roleBinding.labels "context" . ) | nindent 4 }}
+    {{ include "rafterUploadService.tplValue" ( dict "value" .Values.rbac.clusterScope.roleBinding.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.rbac.clusterScope.roleBinding.annotations }}
   annotations:
-    {{ include "rafter.rafterUploadService" ( dict "value" .Values.rbac.clusterScope.roleBinding.annotations "context" . ) | nindent 4 }}
+    {{ include "rafterUploadService.tplValue" ( dict "value" .Values.rbac.clusterScope.roleBinding.annotations "context" . ) | nindent 4 }}
   {{- end }}
 subjects:
   - kind: ServiceAccount

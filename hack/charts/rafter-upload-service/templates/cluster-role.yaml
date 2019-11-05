@@ -10,17 +10,17 @@ metadata:
     app.kubernetes.io/part-of: rafter
     helm.sh/chart: {{ include "rafterUploadService.chart" . }}
   {{- if .Values.rbac.clusterScope.role.labels }}
-    {{ include "rafter.rafterUploadService" ( dict "value" .Values.rbac.clusterScope.role.labels "context" . ) | nindent 4 }}
+    {{ include "rafterUploadService.tplValue" ( dict "value" .Values.rbac.clusterScope.role.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.rbac.clusterScope.role.annotations }}
   annotations:
-    {{ include "rafter.rafterUploadService" ( dict "value" .Values.rbac.clusterScope.role.annotations "context" . ) | nindent 4 }}
+    {{ include "rafterUploadService.tplValue" ( dict "value" .Values.rbac.clusterScope.role.annotations "context" . ) | nindent 4 }}
   {{- end }}
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
   verbs: ["get", "create"]
 {{- if .Values.rbac.clusterScope.role.extraRules }}
-{{ include "rafter.rafterUploadService" ( dict "value" .Values.rbac.clusterScope.role.extraRules "context" . ) | nindent 0 }}
+{{ include "rafterUploadService.tplValue" ( dict "value" .Values.rbac.clusterScope.role.extraRules "context" . ) | nindent 0 }}
 {{- end }}
 {{- end }}
