@@ -36,5 +36,6 @@ FROM scratch
 LABEL source = git@github.com:kyma-project/kyma.git
 
 COPY --from=builder /app /app
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 CMD ["/app/main","-logtostderr","=false"]
