@@ -1,11 +1,12 @@
-ROOT := .
-COVERAGE_OUTPUT_PATH := cover.out
+ROOT :=  $(shell pwd)
+COVERAGE_OUTPUT_PATH := ${ROOT}/cover.out
+LICENSES_PATH := ${ROOT}/licenses
 
 # Image URL to use all building/pushing image targets
-UPLOADER_IMG_NAME := rafter-upload-service
-MANAGER_IMG_NAME := rafter-controller-manager
-FRONTMATTER_IMG_NAME := rafter-frontmatter-service
-ASYNCAPI_IMG_NAME := rafter-asyncapi-service
+UPLOADER_IMG_NAME ?= rafter-upload-service
+MANAGER_IMG_NAME ?= rafter-controller-manager
+FRONTMATTER_IMG_NAME ?= rafter-frontmatter-service
+ASYNCAPI_IMG_NAME ?= rafter-asyncapi-service
 
 IMG-CI-NAME-PREFIX := $(DOCKER_PUSH_REPOSITORY)$(DOCKER_PUSH_DIRECTORY)
 
@@ -25,67 +26,55 @@ GOBIN=$(shell go env GOBIN)
 endif
 
 all: docker-build
-.PHONY: all
 
 build-uploader:
 	docker build -t $(UPLOADER_IMG_NAME) -f ${ROOT}/deploy/uploader/Dockerfile ${ROOT}
-.PHONY: build-uploader
 
 push-uploader:
 	docker tag $(UPLOADER_IMG_NAME) $(UPLOADER-CI-IMG-NAME)
 	docker push $(UPLOADER-CI-IMG-NAME)
-.PHONY: push-uploader
 
 build-manager:
 	docker build -t $(MANAGER_IMG_NAME) -f ${ROOT}/deploy/manager/Dockerfile ${ROOT}
-.PHONY: build-manager
 
 push-manager:
 	docker tag $(MANAGER_IMG_NAME) $(MANAGER-CI-IMG-NAME)
 	docker push $(MANAGER-CI-IMG-NAME)
-.PHONY: push-manager
 
 build-frontmatter:
 	docker build -t $(FRONTMATTER_IMG_NAME) -f ${ROOT}/deploy/extension/frontmatter/Dockerfile ${ROOT}
-.PHONY: build-frontmatter
 
 push-frontmatter:
 	docker tag $(FRONTMATTER_IMG_NAME) $(FRONTMATTER-CI-IMG-NAME)
 	docker push $(FRONTMATTER-CI-IMG-NAME)
-.PHONY: push-frontmatter
 
 build-asyncapi:
 	docker build -t $(ASYNCAPI_IMG_NAME) -f ${ROOT}/deploy/extension/asyncapi/Dockerfile ${ROOT}
-.PHONY: build-frontmatter
 
 push-asyncapi:
 	docker tag $(ASYNCAPI_IMG_NAME) $(ASYNCAPI-CI-IMG-NAME)
 	docker push $(ASYNCAPI-CI-IMG-NAME)
-.PHONY: push-asyncapi
 
 clean:
 	rm -f ${COVERAGE_OUTPUT_PATH}
-.PHONY: clean
+	rm -rf ${LICENSES_PATH}
 
 pull-licenses:
 ifdef LICENSE_PULLER_PATH
 	bash $(LICENSE_PULLER_PATH)
 else
-	mkdir -p licenses
+	mkdir -p ${LICENSES_PATH}
 endif
-.PHONY: pull-licenses
 
 fmt:
 	find ${ROOT} -type f -name "*.go" \
 	| egrep -v '_*/automock|_*/testdata|_*export_test.go' \
 	| xargs -L1 go fmt
-.PHONY: fmt
 
 vet:
 	@go list ${ROOT}/... \
 	| grep -v "automock" \
 	| xargs -L1 go vet
-.PHONY: vet
 
 # Run tests
 test: clean manifests vet fmt
@@ -93,7 +82,6 @@ test: clean manifests vet fmt
 	@go tool cover -func=${COVERAGE_OUTPUT_PATH} \
 		| grep total \
 		| awk '{print "Total test coverage: " $$3}'
-.PHONY: test
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests: controller-gen
@@ -102,7 +90,6 @@ manifests: controller-gen
 		output:crd:artifacts:config=${ROOT}/config/crd/bases \
 		output:rbac:artifacts:config=${ROOT}/config/rbac \
 		output:webhook:artifacts:config=${ROOT}/config/webhook
-.PHONY: manifests
 
 docker-build: \
 	test \
@@ -111,7 +98,6 @@ docker-build: \
 	build-frontmatter \
 	build-asyncapi \
 	build-manager
-.PHONY: docker-build
 
 # Push the docker image
 docker-push: \
@@ -119,7 +105,6 @@ docker-push: \
 	push-frontmatter \
 	push-asyncapi \
 	push-manager
-.PHONY: docker-push
 
 # find or download controller-gen
 # download controller-gen if necessary
@@ -130,13 +115,31 @@ CONTROLLER_GEN=$(GOBIN)/controller-gen
 else
 CONTROLLER_GEN=$(shell which controller-gen)
 endif
-.PHONY: controller-gen
 
 ci-pr: docker-build docker-push
-.PHONY: ci-pr
 
 ci-master: docker-build docker-push
-.PHONY: ci-master
 
 ci-release: docker-build docker-push
-.PHONY: ci-release
+
+.PHONY: all \
+		build-uploader \
+		push-uploader \
+		build-manager \
+		push-manager \
+		build-frontmatter \
+		push-frontmatter \
+		build-asyncapi \
+		push-asyncapi \
+		clean \
+		pull-licenses \
+		vet \
+		fmt \
+		test \
+		manifests \
+		docker-build \
+		docker-push \
+		controller-gen \
+		ci-pr \
+		ci-master \
+		ci-release
