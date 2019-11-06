@@ -1,7 +1,6 @@
 # AsyncAPI Service
 
-This project contains the Helm chart for the AsyncAPI Service. 
-<!-- It installs the Helm chart for the service in version [1.0.0](https://github.com/kyma-project/rafter/tree/1.0.0). -->
+This project contains the Helm chart for the AsyncAPI Service.
 
 ## Prerequisites
 
@@ -53,17 +52,17 @@ The following table lists the configurable parameters of the AsyncAPI Service ch
 | `fullnameOverride` | String that fully overrides the `rafterAsyncAPIService.fullname` template | `nil` |
 | `deployment.labels` | Custom labels for the Deployment | `{}` |
 | `deployment.annotations` | Custom annotations for the Deployment | `{}` |
-| `deployment.replicas` | Number of service nodes | `1` |
+| `deployment.replicas` | Number of AsyncAPI Service nodes | `1` |
 | `deployment.extraProperties` | Additional properties injected in the Deployment | `{}` |
 | `pod.labels` | Custom labels for the Pod | `{}` |
 | `pod.annotations` | Custom annotations for the Pod | `{}` |
 | `pod.extraProperties` | Additional properties injected in the Pod | `{}` |
 | `pod.extraContainerProperties` | Additional properties injected in the container | `{}` |
-| `service.name` | Service name. If not set, it is generated using the `rafterAsyncAPIService.fullname` template | `nil` |
+| `service.name` | Service name. If not set, it is generated using the `rafterAsyncAPIService.fullname` template. | `nil` |
 | `service.type` | Service type | `ClusterIP` |
 | `service.port.name` |  Name of the Service port | `http` |
 | `service.port.external` | Port on which the Service is exposed in Kubernetes | `80` |
-| `service.port.internal` | Internal port of the Service in Pod | `3000` |
+| `service.port.internal` | Internal port of the Service in the Pod | `3000` |
 | `service.port.protocol` | Protocol of the Service port | `TCP` |
 | `service.labels` | Custom labels for the Service | `{}` |
 | `service.annotations` | Custom annotations for the Service | `{}` |
@@ -85,17 +84,15 @@ helm install --name rafter-release \
 
 That command installs the release with the `rafter-service-monitor` name for the ServiceMonitor custom resource.
 
-Alternatively, you can provide a YAML file while installing the chart to specify the values for the mentioned parameters. See this example:
+Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
 helm install --name rafter-release -f values.yaml incubator/rafter-asyncapi-service
 ```
 
-**TIP:** You can also use the default [values.yaml](./values.yaml).
-
 ### Template values.yaml
 
-You can template `values.yaml` for the AsyncAPI Service chart, using such Helm variables as `.Chart.*`, or `.Values.*`. See this example:
+You can template `values.yaml` for the AsyncAPI Service chart using such Helm variables as `.Chart.*`, or `.Values.*`. See this example:
 
 ``` yaml
 pod:
@@ -103,3 +100,18 @@ pod:
     sidecar.istio.io/inject: "false"
     recreate: "{{ .Release.Time.Seconds }}"
 ``` 
+
+### Change values for `envs.*` parameters
+
+All `envs.*` parameters have possibility to define their values as object, so parameters can be provided as inline `value` or `valueFrom` object. For example:
+
+``` yaml
+envs:
+  timeout:
+    value: 1m
+  workers:
+    valueFrom:
+      configMapKeyRef:
+        name: rafter-asyncapi-service-config
+        key: RAFTER_ASYNCAPI_SERVICE_WORKERS
+```
