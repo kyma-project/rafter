@@ -6,9 +6,9 @@ nameOverride:
 fullnameOverride:
 
 image:
-  repository: eu.gcr.io/kyma-project/rafter-frontmatter-service
-  tag: v1.0.0
-  pullPolicy: IfNotPresent
+  repository: rafter-frontmatter-service
+  tag: latest
+  pullPolicy: Never
 
 deployment:
   labels: {}
@@ -47,8 +47,10 @@ serviceMonitor:
   annotations: {}
 
 envs:
-  host: "0.0.0.0"
-  verbose: "true"
+  host:
+    value: "0.0.0.0"
+  verbose: 
+    value: "true"
   timeout:
     value: "1m"
   workers:

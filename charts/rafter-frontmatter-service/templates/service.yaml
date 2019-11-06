@@ -1,19 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "rafterMetadataService.serviceName" . }}
+  name: {{ include "rafterFrontmatterService.serviceName" . }}
   labels:
-    app.kubernetes.io/name: {{ include "rafterMetadataService.name" . }}
+    app.kubernetes.io/name: {{ include "rafterFrontmatterService.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/part-of: rafter
-    helm.sh/chart: {{ include "rafterMetadataService.chart" . }}
+    helm.sh/chart: {{ include "rafterFrontmatterService.chart" . }}
   {{- if .Values.service.labels }}
-    {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.metrics.service.labels "context" . ) | nindent 4 }}
+    {{ include "rafterFrontmatterService.tplValue" ( dict "value" .Values.metrics.service.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.service.annotations }}
   annotations:
-    {{ include "rafterMetadataService.tplValue" ( dict "value" .Values.metrics.service.annotations "context" . ) | nindent 4 }}
+    {{ include "rafterFrontmatterService.tplValue" ( dict "value" .Values.metrics.service.annotations "context" . ) | nindent 4 }}
   {{- end }}
 spec:
   type: {{ .Values.service.type }}
@@ -23,5 +22,5 @@ spec:
       protocol: {{ .Values.service.port.protocol }}
       targetPort: {{ .Values.service.port.internal }}
   selector:
-    app.kubernetes.io/name: {{ include "rafterMetadataService.name" . }}
+    app.kubernetes.io/name: {{ include "rafterFrontmatterService.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

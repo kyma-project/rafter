@@ -17,15 +17,15 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.deployment.replicas }}
-  {{- if .Values.deployment.extraProperties }}
-  {{ include "rafter.tplValue" ( dict "value" .Values.deployment.extraProperties "context" . ) | nindent 2 }}
-  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "rafter.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       helm.sh/chart: {{ include "rafter.chart" . }}
+  {{- if .Values.deployment.extraProperties }}
+  {{ include "rafter.tplValue" ( dict "value" .Values.deployment.extraProperties "context" . ) | nindent 2 }}
+  {{- end }}
   template:
     metadata:
       labels:

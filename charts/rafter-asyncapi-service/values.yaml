@@ -6,9 +6,9 @@ nameOverride:
 fullnameOverride:
 
 image:
-  repository: eu.gcr.io/kyma-project/rafter-asyncapi-service
-  tag: v1.0.0
-  pullPolicy: IfNotPresent
+  repository: rafter-asyncapi-service
+  tag: latest
+  pullPolicy: Never
 
 deployment:
   labels: {}
@@ -47,5 +47,7 @@ serviceMonitor:
   annotations: {}
 
 envs:
-  host: "0.0.0.0"
-  verbose: "true"
+  host:
+    value: "0.0.0.0"
+  verbose: 
+    value: "true"

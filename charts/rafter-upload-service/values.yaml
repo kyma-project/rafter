@@ -70,8 +70,10 @@ serviceMonitor:
   annotations: {}
 
 envs:
-  host: "0.0.0.0"
-  verbose: "true"
+  host:
+    value: "0.0.0.0"
+  verbose: 
+    value: "true"
   kubeconfigPath:
   upload:
     timeout:
@@ -79,7 +81,7 @@ envs:
     workers:
       value: "10"
     endpoint:
-      value: '{{ include "rafterUploadService.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000'
+      value: '{{ include "rafterUploadService.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local'
     externalEndpoint:
     port:
       value: "9000"
@@ -104,7 +106,7 @@ envs:
       value: "us-east-1"
   configMap:
     enabled:
-      value: true
+      value: "false"
     name:
       value: '{{ include "rafterUploadService.fullname" . }}'
     namespace:

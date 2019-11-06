@@ -6,7 +6,6 @@ metadata:
     app.kubernetes.io/name: {{ include "rafterAsyncAPIService.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/part-of: rafter
     helm.sh/chart: {{ include "rafterAsyncAPIService.chart" . }}
   {{- if .Values.deployment.labels }}
     {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.deployment.labels "context" . ) | nindent 4 }}
@@ -17,6 +16,12 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "rafterAsyncAPIService.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+      helm.sh/chart: {{ include "rafterAsyncAPIService.chart" . }}
   {{- if .Values.deployment.extraProperties }}
   {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.deployment.extraProperties "context" . ) | nindent 2 }}
   {{- end }}
@@ -26,7 +31,6 @@ spec:
         app.kubernetes.io/name: {{ include "rafterAsyncAPIService.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
-        app.kubernetes.io/part-of: rafter
         helm.sh/chart: {{ include "rafterAsyncAPIService.chart" . }}
       {{- if .Values.pod.labels }}
         {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.pod.labels "context" . ) | nindent 8 }}

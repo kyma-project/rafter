@@ -77,35 +77,35 @@ rbac:
 webhooksConfigMap:
   create: true
   name:
-  hooks: {}
-    # markdown: |-
-    #   {
-    #     "metadataExtractors":[
-    #       {
-    #         "name": "rafter-frontmatter-service",
-    #         "namespace": "kyma-system",
-    #         "endpoint": "/v1/extract",
-    #         "filter": "\\.md$"
-    #       }
-    #     ]
-    #   }
-    # asyncapi: |-
-    #   {
-    #     "validations":[
-    #       {
-    #         "name": "rafter-asyncapi-service",
-    #         "namespace": "kyma-system",
-    #         "endpoint": "/v1/validate"
-    #       }
-    #     ],
-    #     "mutations":[
-    #       {
-    #         "name": "rafter-asyncapi-service",
-    #         "namespace": "kyma-system",
-    #         "endpoint": "/v1/convert"
-    #       }
-    #     ]
-    #   }
+  hooks:
+    markdown: |-
+      {
+        "metadataExtractors":[
+          {
+            "name": "rafter-frontmatter-service",
+            "namespace": "default",
+            "endpoint": "/v1/extract",
+            "filter": "\\.md$"
+          }
+        ]
+      }
+    asyncapi: |-
+      {
+        "validations":[
+          {
+            "name": "rafter-asyncapi-service",
+            "namespace": "default",
+            "endpoint": "/v1/validate"
+          }
+        ],
+        "mutations":[
+          {
+            "name": "rafter-asyncapi-service",
+            "namespace": "default",
+            "endpoint": "/v1/convert"
+          }
+        ]
+      }
   labels: {}
   annotations: {}
 

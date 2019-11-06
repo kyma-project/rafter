@@ -6,7 +6,6 @@ metadata:
     app.kubernetes.io/name: {{ include "rafterAsyncAPIService.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/part-of: rafter
     helm.sh/chart: {{ include "rafterAsyncAPIService.chart" . }}
   {{- if .Values.service.labels }}
     {{ include "rafterAsyncAPIService.tplValue" ( dict "value" .Values.service.annotations "context" . ) | nindent 4 }}
