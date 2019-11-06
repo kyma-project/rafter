@@ -26,10 +26,10 @@ type CommonAsset struct {
 }
 
 const (
-	assetGroupLabel          = "cms.kyma-project.io/docs-topic"
-	accessLabel              = "cms.kyma-project.io/access"
-	assetShortNameAnnotation = "cms.kyma-project.io/asset-short-name"
-	typeLabel                = "cms.kyma-project.io/type"
+	assetGroupLabel          = "rafter.kyma-project.io/asset-group"
+	accessLabel              = "rafter.kyma-project.io/access"
+	assetShortNameAnnotation = "rafter.kyma-project.io/asset-short-name"
+	typeLabel                = "rafter.kyma-project.io/type"
 )
 
 var (
@@ -88,10 +88,14 @@ func (h *assetgroupHandler) Handle(ctx context.Context, instance ObjectMetaAcces
 		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupAssetsSpecValidationFailed, err.Error()), status), err
 	}
 
-	bucketName, err := h.ensureBucketExits(ctx, instance.GetNamespace())
-	if err != nil {
-		h.recordWarningEventf(instance, v1beta1.AssetGroupBucketError, err.Error())
-		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupBucketError, err.Error()), status), err
+	bucketName := spec.BucketRef
+	if bucketName == "" {
+		bucketName, err = h.ensureBucketExits(ctx, instance.GetNamespace())
+
+		if err != nil {
+			h.recordWarningEventf(instance, v1beta1.AssetGroupBucketError, err.Error())
+			return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupBucketError, err.Error()), status), err
+		}
 	}
 
 	commonAssets, err := h.assetSvc.List(ctx, instance.GetNamespace(), h.buildLabels(instance.GetName(), ""))
@@ -480,7 +484,7 @@ func (h *assetgroupHandler) generateBucketName(private bool) string {
 		access = "private"
 	}
 
-	return h.appendSuffix(fmt.Sprintf("cms-%s", access))
+	return h.appendSuffix(fmt.Sprintf("rafter-%s", access))
 }
 
 func (h *assetgroupHandler) appendSuffix(name string) string {

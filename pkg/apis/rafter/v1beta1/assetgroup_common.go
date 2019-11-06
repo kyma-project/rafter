@@ -8,6 +8,7 @@ import (
 type CommonAssetGroupSpec struct {
 	DisplayName string `json:"displayName,omitempty"`
 	Description string `json:"description,omitempty"`
+	BucketRef string `json:"bucketRef,omitempty"`
 	// +kubebuilder:validation:MinItems=1
 	Sources []Source `json:"sources"`
 }

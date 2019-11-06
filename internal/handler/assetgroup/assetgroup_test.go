@@ -93,7 +93,7 @@ func Test_findSource(t *testing.T) {
 	}
 }
 
-func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
+func TestAssetGroupHandler_Handle_AddOrUpdate(t *testing.T) {
 	sourceName := v1beta1.AssetGroupSourceName("t1")
 	assetType := v1beta1.AssetGroupSourceType("swag")
 
@@ -102,7 +102,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -111,8 +111,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{"test-bucket"}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(nil, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{"test-bucket"}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(nil, nil).Once()
 		assetSvc.On("Create", ctx, testData, mock.Anything).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
@@ -134,7 +134,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		ctx := context.TODO()
 		metadata := &runtime.RawExtension{Raw: []byte(`{"json":"true"}`)}
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, metadata)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -143,8 +143,38 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{"test-bucket"}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(nil, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{"test-bucket"}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(nil, nil).Once()
+		assetSvc.On("Create", ctx, testData, mock.Anything).Return(nil).Once()
+		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
+
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+
+		// When
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
+
+		// Then
+		g.Expect(err).ToNot(gomega.HaveOccurred())
+		g.Expect(status).ToNot(gomega.BeNil())
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
+	})
+
+	t.Run("CreateWithBucketRef", func(t* testing.T) {
+		// Given
+		g := gomega.NewGomegaWithT(t)
+		ctx := context.TODO()
+		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
+		testData := testData("halo", "bucketName", sources)
+
+		assetSvc := new(automock.AssetService)
+		defer assetSvc.AssertExpectations(t)
+		bucketSvc := new(automock.BucketService)
+		defer bucketSvc.AssertExpectations(t)
+		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
+		defer webhookConfSvc.AssertExpectations(t)
+
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(nil, nil).Once()
 		assetSvc.On("Create", ctx, testData, mock.Anything).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
@@ -165,7 +195,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -174,8 +204,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{"test-bucket"}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(nil, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{"test-bucket"}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(nil, nil).Once()
 		assetSvc.On("Create", ctx, testData, mock.Anything).Return(errors.New("test-data")).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
@@ -200,7 +230,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 			testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil),
 			testSource(sourceName, "markdown", "https://dummy.url", v1beta1.AssetGroupSingle, nil),
 		}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 		source, _ := getSourceByType(sources, sourceName)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAsset.Spec.Source.Filter = "xyz"
@@ -213,8 +243,46 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(existingAssets, nil).Once()
+		assetSvc.On("Update", ctx, mock.Anything).Return(nil).Once()
+		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
+
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+
+		// When
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
+
+		// Then
+		g.Expect(err).ToNot(gomega.HaveOccurred())
+		g.Expect(status).ToNot(gomega.BeNil())
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
+	})
+
+	t.Run("UpdateBucketRef", func(t *testing.T) {
+		// Given
+		g := gomega.NewGomegaWithT(t)
+		ctx := context.TODO()
+		bucketName := "test-bucket"
+		sources := []v1beta1.Source{
+			testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil),
+			testSource(sourceName, "markdown", "https://dummy.url", v1beta1.AssetGroupSingle, nil),
+		}
+		testData := testData("halo", "bucketName", sources)
+		source, _ := getSourceByType(sources, sourceName)
+		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
+		existingAsset.Spec.Source.Filter = "xyz"
+		existingAssets := []assetgroup.CommonAsset{existingAsset}
+
+		assetSvc := new(automock.AssetService)
+		defer assetSvc.AssertExpectations(t)
+		bucketSvc := new(automock.BucketService)
+		defer bucketSvc.AssertExpectations(t)
+		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
+		defer webhookConfSvc.AssertExpectations(t)
+
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(existingAssets, nil).Once()
 		assetSvc.On("Update", ctx, mock.Anything).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
@@ -238,7 +306,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 			testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil),
 			testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil),
 		}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -265,7 +333,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		ctx := context.TODO()
 		bucketName := "test-bucket"
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 		source, _ := getSourceByType(sources, sourceName)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAsset.Spec.Source.Filter = "xyz"
@@ -278,8 +346,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(existingAssets, nil).Once()
 		assetSvc.On("Update", ctx, mock.Anything).Return(errors.New("test-error")).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
@@ -301,7 +369,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		ctx := context.TODO()
 		bucketName := "test-bucket"
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
@@ -315,8 +383,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(existingAssets, nil).Once()
 		assetSvc.On("Delete", ctx, toRemove).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
@@ -338,7 +406,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		ctx := context.TODO()
 		bucketName := "test-bucket"
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
@@ -352,8 +420,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(existingAssets, nil).Once()
 		assetSvc.On("Delete", ctx, toRemove).Return(errors.New("test-error")).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
@@ -374,7 +442,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -383,9 +451,9 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return(nil, nil).Once()
-		bucketSvc.On("Create", ctx, mock.Anything, false, map[string]string{"cms.kyma-project.io/access": "public"}).Return(nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(nil, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return(nil, nil).Once()
+		bucketSvc.On("Create", ctx, mock.Anything, false, map[string]string{"rafter.kyma-project.io/access": "public"}).Return(nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(nil, nil).Once()
 		assetSvc.On("Create", ctx, testData, mock.Anything).Return(nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
@@ -406,7 +474,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -415,8 +483,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return(nil, nil).Once()
-		bucketSvc.On("Create", ctx, mock.Anything, false, map[string]string{"cms.kyma-project.io/access": "public"}).Return(errors.New("test-error")).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return(nil, nil).Once()
+		bucketSvc.On("Create", ctx, mock.Anything, false, map[string]string{"rafter.kyma-project.io/access": "public"}).Return(errors.New("test-error")).Once()
 
 		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
@@ -435,7 +503,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -444,7 +512,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return(nil, errors.New("test-error")).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return(nil, errors.New("test-error")).Once()
 
 		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
@@ -463,7 +531,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 
 		assetSvc := new(automock.AssetService)
 		defer assetSvc.AssertExpectations(t)
@@ -472,8 +540,8 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{"test-bucket"}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(nil, errors.New("test-error")).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{"test-bucket"}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(nil, errors.New("test-error")).Once()
 
 		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
 
@@ -488,7 +556,7 @@ func TestDocstopicHandler_Handle_AddOrUpdate(t *testing.T) {
 	})
 }
 
-func TestDocstopicHandler_Handle_Status(t *testing.T) {
+func TestAssetGroupHandler_Handle_Status(t *testing.T) {
 	sourceName := v1beta1.AssetGroupSourceName("t1")
 	assetType := v1beta1.AssetGroupSourceType("swag")
 
@@ -498,7 +566,7 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		ctx := context.TODO()
 		bucketName := "test-bucket"
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 		testData.Status.Phase = v1beta1.AssetGroupPending
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
@@ -512,8 +580,8 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(existingAssets, nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
 		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
@@ -532,7 +600,7 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		ctx := context.TODO()
 		bucketName := "test-bucket"
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 		testData.Status.Phase = v1beta1.AssetGroupPending
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
@@ -546,8 +614,8 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(existingAssets, nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
 		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
@@ -568,7 +636,7 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		ctx := context.TODO()
 		bucketName := "test-bucket"
 		sources := []v1beta1.Source{testSource(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil)}
-		testData := testData("halo", sources)
+		testData := testData("halo", "", sources)
 		testData.Status.Phase = v1beta1.AssetGroupReady
 		source, ok := getSourceByType(sources, sourceName)
 		g.Expect(ok, true)
@@ -582,8 +650,8 @@ func TestDocstopicHandler_Handle_Status(t *testing.T) {
 		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
 		defer webhookConfSvc.AssertExpectations(t)
 
-		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
-		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"cms.kyma-project.io/docs-topic": testData.Name}).Return(existingAssets, nil).Once()
+		bucketSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/access": "public"}).Return([]string{bucketName}, nil).Once()
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(existingAssets, nil).Once()
 		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
 
 		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
@@ -613,7 +681,7 @@ func testSource(sourceName v1beta1.AssetGroupSourceName, sourceType v1beta1.Asse
 	}
 }
 
-func testData(name string, sources []v1beta1.Source) *v1beta1.AssetGroup {
+func testData(name string, bucketRef string, sources []v1beta1.Source) *v1beta1.AssetGroup {
 	return &v1beta1.AssetGroup{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      name,
@@ -621,6 +689,7 @@ func testData(name string, sources []v1beta1.Source) *v1beta1.AssetGroup {
 		},
 		Spec: v1beta1.AssetGroupSpec{
 			CommonAssetGroupSpec: v1beta1.CommonAssetGroupSpec{
+				BucketRef:   bucketRef,
 				DisplayName: fmt.Sprintf("%s Display", name),
 				Description: fmt.Sprintf("%s Description", name),
 				Sources:     sources,
@@ -629,17 +698,17 @@ func testData(name string, sources []v1beta1.Source) *v1beta1.AssetGroup {
 	}
 }
 
-func commonAsset(name v1beta1.AssetGroupSourceName, assetType v1beta1.AssetGroupSourceType, docsName, bucketName string, source v1beta1.Source, phase v1beta1.AssetPhase) assetgroup.CommonAsset {
+func commonAsset(name v1beta1.AssetGroupSourceName, assetType v1beta1.AssetGroupSourceType, assetGroupName, bucketName string, source v1beta1.Source, phase v1beta1.AssetPhase) assetgroup.CommonAsset {
 	return assetgroup.CommonAsset{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      string(name),
 			Namespace: "test",
 			Labels: map[string]string{
-				"cms.kyma-project.io/docs-topic": docsName,
-				"cms.kyma-project.io/type":       string(assetType),
+				"rafter.kyma-project.io/asset-group": assetGroupName,
+				"rafter.kyma-project.io/type":       string(assetType),
 			},
 			Annotations: map[string]string{
-				"cms.kyma-project.io/asset-short-name": string(name),
+				"rafter.kyma-project.io/asset-short-name": string(name),
 			},
 		},
 		Spec: v1beta1.CommonAssetSpec{

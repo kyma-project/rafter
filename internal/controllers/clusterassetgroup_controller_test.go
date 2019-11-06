@@ -67,7 +67,7 @@ var _ = Describe("Asset", func() {
 			asset.Status.LastHeartbeatTime = v1.Now()
 			Expect(k8sClient.Status().Update(context.TODO(), &asset)).To(Succeed())
 
-			if asset.Annotations["cms.kyma-project.io/asset-short-name"] == "source-one" {
+			if asset.Annotations["rafter.kyma-project.io/asset-short-name"] == "source-one" {
 				Expect(asset.Spec.Parameters).ToNot(BeNil())
 				Expect(asset.Spec.Parameters).To(Equal(&fixParameters))
 			} else {
@@ -98,7 +98,7 @@ var _ = Describe("Asset", func() {
 		Expect(k8sClient.List(context.TODO(), assets)).To(Succeed())
 		Expect(assets.Items).To(HaveLen(len(assetgroup.Spec.Sources)))
 		for _, a := range assets.Items {
-			if a.Annotations["cms.kyma-project.io/asset-short-name"] != "source-two" {
+			if a.Annotations["rafter.kyma-project.io/asset-short-name"] != "source-two" {
 				continue
 			}
 			Expect(a.Spec.Source.Filter).To(Equal("zyx"))
