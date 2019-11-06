@@ -5,6 +5,9 @@
 nameOverride:
 fullnameOverride:
 
+minio:
+  enabled: false
+
 image:
   repository: eu.gcr.io/kyma-project/rafter-upload-service
   tag: v1.0.0
@@ -100,14 +103,11 @@ envs:
     publicPrefix:
       value: system-public
     region:
-      valueFrom:
-        configMapKeyRef:
-          name: assetstore-minio-docs-upload
-          key: APP_BUCKET_REGION
+      value: "us-east-1"
   configMap:
     enabled:
       value: true
     name:
-      value: asset-upload-service
+      value: '{{ include "rafter.fullname" . }}'
     namespace:
-      value: kyma-system
+      value: "{{ .Release.Namespace }}"

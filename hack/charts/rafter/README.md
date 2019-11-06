@@ -1,11 +1,11 @@
-# Rafter
+# Rafter Controller Manager
 
-This helm chart installs Rafter version v1.0.0 https://github.com/kyma-project/rafter/tree/v1.0.0
+This project contains the Helm chart for the Rafter Controller Manager.
 
 ## TL;DR;
 
 ``` bash
-$ helm install incubator/rafter
+$ helm install incubator/rafter-controller-manager
 ```
 
 ## Overview
@@ -22,10 +22,10 @@ This project contains the chart for the Rafter Controller Manager.
 To install the chart with the release name `rafter-release`:
 
 ``` bash
-$ helm install --name rafter-release incubator/rafter
+$ helm install --name rafter-release incubator/rafter-controller-manager
 ```
 
-The command deploys Rafter on the Kubernetes cluster in the default configuration. The [parameters](#[arameters) section lists the parameters that can be configured during installation.
+The command deploys Rafter Controller Manager on the Kubernetes cluster in the default configuration. The [parameters](#[arameters) section lists the parameters that can be configured during installation.
 
 > **Tip**: List all releases using `helm list`.
 
@@ -39,131 +39,111 @@ $ helm delete rafter-release
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
-CRDs created by this chart are not removed by default and should be manually cleaned up:
-
-``` bash
-kubectl delete crd clusterassetgroups.rafter.kyma-project.io
-kubectl delete crd assetgroups.rafter.kyma-project.io
-kubectl delete crd clusterbuckets.rafter.kyma-project.io
-kubectl delete crd buckets.rafter.kyma-project.io
-kubectl delete crd clusterassets.rafter.kyma-project.io
-kubectl delete crd assets.rafter.kyma-project.io
-```
-
 ## Parameters
 
-The following table lists the configurable parameters of the Rafter chart and their default values.
+The following table lists the configurable parameters of the Rafter Controller Manager chart and their default values.
 
 | Parameter | Description | Default |
 | --- | ---| ---|
-| `image.repository` | Rafter image repository. | `eu.gcr.io/kyma-project/rafter`  |
-| `image.tag` | Rafter image tag. | `{TAG_NAME}` |
-| `image.pullPolicy` | Rafter image pull policy. | `IfNotPresent` |
-| `nameOverride` | String to partially override `rafter.name` template with a string (will prepend the release name). | `nil` |
-| `fullnameOverride` | String to fully override `rafter.fullname` template with a string. | `nil` |
-| `installCRDs` | If true, create CRDs managed by the Rafter. | `true` |
-| `deployment.labels` | Custom labels for the `Deployment`. | `{}` |
-| `deployment.annotations` | Custom annotations for the `Deployment`. | `{}` |
-| `deployment.replicas` | Number of nodes. If value is great than 1, then controllers have enabled `leader-election`. | `1` |
-| `deployment.extraProperties` | Extra properties injected in the `Deployment`. | `{}` |
-| `pod.labels` | Custom labels for the `Pod`. | `{}` |
-| `pod.annotations` | Custom annotations for the `Pod`. | `{}` |
-| `pod.resources` | Pod's resource requests and limits. | `{}` |
-| `pod.volumes` | Volumes for the `Pod`. | `{}` |
-| `pod.volumeMounts` | Volume mounts for the container. | `{}` |
-| `pod.extraProperties` | Extra properties injected in the `Pod`. | `{}` |
-| `pod.extraContainerProperties` | Extra properties injected in the container. | `{}` |
-| `serviceAccount.create` | Whether a new `ServiceAccount` resource that the Rafter will use should be created. | `true` |
-| `serviceAccount.name` | `ServiceAccount` resource to be used for the Rafter. If not set and `serviceAccount.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `serviceAccount.create` is `false` a name is `default`. | `nil` |
-| `serviceAccount.labels` | Custom labels for the custom `ServiceAccount` resource. | `{}` |
-| `serviceAccount.annotations` | Custom annotations for the custom `ServiceAccount` resource. | `{}` |
-| `rbac.clusterScope.create` | Whether a new `ClusterRole` and `ClusterRoleBinding` resources that the Rafter will use should be created. | `true` |
-| `rbac.clusterScope.role.name` | `ClusterRole` resource to be used for the Rafter. If not set and `rbac.clusterScope.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `rbac.clusterScope.create` is `false` a name is `default`. | `nil` |
-| `rbac.clusterScope.role.labels` | Custom labels for the custom `ClusterRole` resource. | `{}` |
-| `rbac.clusterScope.role.annotations` | Custom annotations for the custom `ClusterRole` resource. | `{}` |
-| `rbac.clusterScope.role.extraRules` | Extra rules for the custom `ClusterRole` resource. | `[]` |
-| `rbac.clusterScope.roleBinding.name` | `ClusterRoleBinding` resource to be used for the Rafter. If not set and `rbac.clusterScope.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `rbac.clusterScope.create` is `false` a name is `default`. | `nil` |
-| `rbac.clusterScope.roleBinding.labels` | Custom labels for the custom `ClusterRoleBinding` resource. | `{}` |
-| `rbac.clusterScope.roleBinding.annotations` | Custom annotations for the custom `ClusterRoleBinding` resource. | `{}` |
-| `rbac.namespaced.create` | Whether a new `Role` and `RoleBinding` resources that the Rafter will use should be created. | `true` |
-| `rbac.namespaced.role.name` | `Role` resource to be used for the Rafter. If not set and `rbac.namespaced.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `rbac.namespaced.create` is `false` a name is `default`. | `nil` |
-| `rbac.namespaced.role.labels` | Custom labels for the custom `Role` resource. | `{}` |
-| `rbac.namespaced.role.annotations` | Custom annotations for the custom `Role` resource. | `{}` |
-| `rbac.namespaced.role.extraRules` | Extra rules for the custom `Role` resource. | `[]` |
-| `rbac.namespaced.roleBinding.name` | `RoleBinding` resource to be used for the Rafter. If not set and `rbac.namespaced.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `rbac.namespaced.create` is `false` a name is `default`. | `nil` |
-| `rbac.namespaced.roleBinding.labels` | Custom labels for the custom `RoleBinding` resource. | `{}` |
-| `rbac.namespaced.roleBinding.annotations` | Custom annotations for the custom `RoleBinding` resource. | `{}` |
-| `rbac.namespaced.roleBinding.name` | `RoleBinding` resource to be used for the Rafter. If not set and `rbac.namespaced.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `rbac.namespaced.create` is `false` a name is `default`. | `nil` |
-| `rbac.namespaced.roleBinding.labels` | Custom labels for the custom `RoleBinding` resource. | `{}` |
-| `rbac.namespaced.roleBinding.annotations` | Custom annotations for the custom `RoleBinding` resource. | `{}` |
-| `webhooksConfigMap.create` | Whether a new `ConfigMap` resource that the Rafter will use should be created. | `false` |
-| `webhooksConfigMap.name` | `ConfigMap` resource to be used for the Rafter. If not set and `webhooksConfigMap.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `webhooksConfigMap.create` is `false` a name is `default`. | `nil` |
-| `webhooksConfigMap.hooks` | Data passed to custom `ConfigMap` resource. | `{}` |
-| `webhooksConfigMap.labels` | Custom labels for the custom `ConfigMap` resource. | `{}` |
-| `webhooksConfigMap.annotations` | Custom annotations for the custom `ConfigMap` resource. | `{}` |
-| `metrics.enabled` | Set this to `true` to enable exporting the Prometheus monitoring metrics. | `true` |
-| `metrics.service.name` | `Service` to be used for the exposing metrics. If not set and `metrics.enabled` is `true` a name is generated using the `rafter.fullname` template. If not set and `metrics.enabled` is `false` a name is `default`. | `nil` |
-| `metrics.service.type` | `Service` type. | `ClusterIP` |
+| `image.repository` | Rafter Controller Manager image repository | `eu.gcr.io/kyma-project/rafter-controller-manager` |
+| `image.tag` | Rafter Controller Manager image tag | `{TAG_NAME}` |
+| `image.pullPolicy` | Pull policy for the Rafter Controller Manager image | `IfNotPresent` |
+| `nameOverride` | String that partially overrides the `rafter.name` template | `nil` |
+| `fullnameOverride` | String that fully overrides the `rafter.fullname` template | `nil` |
+| `deployment.labels` | Custom labels for the Deployment | `{}` |
+| `deployment.annotations` | Custom annotations for the Deployment | `{}` |
+| `deployment.replicas` | Number of Rafter Controller Manager nodes | `1` |
+| `deployment.extraProperties` | Additional properties injected in the Deployment | `{}` |
+| `pod.labels` | Custom labels for the Pod | `{}` |
+| `pod.annotations` | Custom annotations for the Pod | `{}` |
+| `pod.extraProperties` | Additional properties injected in the Pod | `{}` |
+| `pod.extraContainerProperties` | Additional properties injected in the container | `{}` |
+| `serviceAccount.create` | Parameter that defines whether to create a new ServiceAccount for the Rafter Controller Manager | `true` |
+| `serviceAccount.name` | ServiceAccount resource that the Rafter Controller Manager uses. If not set and the `serviceAccount.create` parameter is set to `true`, the name is generated using the `rafter.fullname` template. If not set and `serviceAccount.create` is set to `false`, the name is set to `default`. | `nil` |
+| `serviceAccount.labels` | Custom labels for the ServiceAccount | `{}` |
+| `serviceAccount.annotations` | Custom annotations for the ServiceAccount | `{}` |
+| `rbac.clusterScope.create` | Parameter that defines whether to create a new ClusterRole and ClusterRoleBinding for the Rafter Controller Manager | `true` |
+| `rbac.clusterScope.role.name` | ClusterRole resource that the Rafter Controller Manager uses. If not set and the `rbac.clusterScope.create` parameter is set to `true`, the name is generated using the `rafter.fullname` template. If not set and `rbac.clusterScope.create` is set to `false`, the name is set to `default`. | `nil` |
+| `rbac.clusterScope.role.labels` | Custom labels for the ClusterRole | `{}` |
+| `rbac.clusterScope.role.annotations` | Custom annotations for the ClusterRole | `{}` |
+| `rbac.clusterScope.role.extraRules` | Additional rules injected in the ClusterRole | `[]` |
+| `rbac.clusterScope.roleBinding.name` | ClusterRoleBinding resource that the Rafter Controller Manager uses. If not set and the `rbac.clusterScope.create` parameter is set to `true`, the name is generated using the `rafter.fullname` template. If not set and `rbac.clusterScope.create` is set to `false`, the name is set to `default`. | `nil` |
+| `rbac.clusterScope.roleBinding.labels` | Custom labels for the ClusterRoleBinding | `{}` |
+| `rbac.clusterScope.roleBinding.annotations` | Custom annotations for the ClusterRoleBinding | `{}` |
+| `rbac.namespaced.create` | Parameter that defines whether to create a new Role and RoleBinding for the Rafter Controller Manager | `true` |
+| `rbac.namespaced.role.name` | Role resource that the Rafter Controller Manager uses. If not set and the `rbac.namespaced.create` parameter is set to `true`, the name is generated using the `rafter.fullname` template. If not set and `rbac.namespaced.create` is set to `false`, the name is set to `default`.  | `nil` |
+| `rbac.namespaced.role.labels` | Custom annotations for the Role | `{}` |
+| `rbac.namespaced.role.annotations` | Custom annotations for the Role | `{}` |
+| `rbac.namespaced.role.extraRules` | Additional rules injected in the Role | `[]` |
+| `rbac.namespaced.roleBinding.name` | RoleBinding resource that the Rafter Controller Manager uses. If not set and the `rbac.namespaced.create` parameter is set to `true`, the name is generated using the `rafter.fullname` template. If not set and `rbac.namespaced.create` is set to `false`, the name is set to `default`. | `nil` |
+| `rbac.namespaced.roleBinding.labels` | Custom annotations for the RoleBinding | `{}` |
+| `rbac.namespaced.roleBinding.annotations` | Custom annotations for the RoleBinding | `{}` |
+| `webhooksConfigMap.create` | Parameter that defines whether to create a new ConfigMap with the Webhooks data for the Rafter Controller Manager | `false` |
+| `webhooksConfigMap.name` | ConfigMap resource that the Rafter Controller Manager uses. If not set and the `webhooksConfigMap.create` parameter is set to `true`, the name is generated using the `rafter.fullname` template. If not set and `webhooksConfigMap.create` is set to `false`, the name is set to `default`. | `nil` |
+| `webhooksConfigMap.hooks` | Data passed to ConfigMap | `{}` |
+| `webhooksConfigMap.labels` | Custom labels for the ConfigMap | `{}` |
+| `webhooksConfigMap.annotations` | Custom annotations for the ConfigMap | `{}` |
+| `metrics.enabled` | Parameter that defines whether to enable exporting the Prometheus monitoring metrics | `true` |
+| `metrics.service.name` | Name of Service to be used for the exposing metrics. If not set and `metrics.enabled` is `true` a name is generated using the `rafter.fullname` template. If not set and `metrics.enabled` is `false` a name is `default`. | `nil` |
+| `metrics.service.type` |  Service type | `ClusterIP` |
 | `metrics.service.port.name` | Name of the port on the metrics `Service`. | `metrics` |
-| `metrics.service.port.external` | Port where the metrics `Service` is exposed. | `8080` |
-| `metrics.service.port.internal` | Internal pod's port on the metrics `Service`. | `metrics` |
-| `metrics.service.port.protocol` | Protocol of the port on the metrics `Service`. | `TCP` |
-| `metrics.service.annotations` | Custom annotations for the metrics `Service`. | `{}` |
-| `metrics.service.labels` | Custom labels for the metrics `Service`. | `{}` |
-| `metrics.serviceMonitor.create` | Whether a new `ServiceMonitor` resource that the Prometheus operator will use should be created. | `false` |
-| `metrics.serviceMonitor.name` | `ServiceMonitor` resource to be used for the Prometheus operator. If not set and `metrics.serviceMonitor.create` is `true` a name is generated using the `rafter.fullname` template. If not set and `metrics.serviceMonitor.create` is `false` a name is `default`. | `nil` |
-| `metrics.serviceMonitor.scrapeInterval` | Scrape interval for the custom `ServiceMonitor` resource. | `30s` |
-| `metrics.serviceMonitor.labels` | Custom labels for the custom `ServiceMonitor` resource. | `{}` |
-| `metrics.serviceMonitor.annotations` | Custom annotations for the custom `ServiceMonitor` resource. | `{}` |
-| `metrics.pod.labels` | Custom labels for the Rafter `Pod`, when `metrics.enabled` is set to `true`. | `{}` |
-| `metrics.pod.annotations` | Custom annotations for the Rafter `Pod`, when `metrics.enabled` is set to `true` | `{}` |
-| `envs.clusterAssetGroup.relistInterval` | The period of time after which the controller refreshes the status of a `ClusterAssetGroup` CR. | `5m` |
-| `envs.assetGroup.relistInterval` | The period of time after which the controller refreshes the status of an `AssetGroup` CR. | `5m` |
-| `envs.clusterBucket.relistInterval` | The period of time after which the controller refreshes the status of a `ClusterBucket` CR. | `30s` |
-| `envs.clusterBucket.maxConcurrentReconciles` | The maximum number of `ClusterBucket` reconciles that can run in parallel. | `1` |
-| `envs.clusterBucket.region` | The location of the region in which the controller creates a `ClusterBucket` CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
-| `envs.bucket.relistInterval` | The period of time after which the controller refreshes the status of a `Bucket` CR. | `30s` |
-| `envs.bucket.maxConcurrentReconciles` | The maximum number of `Bucket` reconciles that can run in parallel. | `1` |
-| `envs.bucket.region` | The location of the region in which the controller creates a `Bucket` CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
-| `envs.clusterAsset.relistInterval` | The period of time after which the controller refreshes the status of a `ClusterAsset` CR. | `30s` |
-| `envs.clusterAsset.maxConcurrentReconciles` | The maximum number of `ClusterAsset` reconciles that can run in parallel. | `1` |
-| `envs.asset.relistInterval` | The period of time after which the controller refreshes the status of a `Asset` CR. | `30s` |
-| `envs.asset.maxConcurrentReconciles` | The maximum number of `Asset` reconciles that can run in parallel. | `1` |
-| `envs.store.endpoint` | The address of the content storage server. | `minio.kyma.local` |
-| `envs.store.externalEndpoint` | The external address of the content storage server. If not set, the system uses the `APP_UPLOAD_ENDPOINT` variable. | `https://minio.kyma.local` |
-| `envs.store.accessKey` | The access key required to sign in to the content storage server. | `nil` |
-| `envs.store.secretKey` | The secret key required to sign in to the content storage server. | `nil` |
-| `envs.store.useSSL` | The HTTPS connection with the content storage server. | `true` |
-| `envs.store.uploadWorkers` | The number of workers used in parallel to upload files to the storage server. | `true` |
-| `envs.loader.verifySSL` | The variable that verifies the SSL certificate before downloading source files. | `true` |
-| `envs.loader.tempDir` | The path to the directory used to store data temporarily. | `/tmp` |
-| `envs.webhooks.validation.timeout` | The period of time after which validation is canceled. | `1m` |
-| `envs.webhooks.validation.workers` | The number of workers used in parallel to validate files. | `10` |
-| `envs.webhooks.mutation.timeout` | The period of time after which mutation is canceled. | `1m` |
-| `envs.webhooks.mutation.workers` | The number of workers used in parallel to mutate files. | `10` |
-| `envs.webhooks.metadata.timeout` | The period of time after which metadata extraction is canceled. | `1m` |
+| `metrics.service.port.internal` | Internal port of the Service in the Pod | `metrics` |
+| `metrics.service.port.external` | Port on which the Service is exposed in Kubernetes | `8080` |
+| `metrics.service.port.protocol` | Protocol of the Service port | `TCP` |
+| `metrics.service.labels` | Custom labels for the Service | `{}` |
+| `metrics.service.annotations` | Custom annotations for the Service | `{}` |
+| `metrics.serviceMonitor.create` | Parameter that defines whether to create a new ServiceMonitor custom resource for the Prometheus Operator | `false` |
+| `metrics.serviceMonitor.name` | ServiceMonitor resource that the Prometheus Operator uses. If not set and the `serviceMonitor.create` parameter is set to `true`, the name is generated using the `rafter.fullname` template. If not set and `serviceMonitor.create` is set to `false`, the name is set to `default`. | `nil` |
+| `metrics.serviceMonitor.scrapeInterval` | Scrape interval for the ServiceMonitor custom resource | `30s` |
+| `metrics.serviceMonitor.labels` | Custom labels for the ServiceMonitor custom resource | `{}` |
+| `metrics.serviceMonitor.annotations` | Custom annotations for the ServiceMonitor custom resource | `{}` |
+| `metrics.pod.labels` | Custom labels for the Pod, when `metrics.enabled` is set to `true` | `{}` |
+| `metrics.pod.annotations` | Custom annotations for the Pod, when `metrics.enabled` is set to `true` | `{}` |
+| `envs.clusterAssetGroup.relistInterval` | The period of time after which the controller refreshes the status of a ClusterAssetGroup CR | `5m` |
+| `envs.assetGroup.relistInterval` | The period of time after which the controller refreshes the status of an AssetGroup CR | `5m` |
+| `envs.clusterBucket.relistInterval` | The period of time after which the controller refreshes the status of a ClusterBucket CR | `30s` |
+| `envs.clusterBucket.maxConcurrentReconciles` | The maximum number of ClusterBucket reconciles that can run in parallel | `1` |
+| `envs.clusterBucket.region` | The location of the region in which the controller creates a ClusterBucket CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
+| `envs.bucket.relistInterval` | The period of time after which the controller refreshes the status of a Bucket CR | `30s` |
+| `envs.bucket.maxConcurrentReconciles` | The maximum number of Bucket reconciles that can run in parallel | `1` |
+| `envs.bucket.region` | The location of the region in which the controller creates a Bucket CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
+| `envs.clusterAsset.relistInterval` | The period of time after which the controller refreshes the status of a ClusterAsset CR | `30s` |
+| `envs.clusterAsset.maxConcurrentReconciles` | The maximum number of ClusterAsset reconciles that can run in parallel | `1` |
+| `envs.asset.relistInterval` | The period of time after which the controller refreshes the status of a Asset CR | `30s` |
+| `envs.asset.maxConcurrentReconciles` | The maximum number of Asset reconciles that can run in parallel | `1` |
+| `envs.store.endpoint` | The address of the content storage server | `{{ include "rafter.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000` |
+| `envs.store.externalEndpoint` | The external address of the content storage server | `https://minio.kyma.local` |
+| `envs.store.accessKey` | The access key required to sign in to the content storage server | Value from `{{ include "rafter.fullname" . }}-minio` ConfigMap |
+| `envs.store.secretKey` | The secret key required to sign in to the content storage server | Value from `{{ include "rafter.fullname" . }}-minio` ConfigMap |
+| `envs.store.useSSL` | The HTTPS connection with the content storage server | `false` |
+| `envs.store.uploadWorkers` | The number of workers used in parallel to upload files to the storage server | `10` |
+| `envs.loader.verifySSL` | The variable that verifies the SSL certificate before downloading source files | `false` |
+| `envs.loader.tempDir` | The path to the directory used to store data temporarily | `/tmp` |
+| `envs.webhooks.validation.timeout` | The period of time after which validation is canceled | `1m` |
+| `envs.webhooks.validation.workers` | The number of workers used in parallel to validate files | `10` |
+| `envs.webhooks.mutation.timeout` | The period of time after which mutation is canceled | `1m` |
+| `envs.webhooks.mutation.workers` | The number of workers used in parallel to mutate files | `10` |
+| `envs.webhooks.metadata.timeout` | The period of time after which metadata extraction is canceled | `1m` |
 
-Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
-
-``` bash
-$ helm install --name rafter-release \
-  --set serviceAccount.create=true,serviceAccount.name="rafter-service-account" \
-    incubator/rafter
-```
-
-The above command install release with custom `ServiceAccount` resource with `rafter-service-account` name.
-
-Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example:
+Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
 ``` bash
-$ helm install --name rafter-release -f values.yaml incubator/rafter
+helm install --name rafter-release \
+  --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
+    incubator/rafter-controller-manager
 ```
 
-> **Tip**: You can use the default [values.yaml](./values.yaml).
+That command installs the release with the `rafter-service-monitor` name for the ServiceMonitor custom resource.
 
-### Templating values.yaml
+Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
-The Rafter chart has possibility to templating `values.yaml`. This means that you can use, for example, `.Chart.*`, `.Values.*` or other defined by Helm variables. For example:
+``` bash
+helm install --name rafter-release -f values.yaml incubator/rafter-controller-manager
+```
+
+### Template values.yaml
+
+You can template `values.yaml` for the Rafter Controller Manager chart using such Helm variables as `.Chart.*`, or `.Values.*`. See this example:
 
 ``` yaml
 pod:
@@ -172,24 +152,18 @@ pod:
     recreate: "{{ .Release.Time.Seconds }}"
 ``` 
 
-### Change values for `envs.*` parameters
+### Change values for envs.* parameters
 
-All `envs.*` parameters have possibility to define their values as object, so parameters can be provided as inline `value` or `valueFrom`. For example:
+You can define values of all **envs.*** parameters as objects by specifying parameters as the inline `value` or the `valueFrom` object. See this example:
 
 ``` yaml
 envs:
   clusterAssetGroup:
     relistInterval: 
       value: 5m
-  store:
-    endpoint: 
-      valueFrom:
-        configMapKeyRef:
-          name: assetstore-minio-docs-upload
-          key: APP_UPLOAD_ENDPOINT_WITH_PORT
-    accessKey:
-      valueFrom:
-        secretKeyRef:
-          name: assetstore-minio
-          key: accesskey
+  assetGroup:
+    valueFrom:
+      configMapKeyRef:
+        name: rafter-config
+        key: RAFTER_ASSET_GROUP_RELIST_INTERVALL
 ```

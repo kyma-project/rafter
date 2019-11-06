@@ -116,8 +116,8 @@ metrics:
     type: ClusterIP
     port:
       name: metrics
-      external: 8080
       internal: metrics
+      external: 8080
       protocol: TCP
     labels: {}
     annotations: {}
@@ -195,7 +195,7 @@ envs:
       value: "10"
   loader:
     verifySSL: 
-      value: "true"
+      value: "false"
     tempDir: 
       value: "/tmp"
   webhooks:

@@ -32,8 +32,8 @@ service:
   type: ClusterIP
   port:
     name: http
-    external: 80
     internal: 3000
+    external: 80
     protocol: TCP
   labels: {}
   annotations: {}

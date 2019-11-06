@@ -19,10 +19,10 @@ Use this command to install the chart:
 helm install incubator/rafter-asyncapi-service
 ```
 
-To install the chart with the release name `rafter-release`, use:
+To install the chart with the release name `rafter-asyncapi-release`, use:
 
 ``` bash
-helm install --name rafter-release incubator/rafter-asyncapi-service
+helm install --name rafter-asyncapi-release incubator/rafter-asyncapi-service
 ```
 
 The command deploys the AsyncAPI Service on the Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the parameters that you can configure during installation.
@@ -34,7 +34,7 @@ The command deploys the AsyncAPI Service on the Kubernetes cluster with the defa
 To uninstall the `rafter-release` deployment:
 
 ``` bash
-helm delete rafter-release
+helm delete rafter-asyncapi-release
 ```
 
 That command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -45,7 +45,7 @@ The following table lists the configurable parameters of the AsyncAPI Service ch
 
 | Parameter | Description | Default |
 | --- | ---| ---|
-| `image.repository` | AsyncAPI Service image repository | `eu.gcr.io/kyma-project/rafter` |
+| `image.repository` | AsyncAPI Service image repository | `eu.gcr.io/kyma-project/rafter-asyncapi-service` |
 | `image.tag` | AsyncAPI Service image tag | `{TAG_NAME}` |
 | `image.pullPolicy` | Pull policy for the AsyncAPI Service image | `IfNotPresent` |
 | `nameOverride` | String that partially overrides the `rafterAsyncAPIService.name` template | `nil` |
@@ -61,8 +61,8 @@ The following table lists the configurable parameters of the AsyncAPI Service ch
 | `service.name` | Service name. If not set, it is generated using the `rafterAsyncAPIService.fullname` template. | `nil` |
 | `service.type` | Service type | `ClusterIP` |
 | `service.port.name` |  Name of the Service port | `http` |
-| `service.port.external` | Port on which the Service is exposed in Kubernetes | `80` |
 | `service.port.internal` | Internal port of the Service in the Pod | `3000` |
+| `service.port.external` | Port on which the Service is exposed in Kubernetes | `80` |
 | `service.port.protocol` | Protocol of the Service port | `TCP` |
 | `service.labels` | Custom labels for the Service | `{}` |
 | `service.annotations` | Custom annotations for the Service | `{}` |
@@ -77,7 +77,7 @@ The following table lists the configurable parameters of the AsyncAPI Service ch
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
 ``` bash
-helm install --name rafter-release \
+helm install --name rafter-asyncapi-release \
   --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
     incubator/rafter-asyncapi-service
 ```
@@ -87,7 +87,7 @@ That command installs the release with the `rafter-service-monitor` name for the
 Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
-helm install --name rafter-release -f values.yaml incubator/rafter-asyncapi-service
+helm install --name rafter-asyncapi-release -f values.yaml incubator/rafter-asyncapi-service
 ```
 
 ### Template values.yaml
@@ -101,17 +101,17 @@ pod:
     recreate: "{{ .Release.Time.Seconds }}"
 ``` 
 
-### Change values for `envs.*` parameters
+### Change values for envs.* parameters
 
-All `envs.*` parameters have possibility to define their values as object, so parameters can be provided as inline `value` or `valueFrom` object. For example:
+You can define values of all **envs.*** parameters as objects by specifying parameters as the inline `value` or the `valueFrom` object. See this example:
 
 ``` yaml
 envs:
-  timeout:
-    value: 1m
-  workers:
+  host:
+    value: "0.0.0.0"
+  verbose:
     valueFrom:
       configMapKeyRef:
         name: rafter-asyncapi-service-config
-        key: RAFTER_ASYNCAPI_SERVICE_WORKERS
+        key: RAFTER_ASYNCAPI_SERVICE_VERBOSE
 ```

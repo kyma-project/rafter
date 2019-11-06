@@ -1,102 +1,100 @@
 # Front Matter Service
 
-This helm chart installs Rafter Frontmatter service version v1.0.0 https://github.com/kyma-project/rafter/tree/v1.0.0
-
-## TL;DR;
-
-``` bash
-$ helm install incubator/rafter-frontmatter-service
-```
-
-## Overview
-
-This project contains the chart for the Rafter Metadata service.
+This project contains the Helm chart for the Front Matter Service.
 
 ## Prerequisites
 
-- Kubernetes 1.12+
-- Helm 2.11+ or Helm 3.0-beta3+
+- Kubernetes v1.14 or higher
+- Helm v2.15 or higher
 
-## Installing the Chart
+## Details
 
-To install the chart with the release name `rafter-release`:
+Read how to install, uninstall, and configure the chart.
 
-``` bash
-$ helm install --name rafter-release incubator/rafter-frontmatter-service
-```
+### Install the chart
 
-The command deploys Rafter Frontmatter service on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
-
-> **Tip**: List all releases using `helm list`.
-
-## Uninstalling the Chart
-
-To uninstall/delete the `rafter-release` deployment:
+Use this command to install the chart:
 
 ``` bash
-$ helm delete rafter-release
+helm install incubator/rafter-frontmatter-service
 ```
 
-The command removes all the Kubernetes components associated with the chart and deletes the release.
+To install the chart with the release name `rafter-frontmatter-release`, use:
 
-## Configuration
+``` bash
+helm install --name rafter-frontmatter-release incubator/rafter-frontmatter-service
+```
 
-The following table lists the configurable parameters of the Rafter Frontmatter service chart and their default values.
+The command deploys the Front Matter Service on the Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the parameters that you can configure during installation.
+
+> **TIP:** To list all releases, use `helm list`.
+
+### Uninstall the chart
+
+To uninstall the `rafter-frontmatter-release` deployment:
+
+``` bash
+helm delete rafter-frontmatter-release
+```
+
+That command removes all the Kubernetes components associated with the chart and deletes the release.
+
+### Configuration
+
+The following table lists the configurable parameters of the Front Matter Service chart and their default values.
 
 | Parameter | Description | Default |
 | --- | ---| ---|
-| `image.repository` | Rafter Frontmatter service image repository. | `eu.gcr.io/kyma-project/rafter`  |
-| `image.tag` | Rafter Frontmatter service image tag. | `{TAG_NAME}` |
-| `image.pullPolicy` | Rafter Frontmatter service image pull policy. | `IfNotPresent` |
-| `nameOverride` | String to partially override `rafterFrontmatterService.name` template with a string (will prepend the release name). | `nil` |
-| `fullnameOverride` | String to fully override `rafterFrontmatterService.fullname` template with a string. | `nil` |
-| `deployment.labels` | Custom labels for the `Deployment`. | `{}` |
-| `deployment.annotations` | Custom annotations for the `Deployment`. | `{}` |
-| `deployment.replicas` | Number of nodes. | `1` |
-| `deployment.extraProperties` | Extra properties injected in the `Deployment`. | `{}` |
-| `pod.labels` | Custom labels for the `Pod`. | `{}` |
-| `pod.annotations` | Custom annotations for the `Pod`. | `{}` |
-| `pod.extraProperties` | Extra properties injected in the `Pod`. | `{}` |
-| `pod.extraContainerProperties` | Extra properties injected in the container. | `{}` |
-| `service.name` | `Service` name. If not set a name is generated using the `rafterFrontmatterService.fullname` template. | `nil` |
-| `service.type` | `Service` type. | `ClusterIP` |
-| `service.port.name` | Name of the port on the `Service`. | `http` |
-| `service.port.external` | Port where the `Service` is exposed. | `80` |
-| `service.port.internal` | Internal pod's port on the `Service`. | `3000` |
-| `service.port.protocol` | Protocol of the port on the `Service`. | `TCP` |
-| `service.annotations` | Custom annotations for the `Service`. | `{}` |
-| `service.labels` | Custom labels for the `Service`. | `{}` |
-| `serviceMonitor.create` | Whether a new `ServiceMonitor` resource that the Prometheus operator will use should be created. | `false` |
-| `serviceMonitor.name` | `ServiceMonitor` resource to be used for the Prometheus operator. If not set and `serviceMonitor.create` is `true` a name is generated using the `rafterFrontmatterService.fullname` template. If not set and `serviceMonitor.create` is `false` a name is `default`. | `nil` |
-| `serviceMonitor.scrapeInterval` | Scrape interval for the custom `ServiceMonitor` resource. | `30s` |
-| `serviceMonitor.labels` | Custom labels for the custom `ServiceMonitor` resource. | `{}` |
-| `serviceMonitor.annotations` | Custom annotations for the custom `ServiceMonitor` resource. | `{}` |
-| `envs.host` | App host. | `0.0.0.0` |
-| `envs.verbose` | Whether a logs from app should be visible. | `true` |
-| `envs.timeout` | The file process timeout. | `10m` |
-| `envs.workers` | The maximum number of concurrent metadata extraction workers. | `10` |
+| `image.repository` | Front Matter Service image repository | `eu.gcr.io/kyma-project/rafter-frontmatter-service` |
+| `image.tag` | Front Matter Service image tag | `{TAG_NAME}` |
+| `image.pullPolicy` | Pull policy for the Front Matter Service image | `IfNotPresent` |
+| `nameOverride` | String that partially overrides the `rafterFrontmatterService.name` template | `nil` |
+| `fullnameOverride` | String that fully overrides the `rafterFrontmatterService.fullname` template | `nil` |
+| `deployment.labels` | Custom labels for the Deployment | `{}` |
+| `deployment.annotations` | Custom annotations for the Deployment | `{}` |
+| `deployment.replicas` | Number of Front Matter Service nodes | `1` |
+| `deployment.extraProperties` | Additional properties injected in the Deployment | `{}` |
+| `pod.labels` | Custom labels for the Pod | `{}` |
+| `pod.annotations` | Custom annotations for the Pod | `{}` |
+| `pod.extraProperties` | Additional properties injected in the Pod | `{}` |
+| `pod.extraContainerProperties` | Additional properties injected in the container | `{}` |
+| `service.name` | Service name. If not set, it is generated using the `rafterFrontmatterService.fullname` template. | `nil` |
+| `service.type` | Service type | `ClusterIP` |
+| `service.port.name` |  Name of the Service port | `http` |
+| `service.port.internal` | Internal port of the Service in the Pod | `3000` |
+| `service.port.external` | Port on which the Service is exposed in Kubernetes | `80` |
+| `service.port.protocol` | Protocol of the Service port | `TCP` |
+| `service.labels` | Custom labels for the Service | `{}` |
+| `service.annotations` | Custom annotations for the Service | `{}` |
+| `serviceMonitor.create` | Parameter that defines whether to create a new ServiceMonitor custom resource for the Prometheus Operator | `false` |
+| `serviceMonitor.name` | ServiceMonitor resource that the Prometheus Operator uses. If not set and the `serviceMonitor.create` parameter is set to `true`, the name is generated using the `rafterFrontmatterService.fullname` template. If not set and `serviceMonitor.create` is set to `false`, the name is set to `default` | `nil` |
+| `serviceMonitor.scrapeInterval` | Scrape interval for the ServiceMonitor custom resource | `30s` |
+| `serviceMonitor.labels` | Custom labels for the ServiceMonitor custom resource | `{}` |
+| `serviceMonitor.annotations` | Custom annotations for the ServiceMonitor custom resource | `{}` |
+| `envs.host` | Front Matter Service host | `0.0.0.0` |
+| `envs.verbose` | Parameter that defines if logs from the Front Matter Service should be visible | `true` |
+| `envs.timeout` | The file process timeout | `1m` |
+| `envs.workers` | The maximum number of concurrent metadata extraction workers | `10` |
 
-Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
+Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
 ``` bash
-$ helm install --name rafter-release \
+helm install --name rafter-frontmatter-release \
   --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
     incubator/rafter-frontmatter-service
 ```
 
-The above command install release with custom `ServiceMonitor` resource with `rafter-service-monitor` name.
+That command installs the release with the `rafter-service-monitor` name for the ServiceMonitor custom resource.
 
-Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example:
+Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
-$ helm install --name rafter-release -f values.yaml incubator/rafter-frontmatter-service
+helm install --name rafter-frontmatter-release -f values.yaml incubator/rafter-frontmatter-service
 ```
 
-> **Tip**: You can use the default [values.yaml](./values.yaml).
+### Template values.yaml
 
-### Templating values.yaml
-
-The Rafter Frontmatter service chart has possibility to templating `values.yaml`. This means that you can use, for example, `.Chart.*`, `.Values.*` or other defined by Helm variables. For example:
+You can template `values.yaml` for the Front Matter Service chart using such Helm variables as `.Chart.*`, or `.Values.*`. See this example:
 
 ``` yaml
 pod:
@@ -105,17 +103,17 @@ pod:
     recreate: "{{ .Release.Time.Seconds }}"
 ``` 
 
-### Change values for `envs.*` parameters
+### Change values for envs.* parameters
 
-All `envs.*` parameters have possibility to define their values as object, so parameters can be provided as inline `value` or `valueFrom`. For example:
+You can define values of all **envs.*** parameters as objects by specifying parameters as the inline `value` or the `valueFrom` object. See this example:
 
 ``` yaml
 envs:
-  timeout:
-    value: 1m
-  workers:
+  host:
+    value: "0.0.0.0"
+  verbose:
     valueFrom:
       configMapKeyRef:
         name: rafter-frontmatter-service-config
-        key: RAFTER_FRONTMATTER_SERVICE_WORKERS
+        key: RAFTER_FRONT_MATTER_SERVICE_VERBOSE
 ```
