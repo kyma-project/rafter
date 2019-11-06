@@ -19,19 +19,19 @@ Use this command to install the chart:
 helm install incubator/rafter-frontmatter-service
 ```
 
-To install the chart with the release name `rafter-frontmatter-release`, use:
+To install the chart with the `rafter-frontmatter-release` release name, use:
 
 ``` bash
 helm install --name rafter-frontmatter-release incubator/rafter-frontmatter-service
 ```
 
-The command deploys the Front Matter Service on the Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the parameters that you can configure during installation.
+The command deploys the Front Matter Service on the Kubernetes cluster with the default configuration. The [**Configuration**](#configuration) section lists the parameters that you can configure during installation.
 
 > **TIP:** To list all releases, use `helm list`.
 
 ### Uninstall the chart
 
-To uninstall the `rafter-frontmatter-release` deployment:
+To uninstall the `rafter-frontmatter-release` release, run:
 
 ``` bash
 helm delete rafter-frontmatter-release
@@ -67,7 +67,7 @@ The following table lists the configurable parameters of the Front Matter Servic
 | `service.labels` | Custom labels for the Service | `{}` |
 | `service.annotations` | Custom annotations for the Service | `{}` |
 | `serviceMonitor.create` | Parameter that defines whether to create a new ServiceMonitor custom resource for the Prometheus Operator | `false` |
-| `serviceMonitor.name` | ServiceMonitor resource that the Prometheus Operator uses. If not set and the `serviceMonitor.create` parameter is set to `true`, the name is generated using the `rafterFrontmatterService.fullname` template. If not set and `serviceMonitor.create` is set to `false`, the name is set to `default` | `nil` |
+| `serviceMonitor.name` | ServiceMonitor resource that the Prometheus Operator uses. If not set and the `serviceMonitor.create` parameter is set to `true`, the name is generated using the `rafterFrontmatterService.fullname` template. If not set and `serviceMonitor.create` is set to `false`, the name is set to `default`. | `nil` |
 | `serviceMonitor.scrapeInterval` | Scrape interval for the ServiceMonitor custom resource | `30s` |
 | `serviceMonitor.labels` | Custom labels for the ServiceMonitor custom resource | `{}` |
 | `serviceMonitor.annotations` | Custom annotations for the ServiceMonitor custom resource | `{}` |
@@ -92,14 +92,14 @@ Alternatively, use the default values in [values.yaml](./values.yaml) or provide
 helm install --name rafter-frontmatter-release -f values.yaml incubator/rafter-frontmatter-service
 ```
 
-### Template values.yaml
+### values.yaml as a template
 
-You can template `values.yaml` for the Front Matter Service chart using such Helm variables as `.Chart.*`, or `.Values.*`. See this example:
+The `values.yaml` for the Front Matter Service chart serves as a template. Use such Helm variables as `.Release.*`, or `.Values.*`. See this example:
 
 ``` yaml
 pod:
   annotations:
-    sidecar.istio.io/inject: "false"
+    sidecar.istio.io/inject: "{{ .Values.injectIstio }}"
     recreate: "{{ .Release.Time.Seconds }}"
 ``` 
 

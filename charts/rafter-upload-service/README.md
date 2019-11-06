@@ -19,19 +19,19 @@ Use this command to install the chart:
 helm install incubator/rafter-upload-service
 ```
 
-To install the chart with the release name `rafter-upload-release`, use:
+To install the chart with the `rafter-upload-release` release name, use:
 
 ``` bash
 helm install --name rafter-upload-release incubator/rafter-upload-service
 ```
 
-The command deploys the Upload Service on the Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the parameters that you can configure during installation.
+The command deploys the Upload Service on the Kubernetes cluster with the default configuration. The [**Configuration**](#configuration) section lists the parameters that you can configure during installation.
 
 > **TIP:** To list all releases, use `helm list`.
 
 ### Uninstall the chart
 
-To uninstall the `rafter-upload-release` deployment:
+To uninstall the `rafter-upload-release` release, run:
 
 ``` bash
 helm delete rafter-upload-release
@@ -42,7 +42,6 @@ That command removes all the Kubernetes components associated with the chart and
 ### Configuration
 
 The following table lists the configurable parameters of the Upload Service chart and their default values.
-
 
 | Parameter | Description | Default |
 | --- | ---| ---|
@@ -81,7 +80,7 @@ The following table lists the configurable parameters of the Upload Service char
 | `rbac.clusterScope.roleBinding.labels` | Custom labels for the ClusterRoleBinding | `{}` |
 | `rbac.clusterScope.roleBinding.annotations` | Custom annotations for the ClusterRoleBinding | `{}` |
 | `serviceMonitor.create` | Parameter that defines whether to create a new ServiceMonitor custom resource for the Prometheus Operator | `false` |
-| `serviceMonitor.name` | ServiceMonitor resource that the Prometheus Operator uses. If not set and the `serviceMonitor.create` parameter is set to `true`, the name is generated using the `rafterUploadService.fullname` template. If not set and `serviceMonitor.create` is set to `false`, the name is set to `default` | `nil` |
+| `serviceMonitor.name` | ServiceMonitor resource that the Prometheus Operator uses. If not set and the `serviceMonitor.create` parameter is set to `true`, the name is generated using the `rafterUploadService.fullname` template. If not set and `serviceMonitor.create` is set to `false`, the name is set to `default`. | `nil` |
 | `serviceMonitor.scrapeInterval` | Scrape interval for the ServiceMonitor custom resource | `30s` |
 | `serviceMonitor.labels` | Custom labels for the ServiceMonitor custom resource | `{}` |
 | `serviceMonitor.annotations` | Custom annotations for the ServiceMonitor custom resource | `{}` |
@@ -90,7 +89,7 @@ The following table lists the configurable parameters of the Upload Service char
 | `envs.kubeconfigPath` | The path to the `kubeconfig` file, needed to run the Upload Service outside of a cluster | `nil` |
 | `envs.upload.timeout` | The file process timeout | `30m` |
 | `envs.upload.workers` | The maximum number of concurrent metadata extraction workers | `10` |
-| `envs.upload.endpoint` | The address of the content storage server | `{{ include "rafterUploadService.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000` |
+| `envs.upload.endpoint` | The address of the content storage server | `{{ include "rafterUploadService.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local` |
 | `envs.upload.externalEndpoint` | The external address of the content storage server | `nil` |
 | `envs.upload.port` | The port on which the content storage server listens | `9000` |
 | `envs.upload.accessKey` | The access key required to sign in to the content storage server | Value from `{{ include "rafterUploadService.fullname" . }}-minio` ConfigMap |
@@ -119,14 +118,14 @@ Alternatively, use the default values in [values.yaml](./values.yaml) or provide
 helm install --name rafter-upload-release -f values.yaml incubator/rafter-upload-service
 ```
 
-### Template values.yaml
+### values.yaml as a template
 
-You can template `values.yaml` for the Upload Service chart using such Helm variables as `.Chart.*`, or `.Values.*`. See this example:
+The `values.yaml` for the Upload Service chart serves as a template. Use such Helm variables as `.Release.*`, or `.Values.*`. See this example:
 
 ``` yaml
 pod:
   annotations:
-    sidecar.istio.io/inject: "false"
+    sidecar.istio.io/inject: "{{ .Values.injectIstio }}"
     recreate: "{{ .Release.Time.Seconds }}"
 ``` 
 

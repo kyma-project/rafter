@@ -2,44 +2,44 @@
 
 This project contains the Helm chart for the Rafter Controller Manager.
 
-## TL;DR;
-
-``` bash
-$ helm install incubator/rafter-controller-manager
-```
-
-## Overview
-
-This project contains the chart for the Rafter Controller Manager.
-
 ## Prerequisites
 
-- Kubernetes 1.15+
-- Helm 2.15+ or Helm 3.0-beta3+
+- Kubernetes v1.14 or higher
+- Helm v2.15 or higher
 
-## Installing the Chart
+## Details
 
-To install the chart with the release name `rafter-release`:
+Read how to install, uninstall, and configure the chart.
 
-``` bash
-$ helm install --name rafter-release incubator/rafter-controller-manager
-```
+### Install the chart
 
-The command deploys Rafter Controller Manager on the Kubernetes cluster in the default configuration. The [parameters](#[arameters) section lists the parameters that can be configured during installation.
-
-> **Tip**: List all releases using `helm list`.
-
-## Uninstalling the Chart
-
-To uninstall/delete the `rafter-release` deployment:
+Use this command to install the chart:
 
 ``` bash
-$ helm delete rafter-release
+helm install incubator/rafter-controller-manager
 ```
 
-The command removes all the Kubernetes components associated with the chart and deletes the release.
+To install the chart with the `rafter-release` release name, use:
 
-## Parameters
+``` bash
+helm install --name rafter-release incubator/rafter-controller-manager
+```
+
+The command deploys the Rafter Controller Manager on the Kubernetes cluster with the default configuration. The [**Configuration**](#configuration) section lists the parameters that you can configure during installation.
+
+> **TIP:** To list all releases, use `helm list`.
+
+### Uninstall the chart
+
+To uninstall the `rafter-release` release, run:
+
+``` bash
+helm delete rafter-release
+```
+
+That command removes all the Kubernetes components associated with the chart and deletes the release.
+
+### Configuration
 
 The following table lists the configurable parameters of the Rafter Controller Manager chart and their default values.
 
@@ -141,14 +141,14 @@ Alternatively, use the default values in [values.yaml](./values.yaml) or provide
 helm install --name rafter-release -f values.yaml incubator/rafter-controller-manager
 ```
 
-### Template values.yaml
+### values.yaml as a template
 
-You can template `values.yaml` for the Rafter Controller Manager chart using such Helm variables as `.Chart.*`, or `.Values.*`. See this example:
+The `values.yaml` for the Rafter Controller Manager chart serves as a template. Use such Helm variables as `.Release.*`, or `.Values.*`. See this example:
 
 ``` yaml
 pod:
   annotations:
-    sidecar.istio.io/inject: "false"
+    sidecar.istio.io/inject: "{{ .Values.injectIstio }}"
     recreate: "{{ .Release.Time.Seconds }}"
 ``` 
 
