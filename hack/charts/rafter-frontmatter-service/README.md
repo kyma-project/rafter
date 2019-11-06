@@ -1,4 +1,4 @@
-# Rafter Frontmatter service
+# Front Matter Service
 
 This helm chart installs Rafter Frontmatter service version v1.0.0 https://github.com/kyma-project/rafter/tree/v1.0.0
 
