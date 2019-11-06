@@ -112,7 +112,7 @@ The following table lists the configurable parameters of the Rafter Controller M
 | `envs.asset.relistInterval` | The period of time after which the controller refreshes the status of a Asset CR | `30s` |
 | `envs.asset.maxConcurrentReconciles` | The maximum number of Asset reconciles that can run in parallel | `1` |
 | `envs.store.endpoint` | The address of the content storage server | `{{ include "rafter.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000` |
-| `envs.store.externalEndpoint` | The external address of the content storage server | `https://minio.kyma.local` |
+| `envs.store.externalEndpoint` | The external address of the content storage server | `nil` |
 | `envs.store.accessKey` | The access key required to sign in to the content storage server | Value from `{{ include "rafter.fullname" . }}-minio` ConfigMap |
 | `envs.store.secretKey` | The secret key required to sign in to the content storage server | Value from `{{ include "rafter.fullname" . }}-minio` ConfigMap |
 | `envs.store.useSSL` | The HTTPS connection with the content storage server | `false` |

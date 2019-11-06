@@ -172,9 +172,7 @@ envs:
       #   configMapKeyRef:
       #     name: '{{ include "rafter.fullname" . }}-minio'
       #     key: APP_UPLOAD_ENDPOINT_WITH_PORT
-    externalEndpoint: 
-      value: dupa
-      # value: '{{ if .Values.global.minioExternalEndpoint }}{{ .Values.global.minioExternalEndpoint }}{{ else }}https://minio{{ end }}'
+    externalEndpoint:
     accessKey:
       valueFrom:
         secretKeyRef:

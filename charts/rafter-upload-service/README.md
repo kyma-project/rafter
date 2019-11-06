@@ -90,17 +90,17 @@ The following table lists the configurable parameters of the Upload Service char
 | `envs.kubeconfigPath` | The path to the `kubeconfig` file, needed to run the Upload Service outside of a cluster | `nil` |
 | `envs.upload.timeout` | The file process timeout | `30m` |
 | `envs.upload.workers` | The maximum number of concurrent metadata extraction workers | `10` |
-| `envs.upload.endpoint` | The address of the content storage server | `{{ include "rafter.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000` |
-| `envs.upload.externalEndpoint` | The external address of the content storage server. If not set, the system uses the `APP_UPLOAD_ENDPOINT` variable | `https://minio.kyma.local` |
+| `envs.upload.endpoint` | The address of the content storage server | `{{ include "rafterUploadService.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000` |
+| `envs.upload.externalEndpoint` | The external address of the content storage server | `nil` |
 | `envs.upload.port` | The port on which the content storage server listens | `9000` |
-| `envs.upload.accessKey` | The access key required to sign in to the content storage server | Value from `{{ include "rafter.fullname" . }}-minio` ConfigMap |
-| `envs.upload.secretKey` | The secret key required to sign in to the content storage server | Value from `{{ include "rafter.fullname" . }}-minio` ConfigMap |
+| `envs.upload.accessKey` | The access key required to sign in to the content storage server | Value from `{{ include "rafterUploadService.fullname" . }}-minio` ConfigMap |
+| `envs.upload.secretKey` | The secret key required to sign in to the content storage server | Value from `{{ include "rafterUploadService.fullname" . }}-minio` ConfigMap |
 | `envs.upload.secure` | The HTTPS connection with the content storage server | `false` |
 | `envs.bucket.privatePrefix` | The prefix of the private system bucket | `system-private` |
 | `envs.bucket.publicPrefix` | The prefix of the public system bucket | `system-public` |
 | `envs.bucket.region` | 	The region of the system buckets | `us-east-1` |
 | `envs.configMap.enabled` | The toggle used to save and load the configuration using the ConfigMap | `true` |
-| `envs.configMap.name` | The name of the ConfigMap | `{{ include "rafter.fullname" . }}` |
+| `envs.configMap.name` | The name of the ConfigMap | `{{ include "rafterUploadService.fullname" . }}` |
 | `envs.configMap.namespace` | The Namespace in which the ConfigMap is created | `{{ .Release.Namespace }}` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:

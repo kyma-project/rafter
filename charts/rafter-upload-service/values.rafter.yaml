@@ -79,19 +79,19 @@ envs:
     workers:
       value: "10"
     endpoint:
-      value: '{{ include "rafterUploadService.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000'
+      value: 'rafter-release-minio.{{ .Release.Namespace }}.svc.cluster.local:9000'
     externalEndpoint:
     port:
       value: "9000"
     accessKey:
       valueFrom:
         secretKeyRef:
-          name: '{{ include "rafterUploadService.fullname" . }}-minio'
+          name: 'rafter-release-minio'
           key: accesskey
     secretKey:
       valueFrom:
         secretKeyRef:
-          name: '{{ include "rafterUploadService.fullname" . }}-minio'
+          name: 'rafter-release-minio'
           key: secretkey
     secure: 
       value: "false"
@@ -106,6 +106,6 @@ envs:
     enabled:
       value: true
     name:
-      value: '{{ include "rafterUploadService.fullname" . }}'
+      value: 'rafter-release'
     namespace:
       value: "{{ .Release.Namespace }}"
