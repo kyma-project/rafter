@@ -108,6 +108,6 @@ envs:
     enabled:
       value: "false"
     name:
-      value: '{{ include "rafterUploadService.fullname" . }}'
+      value: "rafter-upload-service"
     namespace:
       value: "{{ .Release.Namespace }}"
