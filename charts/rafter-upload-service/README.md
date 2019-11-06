@@ -131,7 +131,7 @@ pod:
 
 ### Change values for envs.* parameters
 
-You can define values of all **envs.*** parameters as objects by specifying parameters as the inline `value` or the `valueFrom` object. See this example:
+You can define values for all `envs.*` parameters as objects by providing the parameters as the inline `value` or the `valueFrom` object. See the following example:
 
 ``` yaml
 envs:
