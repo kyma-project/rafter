@@ -4,8 +4,10 @@
 resources:
 - bases/rafter.kyma-project.io_clusterassets.yaml
 - bases/rafter.kyma-project.io_clusterbuckets.yaml
+- bases/rafter.kyma-project.io_clusterassetgroups.yaml
 - bases/rafter.kyma-project.io_assets.yaml
 - bases/rafter.kyma-project.io_buckets.yaml
+- bases/rafter.kyma-project.io_assetgroups.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
