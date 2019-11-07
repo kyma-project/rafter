@@ -45,34 +45,34 @@ The following table lists the configurable parameters of the AsyncAPI Service ch
 
 | Parameter | Description | Default |
 | --- | ---| ---|
-| `image.repository` | AsyncAPI Service image repository | `eu.gcr.io/kyma-project/rafter-asyncapi-service` |
-| `image.tag` | AsyncAPI Service image tag | `{TAG_NAME}` |
-| `image.pullPolicy` | Pull policy for the AsyncAPI Service image | `IfNotPresent` |
-| `nameOverride` | String that partially overrides the `rafterAsyncAPIService.name` template | `nil` |
-| `fullnameOverride` | String that fully overrides the `rafterAsyncAPIService.fullname` template | `nil` |
-| `deployment.labels` | Custom labels for the Deployment | `{}` |
-| `deployment.annotations` | Custom annotations for the Deployment | `{}` |
-| `deployment.replicas` | Number of AsyncAPI Service nodes | `1` |
-| `deployment.extraProperties` | Additional properties injected in the Deployment | `{}` |
-| `pod.labels` | Custom labels for the Pod | `{}` |
-| `pod.annotations` | Custom annotations for the Pod | `{}` |
-| `pod.extraProperties` | Additional properties injected in the Pod | `{}` |
-| `pod.extraContainerProperties` | Additional properties injected in the container | `{}` |
-| `service.name` | Service name. If not set, it is generated using the `rafterAsyncAPIService.fullname` template. | `nil` |
-| `service.type` | Service type | `ClusterIP` |
-| `service.port.name` |  Name of the Service port | `http` |
-| `service.port.internal` | Internal port of the Service in the Pod | `3000` |
-| `service.port.external` | Port on which the Service is exposed in Kubernetes | `80` |
-| `service.port.protocol` | Protocol of the Service port | `TCP` |
-| `service.labels` | Custom labels for the Service | `{}` |
-| `service.annotations` | Custom annotations for the Service | `{}` |
-| `serviceMonitor.create` | Parameter that defines whether to create a new ServiceMonitor custom resource for the Prometheus Operator | `false` |
-| `serviceMonitor.name` | ServiceMonitor resource that the Prometheus Operator uses. If not set and the `serviceMonitor.create` parameter is set to `true`, the name is generated using the `rafterAsyncAPIService.fullname` template. If not set and `serviceMonitor.create` is set to `false`, the name is set to `default`. | `nil` |
-| `serviceMonitor.scrapeInterval` | Scrape interval for the ServiceMonitor custom resource | `30s` |
-| `serviceMonitor.labels` | Custom labels for the ServiceMonitor custom resource | `{}` |
-| `serviceMonitor.annotations` | Custom annotations for the ServiceMonitor custom resource | `{}` |
-| `envs.host` | AsyncAPI Service host | `0.0.0.0` |
-| `envs.verbose` | Parameter that defines if logs from the AsyncAPI Service should be visible | `true` |
+| **image.repository** | AsyncAPI Service image repository | `eu.gcr.io/kyma-project/rafter-asyncapi-service` |
+| **image.tag** | AsyncAPI Service image tag | `{TAG_NAME}` |
+| **image.pullPolicy** | Pull policy for the AsyncAPI Service image | `IfNotPresent` |
+| **nameOverride** | String that partially overrides the **rafterAsyncAPIService.name** template | `nil` |
+| **fullnameOverride** | String that fully overrides the **rafterAsyncAPIService.fullname** template | `nil` |
+| **deployment.labels** | Custom labels for the Deployment | `{}` |
+| **deployment.annotations** | Custom annotations for the Deployment | `{}` |
+| **deployment.replicas** | Number of AsyncAPI Service nodes | `1` |
+| **deployment.extraProperties** | Additional properties injected in the Deployment | `{}` |
+| **pod.labels** | Custom labels for the Pod | `{}` |
+| **pod.annotations** | Custom annotations for the Pod | `{}` |
+| **pod.extraProperties** | Additional properties injected in the Pod | `{}` |
+| **pod.extraContainerProperties** | Additional properties injected in the container | `{}` |
+| **service.name** | Service name. If not set, it is generated using the **rafterAsyncAPIService.fullname** template. | `nil` |
+| **service.type** | Service type | `ClusterIP` |
+| **service.port.name** |  Name of the Service port | `http` |
+| **service.port.internal** | Internal port of the Service in the Pod | `3000` |
+| **service.port.external** | Port on which the Service is exposed in Kubernetes | `80` |
+| **service.port.protocol** | Protocol of the Service port | `TCP` |
+| **service.labels** | Custom labels for the Service | `{}` |
+| **service.annotations** | Custom annotations for the Service | `{}` |
+| **serviceMonitor.create** | Parameter that defines whether to create a new ServiceMonitor custom resource for the Prometheus Operator | `false` |
+| **serviceMonitor.name** | ServiceMonitor resource that the Prometheus Operator uses. If not set and the **serviceMonitor.create** parameter is set to `true`, the name is generated using the **rafterAsyncAPIService.fullname** template. If not set and **serviceMonitor.create** is set to `false`, the name is set to `default`. | `nil` |
+| **serviceMonitor.scrapeInterval** | Scrape interval for the ServiceMonitor custom resource | `30s` |
+| **serviceMonitor.labels** | Custom labels for the ServiceMonitor custom resource | `{}` |
+| **serviceMonitor.annotations** | Custom annotations for the ServiceMonitor custom resource | `{}` |
+| **envs.host** | AsyncAPI Service host | `0.0.0.0` |
+| **envs.verbose** | Parameter that defines if logs from the AsyncAPI Service should be visible | `true` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
@@ -101,9 +101,9 @@ pod:
     recreate: "{{ .Release.Time.Seconds }}"
 ``` 
 
-### Change values for envs.* parameters
+### Change values for envs. parameters
 
-You can define values for all `envs.*` parameters as objects by providing the parameters as the inline `value` or the `valueFrom` object. See the following example:
+You can define values for all **envs.** parameters as objects by providing the parameters as the inline `value` or the `valueFrom` object. See the following example:
 
 ``` yaml
 envs:

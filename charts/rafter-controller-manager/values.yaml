@@ -77,13 +77,14 @@ rbac:
 webhooksConfigMap:
   create: true
   name:
+  namespace: "{{ .Release.Namespace }}"
   hooks:
     markdown: |-
       {
         "metadataExtractors":[
           {
             "name": "rafter-frontmatter-service",
-            "namespace": "kyma-system"",
+            "namespace": "default",
             "endpoint": "/v1/extract",
             "filter": "\\.md$"
           }
@@ -94,14 +95,14 @@ webhooksConfigMap:
         "validations":[
           {
             "name": "rafter-asyncapi-service",
-            "namespace": "kyma-system",
+            "namespace": "default",
             "endpoint": "/v1/validate"
           }
         ],
         "mutations":[
           {
             "name": "rafter-asyncapi-service",
-            "namespace": "kyma-system"",
+            "namespace": "default",
             "endpoint": "/v1/convert"
           }
         ]

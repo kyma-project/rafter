@@ -126,7 +126,7 @@ spec:
             {{ include "rafter.createEnv" ( dict "name" "APP_WEBHOOK_MUTATION_TIMEOUT" "value" .Values.envs.webhooks.mutation.timeout "context" . ) | nindent 12 }}
             {{ include "rafter.createEnv" ( dict "name" "APP_WEBHOOK_MUTATION_WORKERS_COUNT" "value" .Values.envs.webhooks.mutation.workers "context" . ) | nindent 12 }}
             {{ include "rafter.createEnv" ( dict "name" "APP_WEBHOOK_METADATA_EXTRACTION_TIMEOUT" "value" .Values.envs.webhooks.metadata.timeout "context" . ) | nindent 12 }}
-            - name: APP_WEBHOOK_CFG_MAP_NAME
+            - name: APP_WEBHOOK_CONFIG_MAP_CFG_MAP_NAME
               value: {{ include "rafter.webhooksConfigMapName" . }}
-            - name: APP_WEBHOOK_CFG_MAP_NAMESPACE
-              value: {{ .Release.Namespace }}
+            - name: APP_WEBHOOK_CONFIG_MAP_CFG_MAP_NAMESPACE
+              value: {{ .Values.webhooksConfigMap.namespace }}

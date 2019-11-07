@@ -71,6 +71,6 @@ spec:
             {{ include "rafterUploadService.createEnv" ( dict "name" "APP_BUCKET_PUBLIC_PREFIX" "value" .Values.envs.bucket.publicPrefix "context" . ) | nindent 12 }}
             {{ include "rafterUploadService.createEnv" ( dict "name" "APP_BUCKET_REGION" "value" .Values.envs.bucket.region "context" . ) | nindent 12 }}
             # Config map
-            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_CONFIG_ENABLED" "value" .Values.envs.configMap.enabled "context" . ) | nindent 12 }}
+            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_CONFIG_MAP_ENABLED" "value" .Values.envs.configMap.enabled "context" . ) | nindent 12 }}
             {{ include "rafterUploadService.createEnv" ( dict "name" "APP_CONFIG_MAP_NAME" "value" .Values.envs.configMap.name "context" . ) | nindent 12 }}
             {{ include "rafterUploadService.createEnv" ( dict "name" "APP_CONFIG_MAP_NAMESPACE" "value" .Values.envs.configMap.namespace "context" . ) | nindent 12 }}
