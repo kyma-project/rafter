@@ -20,7 +20,7 @@ Read how to run and use the service.
 To run the service against the local installation on Minikube without building the binary, use this command:
 
 ```bash
-APP_KUBECONFIG_PATH=/Users/$USER/.kube/config APP_VERBOSE=true APP_UPLOAD_ACCESS_KEY={accessKey} APP_UPLOAD_SECRET_KEY={secretKey} go run main.go
+APP_KUBECONFIG_PATH=/Users/$USER/.kube/config APP_VERBOSE=true APP_UPLOAD_ACCESS_KEY={accessKey} APP_UPLOAD_SECRET_KEY={secretKey} go run ./cmd/uploader/main.go
 ```
 
 Replace values in curly braces with proper details, where:
@@ -35,13 +35,8 @@ The service listens on port `3000`.
 To build the production Docker image, use this command:
 
 ```bash
-docker build {image_name}:{image_tag}
+make build-uploader
 ```
-
-The variables are:
-
-- `{image_name}` that is the name of the output image. The default name is `asset-upload-service`.
-- `{image_tag}` that is the tag of the output image. The default tag is `latest`.
 
 ### Upload files
 
@@ -78,7 +73,7 @@ This service uses `glog` to log messages. Pass command line arguments described 
 
 For example:
 ```bash
-go run main.go --stderrthreshold=INFO -logtostderr=false
+go run ./cmd/uploader/main.go --stderrthreshold=INFO -logtostderr=false
 ```
 
 ## Development

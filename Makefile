@@ -11,9 +11,13 @@ ASYNCAPI_IMG_NAME ?= rafter-asyncapi-service
 IMG-CI-NAME-PREFIX := $(DOCKER_PUSH_REPOSITORY)$(DOCKER_PUSH_DIRECTORY)
 
 UPLOADER-CI-IMG-NAME := $(IMG-CI-NAME-PREFIX)/$(UPLOADER_IMG_NAME):$(DOCKER_TAG)
+UPLOADER-CI-IMG-NAME-LATEST := $(IMG-CI-NAME-PREFIX)/$(UPLOADER_IMG_NAME):latest
 MANAGER-CI-IMG-NAME :=  $(IMG-CI-NAME-PREFIX)/$(MANAGER_IMG_NAME):$(DOCKER_TAG)
+MANAGER-CI-IMG-NAME-LATEST :=  $(IMG-CI-NAME-PREFIX)/$(MANAGER_IMG_NAME):latest
 FRONTMATTER-CI-IMG-NAME := $(IMG-CI-NAME-PREFIX)/$(FRONTMATTER_IMG_NAME):$(DOCKER_TAG)
+FRONTMATTER-CI-IMG-NAME-LATEST := $(IMG-CI-NAME-PREFIX)/$(FRONTMATTER_IMG_NAME):latest
 ASYNCAPI-CI-IMG-NAME :=  $(IMG-CI-NAME-PREFIX)/$(ASYNCAPI_IMG_NAME):$(DOCKER_TAG)
+ASYNCAPI-CI-IMG-NAME-LATEST :=  $(IMG-CI-NAME-PREFIX)/$(ASYNCAPI_IMG_NAME):latest
 
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
@@ -34,12 +38,20 @@ push-uploader:
 	docker tag $(UPLOADER_IMG_NAME) $(UPLOADER-CI-IMG-NAME)
 	docker push $(UPLOADER-CI-IMG-NAME)
 
+push-uploader-latest:
+	docker tag $(UPLOADER_IMG_NAME) $(UPLOADER-CI-IMG-NAME-LATEST)
+	docker push $(UPLOADER-CI-IMG-NAME-LATEST)
+
 build-manager:
 	docker build -t $(MANAGER_IMG_NAME) -f ${ROOT}/deploy/manager/Dockerfile ${ROOT}
 
 push-manager:
 	docker tag $(MANAGER_IMG_NAME) $(MANAGER-CI-IMG-NAME)
 	docker push $(MANAGER-CI-IMG-NAME)
+
+push-manager-latest:
+	docker tag $(MANAGER_IMG_NAME) $(MANAGER-CI-IMG-NAME-LATEST)
+	docker push $(MANAGER-CI-IMG-NAME-LATEST)
 
 build-frontmatter:
 	docker build -t $(FRONTMATTER_IMG_NAME) -f ${ROOT}/deploy/extension/frontmatter/Dockerfile ${ROOT}
@@ -48,12 +60,20 @@ push-frontmatter:
 	docker tag $(FRONTMATTER_IMG_NAME) $(FRONTMATTER-CI-IMG-NAME)
 	docker push $(FRONTMATTER-CI-IMG-NAME)
 
+push-frontmatter-latest:
+	docker tag $(FRONTMATTER_IMG_NAME) $(FRONTMATTER-CI-IMG-NAME-LATEST)
+	docker push $(FRONTMATTER-CI-IMG-NAME-LATEST)
+
 build-asyncapi:
 	docker build -t $(ASYNCAPI_IMG_NAME) -f ${ROOT}/deploy/extension/asyncapi/Dockerfile ${ROOT}
 
 push-asyncapi:
 	docker tag $(ASYNCAPI_IMG_NAME) $(ASYNCAPI-CI-IMG-NAME)
 	docker push $(ASYNCAPI-CI-IMG-NAME)
+
+push-asyncapi-latest:
+	docker tag $(ASYNCAPI_IMG_NAME) $(ASYNCAPI-CI-IMG-NAME-LATEST)
+	docker push $(ASYNCAPI-CI-IMG-NAME-LATEST)
 
 clean:
 	rm -f ${COVERAGE_OUTPUT_PATH}
@@ -118,9 +138,15 @@ endif
 
 ci-pr: docker-build docker-push
 
+ci-release-push-latest: \
+		   push-uploader-latest \
+		   push-manager-latest \
+		   push-frontmatter-latest \
+		   push-asyncapi-latest
+
 ci-master: docker-build docker-push
 
-ci-release: docker-build docker-push
+ci-release: docker-build docker-push ci-release-push-latest
 
 .PHONY: all \
 		build-uploader \
@@ -142,4 +168,8 @@ ci-release: docker-build docker-push
 		controller-gen \
 		ci-pr \
 		ci-master \
-		ci-release
+		ci-release \
+		push-uploader-latest \
+		push-manager-latest \
+		push-frontmatter-latest \
+		push-asyncapi-latest

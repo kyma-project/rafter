@@ -28,7 +28,7 @@ See the [OpenAPI specification](openapi.yaml) for the full API documentation. Yo
 To run the local version of the AsyncAPI Service without building the binary, use this command:
 
 ```bash
-go run main.go
+go run cmd/extension/asyncapi/main.go
 ```
 
 The service listens on port `3000`.
@@ -38,7 +38,7 @@ The service listens on port `3000`.
 To build the production Docker image, use this command:
 
 ```bash
-make -C ../../ docker-build
+make build-asyncapi
 ```
 
 ### Environment variables

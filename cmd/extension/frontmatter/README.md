@@ -20,7 +20,7 @@ Read how to run and use the service.
 To run the service against the local installation on Minikube without building the binary, use this command:
 
 ```bash
-APP_VERBOSE=true go run main.go
+APP_VERBOSE=true go run cmd/extension/frontmatter/main.go
 ```
 
 The service listens on port `3000`.
@@ -30,13 +30,8 @@ The service listens on port `3000`.
 To build the production Docker image, use this command:
 
 ```bash
-docker build {image_name}:{image_tag}
+make build-frontmatter
 ```
-
-The variables are:
-
-- `{image_name}` that is the name of the output image. The default name is `asset-metadata-service`.
-- `{image_tag}` that is the tag of the output image. The default tag is `latest`.
 
 ### Extract metadata from files
 
@@ -62,7 +57,7 @@ This service uses `glog` to log messages. Pass command line arguments described 
 For example:
 
 ```bash
-go run main.go --stderrthreshold=INFO -logtostderr=false
+go run cmd/extension/frontmatter/main.go --stderrthreshold=INFO -logtostderr=false
 ```
 
 ## Development
@@ -72,5 +67,5 @@ go run main.go --stderrthreshold=INFO -logtostderr=false
 To run all unit tests, use this command:
 
 ```bash
-go test ./...
+make test
 ```

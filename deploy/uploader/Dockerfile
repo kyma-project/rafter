@@ -31,11 +31,15 @@ RUN go build -a -o main cmd/uploader/main.go \
     && mv ./main /app/main \
     && if [ -f ${BASE_APP_DIR}/licenses ]; then mv ${BASE_APP_DIR}/licenses /app/licenses; fi
 
+# Get latest CA certs
+FROM alpine:latest as certs
+RUN apk --update add ca-certificates
+
 FROM scratch
 
 LABEL source = git@github.com:kyma-project/kyma.git
 
 COPY --from=builder /app /app
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 CMD ["/app/main","-logtostderr","=false"]

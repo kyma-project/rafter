@@ -21,7 +21,8 @@ Read how to run and use the controller manager.
 To run the controller manager from sources, use this command:
 
 ```bash
-GO111MODULE=on make run
+kubectl apply -k config/default \
+    && APP_STORE_ACCESSKEY='<minio-acceskey>' APP_STORE_SECRETKEY='<minio-secretkey>' go run cmd/manager/main.go
 ```
 
 ### Build a production version
@@ -29,13 +30,8 @@ GO111MODULE=on make run
 To build the production Docker image, use this command:
 
 ```bash
-IMG={image_name}:{image_tag} make docker-build
+make build-manager
 ```
-
-The variables are:
-
-* `{image_name}` which is the name of the output image. Use `rafter-controller-manager` for the image name.
-* `{image_tag}` which is the tag of the output image. Use `latest` for the tag name.
 
 ### Environment variables
 
