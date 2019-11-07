@@ -73,7 +73,7 @@ The following table lists the configurable parameters of the Front Matter Servic
 | **serviceMonitor.annotations** | Custom annotations for the ServiceMonitor custom resource | `{}` |
 | **envs.host** | Front Matter Service host | `0.0.0.0` |
 | **envs.verbose** | Parameter that defines if logs from the Front Matter Service should be visible | `true` |
-| **envs.timeout** | File process time-out | `1m` |
+| **envs.timeout** | File processing time-out | `1m` |
 | **envs.workers** | Maximum number of concurrent metadata extraction workers | `10` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:

@@ -119,7 +119,7 @@ The following table lists the configurable parameters of the Rafter Controller M
 | **envs.store.useSSL** | HTTPS connection with the content storage server | `false` |
 | **envs.store.uploadWorkers** | Number of workers used in parallel to upload files to the storage server | `10` |
 | **envs.loader.verifySSL** | Variable that verifies the SSL certificate before downloading source files | `false` |
-| **envs.loader.tempDir** | Path to the directory used to temporarily store data | **/tmp** |
+| **envs.loader.tempDir** | Path to the directory used to temporarily store data | `/tmp` |
 | **envs.webhooks.validation.timeout** | Period of time after which validation is canceled | `1m` |
 | **envs.webhooks.validation.workers** | Number of workers used in parallel to validate files | `10` |
 | **envs.webhooks.mutation.timeout** | Period of time after which mutation is canceled | `1m` |

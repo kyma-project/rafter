@@ -87,7 +87,7 @@ The following table lists the configurable parameters of the Upload Service char
 | **envs.host** | Upload Service host | `0.0.0.0` |
 | **envs.verbose** | Parameter that defines if logs from the Upload Service should be visible | `true` |
 | **envs.kubeconfigPath** | Path to the `kubeconfig` file needed to run the Upload Service outside of a cluster | `nil` |
-| **envs.upload.timeout** | File process time-out | `30m` |
+| **envs.upload.timeout** | File processing time-out | `30m` |
 | **envs.upload.workers** | Maximum number of concurrent metadata extraction workers | `10` |
 | **envs.upload.endpoint** | Address of the content storage server | `{{ include "rafterUploadService.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local` |
 | **envs.upload.externalEndpoint** | External address of the content storage server | `nil` |
