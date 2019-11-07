@@ -40,7 +40,9 @@ spec:
           description: AssetGroupSpec defines the desired state of AssetGroup
           properties:
             bucketRef:
-              type: string
+              properties:
+                name:
+                  type: string
             description:
               type: string
             displayName:

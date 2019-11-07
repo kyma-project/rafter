@@ -12,7 +12,7 @@ import (
 	"github.com/kyma-project/rafter/internal/webhookconfig"
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/pkg/errors"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
@@ -88,7 +88,7 @@ func (h *assetgroupHandler) Handle(ctx context.Context, instance ObjectMetaAcces
 		return h.onFailedStatus(h.buildStatus(v1beta1.AssetGroupFailed, v1beta1.AssetGroupAssetsSpecValidationFailed, err.Error()), status), err
 	}
 
-	bucketName := spec.BucketRef
+	bucketName := spec.BucketRef.Name
 	if bucketName == "" {
 		bucketName, err = h.ensureBucketExits(ctx, instance.GetNamespace())
 

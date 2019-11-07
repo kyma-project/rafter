@@ -14,7 +14,7 @@ import (
 	"github.com/onsi/gomega/types"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/mock"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
@@ -160,7 +160,7 @@ func TestAssetGroupHandler_Handle_AddOrUpdate(t *testing.T) {
 		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
 	})
 
-	t.Run("CreateWithBucketRef", func(t* testing.T) {
+	t.Run("CreateWithBucketRef", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 		ctx := context.TODO()
@@ -689,7 +689,9 @@ func testData(name string, bucketRef string, sources []v1beta1.Source) *v1beta1.
 		},
 		Spec: v1beta1.AssetGroupSpec{
 			CommonAssetGroupSpec: v1beta1.CommonAssetGroupSpec{
-				BucketRef:   bucketRef,
+				BucketRef: v1beta1.AssetBucketRef{
+					Name: bucketRef,
+				},
 				DisplayName: fmt.Sprintf("%s Display", name),
 				Description: fmt.Sprintf("%s Description", name),
 				Sources:     sources,
@@ -705,7 +707,7 @@ func commonAsset(name v1beta1.AssetGroupSourceName, assetType v1beta1.AssetGroup
 			Namespace: "test",
 			Labels: map[string]string{
 				"rafter.kyma-project.io/asset-group": assetGroupName,
-				"rafter.kyma-project.io/type":       string(assetType),
+				"rafter.kyma-project.io/type":        string(assetType),
 			},
 			Annotations: map[string]string{
 				"rafter.kyma-project.io/asset-short-name": string(name),
