@@ -1,6 +1,6 @@
 # Rafter
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/kyma-project/kyma)](https://goreportcard.com/report/github.com/kyma-project/rafter)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kyma-project/rafter)](https://goreportcard.com/report/github.com/kyma-project/rafter)
 [![Slack](https://img.shields.io/badge/slack-%23rafter%20channel-yellow)](http://slack.kyma-project.io)
 
 ## Overview
