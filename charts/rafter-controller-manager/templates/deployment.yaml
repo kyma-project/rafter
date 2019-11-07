@@ -129,4 +129,4 @@ spec:
             - name: APP_WEBHOOK_CONFIG_MAP_CFG_MAP_NAME
               value: {{ include "rafter.webhooksConfigMapName" . }}
             - name: APP_WEBHOOK_CONFIG_MAP_CFG_MAP_NAMESPACE
-              value: {{ .Values.webhooksConfigMap.namespace }}
+              value: {{ include "rafter.tplValue" ( dict "value" .Values.webhooksConfigMap.namespace "context" . ) }}

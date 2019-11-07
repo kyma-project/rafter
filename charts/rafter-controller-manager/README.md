@@ -100,31 +100,31 @@ The following table lists the configurable parameters of the Rafter Controller M
 | **metrics.serviceMonitor.annotations** | Custom annotations for the ServiceMonitor custom resource | `{}` |
 | **metrics.pod.labels** | Custom labels for the Pod when **metrics.enabled** is set to `true` | `{}` |
 | **metrics.pod.annotations** | Custom annotations for the Pod when **metrics.enabled** is set to `true` | `{}` |
-| **envs.clusterAssetGroup.relistInterval** | The period of time after which the controller refreshes the status of a ClusterAssetGroup CR | `5m` |
-| **envs.assetGroup.relistInterval** | The period of time after which the controller refreshes the status of an AssetGroup CR | `5m` |
-| **envs.clusterBucket.relistInterval** | The period of time after which the controller refreshes the status of a ClusterBucket CR | `30s` |
-| **envs.clusterBucket.maxConcurrentReconciles** | The maximum number of ClusterBucket reconciles that can run in parallel | `1` |
-| **envs.clusterBucket.region** | The location of the region in which the controller creates a ClusterBucket CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
-| **envs.bucket.relistInterval** | The period of time after which the controller refreshes the status of a Bucket CR | `30s` |
-| **envs.bucket.maxConcurrentReconciles** | The maximum number of Bucket reconciles that can run in parallel | `1` |
-| **envs.bucket.region** | The location of the region in which the controller creates a Bucket CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
-| **envs.clusterAsset.relistInterval** | The period of time after which the controller refreshes the status of a ClusterAsset CR | `30s` |
-| **envs.clusterAsset.maxConcurrentReconciles** | The maximum number of ClusterAsset reconciles that can run in parallel | `1` |
-| **envs.asset.relistInterval** | The period of time after which the controller refreshes the status of an Asset CR | `30s` |
-| **envs.asset.maxConcurrentReconciles** | The maximum number of Asset reconciles that can run in parallel | `1` |
+| **envs.clusterAssetGroup.relistInterval** | Period of time after which the controller refreshes the status of a ClusterAssetGroup CR | `5m` |
+| **envs.assetGroup.relistInterval** | Period of time after which the controller refreshes the status of an AssetGroup CR | `5m` |
+| **envs.clusterBucket.relistInterval** | Period of time after which the controller refreshes the status of a ClusterBucket CR | `30s` |
+| **envs.clusterBucket.maxConcurrentReconciles** | Maximum number of ClusterBucket reconciles that can run in parallel | `1` |
+| **envs.clusterBucket.region** | Location of the region in which the controller creates a ClusterBucket CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
+| **envs.bucket.relistInterval** | Period of time after which the controller refreshes the status of a Bucket CR | `30s` |
+| **envs.bucket.maxConcurrentReconciles** | Maximum number of Bucket reconciles that can run in parallel | `1` |
+| **envs.bucket.region** | Location of the region in which the controller creates a Bucket CR. If the field is empty, the controller creates the bucket under the default location. | `us-east-1` |
+| **envs.clusterAsset.relistInterval** | Period of time after which the controller refreshes the status of a ClusterAsset CR | `30s` |
+| **envs.clusterAsset.maxConcurrentReconciles** | Maximum number of ClusterAsset reconciles that can run in parallel | `1` |
+| **envs.asset.relistInterval** | Period of time after which the controller refreshes the status of an Asset CR | `30s` |
+| **envs.asset.maxConcurrentReconciles** | Maximum number of Asset reconciles that can run in parallel | `1` |
 | **envs.store.endpoint** | Address of the content storage server | `{{ include "rafter.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000` |
 | **envs.store.externalEndpoint** | External address of the content storage server | `nil` |
 | **envs.store.accessKey** | Access key required to sign in to the content storage server | Value from `{{ include "rafter.fullname" . }}-minio` ConfigMap |
 | **envs.store.secretKey** | Secret key required to sign in to the content storage server | Value from `{{ include "rafter.fullname" . }}-minio` ConfigMap |
 | **envs.store.useSSL** | HTTPS connection with the content storage server | `false` |
-| **envs.store.uploadWorkers** | The number of workers used in parallel to upload files to the storage server | `10` |
-| **envs.loader.verifySSL** | The variable that verifies the SSL certificate before downloading source files | `false` |
-| **envs.loader.tempDir** | The path to the directory used to temporarily store data | **/tmp** |
-| **envs.webhooks.validation.timeout** | The period of time after which validation is canceled | `1m` |
-| **envs.webhooks.validation.workers** | The number of workers used in parallel to validate files | `10` |
-| **envs.webhooks.mutation.timeout** | The period of time after which mutation is canceled | `1m` |
-| **envs.webhooks.mutation.workers** | The number of workers used in parallel to mutate files | `10` |
-| **envs.webhooks.metadata.timeout** | The period of time after which metadata extraction is canceled | `1m` |
+| **envs.store.uploadWorkers** | Number of workers used in parallel to upload files to the storage server | `10` |
+| **envs.loader.verifySSL** | Variable that verifies the SSL certificate before downloading source files | `false` |
+| **envs.loader.tempDir** | Path to the directory used to temporarily store data | **/tmp** |
+| **envs.webhooks.validation.timeout** | Period of time after which validation is canceled | `1m` |
+| **envs.webhooks.validation.workers** | Number of workers used in parallel to validate files | `10` |
+| **envs.webhooks.mutation.timeout** | Period of time after which mutation is canceled | `1m` |
+| **envs.webhooks.mutation.workers** | Number of workers used in parallel to mutate files | `10` |
+| **envs.webhooks.metadata.timeout** | Period of time after which metadata extraction is canceled | `1m` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
