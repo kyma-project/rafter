@@ -83,7 +83,7 @@ webhooksConfigMap:
         "metadataExtractors":[
           {
             "name": "rafter-frontmatter-service",
-            "namespace": "default",
+            "namespace": "kyma-system"",
             "endpoint": "/v1/extract",
             "filter": "\\.md$"
           }
@@ -94,14 +94,14 @@ webhooksConfigMap:
         "validations":[
           {
             "name": "rafter-asyncapi-service",
-            "namespace": "default",
+            "namespace": "kyma-system",
             "endpoint": "/v1/validate"
           }
         ],
         "mutations":[
           {
             "name": "rafter-asyncapi-service",
-            "namespace": "default",
+            "namespace": "kyma-system"",
             "endpoint": "/v1/convert"
           }
         ]

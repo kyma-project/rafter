@@ -106,7 +106,7 @@ envs:
       value: "us-east-1"
   configMap:
     enabled:
-      value: "false"
+      value: "true"
     name:
       value: "rafter-upload-service"
     namespace:
