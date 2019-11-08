@@ -8,11 +8,11 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "rafterFrontmatterService.chart" . }}
   {{- if .Values.service.labels }}
-    {{ include "rafterFrontmatterService.tplValue" ( dict "value" .Values.metrics.service.labels "context" . ) | nindent 4 }}
+    {{ include "rafterFrontmatterService.tplValue" ( dict "value" .Values.service.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.service.annotations }}
   annotations:
-    {{ include "rafterFrontmatterService.tplValue" ( dict "value" .Values.metrics.service.annotations "context" . ) | nindent 4 }}
+    {{ include "rafterFrontmatterService.tplValue" ( dict "value" .Values.service.annotations "context" . ) | nindent 4 }}
   {{- end }}
 spec:
   type: {{ .Values.service.type }}
