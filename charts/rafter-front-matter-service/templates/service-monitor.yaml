@@ -2,19 +2,19 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "rafterFrontmatterService.serviceMonitorName" . }}
+  name: {{ include "rafterFrontMatterService.serviceMonitorName" . }}
   labels:
     prometheus: monitoring
-    app.kubernetes.io/name: {{ include "rafterFrontmatterService.name" . }}
+    app.kubernetes.io/name: {{ include "rafterFrontMatterService.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ include "rafterFrontmatterService.chart" . }}
+    helm.sh/chart: {{ include "rafterFrontMatterService.chart" . }}
   {{- if .Values.serviceMonitor.labels }}
-    {{ include "rafterFrontmatterService.tplValue" ( dict "value" .Values.metrics.serviceMonitor.labels "context" . ) | nindent 4 }}
+    {{ include "rafterFrontMatterService.tplValue" ( dict "value" .Values.metrics.serviceMonitor.labels "context" . ) | nindent 4 }}
   {{- end }}
   {{- if .Values.serviceMonitor.annotations }}
   annotations:
-    {{ include "rafterFrontmatterService.tplValue" ( dict "value" .Values.metrics.serviceMonitor.annotations "context" . ) | nindent 4 }}
+    {{ include "rafterFrontMatterService.tplValue" ( dict "value" .Values.metrics.serviceMonitor.annotations "context" . ) | nindent 4 }}
   {{- end }}
 spec:
   endpoints:
@@ -23,6 +23,6 @@ spec:
       path: /metrics
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "rafterFrontmatterService.name" . }}
+      app.kubernetes.io/name: {{ include "rafterFrontMatterService.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

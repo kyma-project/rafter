@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "rafterFrontmatterService.name" -}}
+{{- define "rafterFrontMatterService.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "rafterFrontmatterService.fullname" -}}
+{{- define "rafterFrontMatterService.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -27,27 +27,27 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "rafterFrontmatterService.chart" -}}
+{{- define "rafterFrontMatterService.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Create the name of the service
 */}}
-{{- define "rafterFrontmatterService.serviceName" -}}
+{{- define "rafterFrontMatterService.serviceName" -}}
 {{- if .Values.service.name -}}
 {{- include .Values.service.name . | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- include "rafterFrontmatterService.fullname" . -}}
+{{- include "rafterFrontMatterService.fullname" . -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 Create the name of the service monitor
 */}}
-{{- define "rafterFrontmatterService.serviceMonitorName" -}}
+{{- define "rafterFrontMatterService.serviceMonitorName" -}}
 {{- if and .Values.serviceMonitor.create }}
-    {{ default (include "rafterFrontmatterService.fullname" .) .Values.serviceMonitor.name }}
+    {{ default (include "rafterFrontMatterService.fullname" .) .Values.serviceMonitor.name }}
 {{- else -}}
     {{ default "default" .Values.serviceMonitor.name }}
 {{- end -}}
@@ -56,9 +56,9 @@ Create the name of the service monitor
 {{/*
 Renders a value that contains template.
 Usage:
-{{ include "rafterFrontmatterService.tplValue" ( dict "value" .Values.path.to.the.Value "context" $ ) }}
+{{ include "rafterFrontMatterService.tplValue" ( dict "value" .Values.path.to.the.Value "context" $ ) }}
 */}}
-{{- define "rafterFrontmatterService.tplValue" -}}
+{{- define "rafterFrontMatterService.tplValue" -}}
     {{- if typeIs "string" .value }}
         {{- tpl .value .context }}
     {{- else }}
@@ -69,11 +69,11 @@ Usage:
 {{/*
 Renders a proper env in container
 Usage:
-{{ include "rafterFrontmatterService.createEnv" ( dict "name" "APP_FOO_BAR" "value" .Values.path.to.the.Value "context" $ ) }}
+{{ include "rafterFrontMatterService.createEnv" ( dict "name" "APP_FOO_BAR" "value" .Values.path.to.the.Value "context" $ ) }}
 */}}
-{{- define "rafterFrontmatterService.createEnv" -}}
+{{- define "rafterFrontMatterService.createEnv" -}}
 {{- if and .name .value }}
 {{- printf "- name: %s" .name -}}
-{{- include "rafterFrontmatterService.tplValue" ( dict "value" .value "context" .context ) | nindent 2 }}
+{{- include "rafterFrontMatterService.tplValue" ( dict "value" .value "context" .context ) | nindent 2 }}
 {{- end }}
 {{- end -}}

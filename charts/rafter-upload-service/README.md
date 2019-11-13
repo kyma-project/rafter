@@ -50,7 +50,7 @@ The following table lists the configurable parameters of the Upload Service char
 | **image.pullPolicy** | Pull policy for the Upload Service image | `IfNotPresent` |
 | **nameOverride** | String that partially overrides the **rafterUploadService.name** template | `nil` |
 | **fullnameOverride** | String that fully overrides the **rafterUploadService.fullname** template | `nil` |
-| **minio.enabled** | Parameter that defines whether to deploy MinIO | `false` |
+| **minio.enabled** | Parameter that defines whether to deploy MinIO | `true` |
 | **deployment.labels** | Custom labels for the Deployment | `{}` |
 | **deployment.annotations** | Custom annotations for the Deployment | `{}` |
 | **deployment.replicas** | Number of Upload Service nodes | `1` |
@@ -89,7 +89,7 @@ The following table lists the configurable parameters of the Upload Service char
 | **envs.kubeconfigPath** | Path to the `kubeconfig` file needed to run the Upload Service outside of a cluster | `nil` |
 | **envs.upload.timeout** | File processing time-out | `30m` |
 | **envs.upload.workers** | Maximum number of concurrent metadata extraction workers | `10` |
-| **envs.upload.endpoint** | Address of the content storage server | `{{ include "rafterUploadService.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local` |
+| **envs.upload.endpoint** | Address of the content storage server | `rafter-upload-service-minio.{{ .Release.Namespace }}.svc.cluster.local` |
 | **envs.upload.externalEndpoint** | External address of the content storage server | `nil` |
 | **envs.upload.port** | Port on which the content storage server listens | `9000` |
 | **envs.upload.accessKey** | Access key required to sign in to the content storage server | Value from `{{ include "rafterUploadService.fullname" . }}-minio` ConfigMap |

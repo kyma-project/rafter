@@ -1,9 +1,12 @@
-# Default values for rafter.
+# Default values for rafter-controller-manager.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 nameOverride:
 fullnameOverride:
+
+minio:
+  enabled: true
 
 image:
   repository: rafter-controller-manager

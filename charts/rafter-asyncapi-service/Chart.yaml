@@ -7,9 +7,13 @@ home: https://github.com/kyma-project/rafter
 sources:
   - https://github.com/kyma-project/rafter
 keywords:
+  - rafter
   - storage
   - assets
   - buckets
+  - assetgroups
+  - asyncapi
+  - webhook
   - minio
 maintainers:
   - name: derberg

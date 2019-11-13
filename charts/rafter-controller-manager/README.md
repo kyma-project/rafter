@@ -50,6 +50,7 @@ The following table lists the configurable parameters of the Rafter Controller M
 | **image.pullPolicy** | Pull policy for the Rafter Controller Manager image | `IfNotPresent` |
 | **nameOverride** | String that partially overrides the **rafter.name** template | `nil` |
 | **fullnameOverride** | String that fully overrides the **rafter.fullname** template | `nil` |
+| **minio.enabled** | Parameter that defines whether to deploy MinIO | `true` |
 | **deployment.labels** | Custom labels for the Deployment | `{}` |
 | **deployment.annotations** | Custom annotations for the Deployment | `{}` |
 | **deployment.replicas** | Number of Rafter Controller Manager nodes | `1` |

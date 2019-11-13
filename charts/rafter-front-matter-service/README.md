@@ -16,13 +16,13 @@ Read how to install, uninstall, and configure the chart.
 Use this command to install the chart:
 
 ``` bash
-helm install incubator/rafter-frontmatter-service
+helm install incubator/rafter-front-matter-service
 ```
 
-To install the chart with the `rafter-frontmatter-release` release name, use:
+To install the chart with the `rafter-front-matter-release` release name, use:
 
 ``` bash
-helm install --name rafter-frontmatter-release incubator/rafter-frontmatter-service
+helm install --name rafter-front-matter-release incubator/rafter-front-matter-service
 ```
 
 The command deploys the Front Matter Service on the Kubernetes cluster with the default configuration. The [**Configuration**](#configuration) section lists the parameters that you can configure during installation.
@@ -31,10 +31,10 @@ The command deploys the Front Matter Service on the Kubernetes cluster with the 
 
 ### Uninstall the chart
 
-To uninstall the `rafter-frontmatter-release` release, run:
+To uninstall the `rafter-front-matter-release` release, run:
 
 ``` bash
-helm delete rafter-frontmatter-release
+helm delete rafter-front-matter-release
 ```
 
 That command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -45,7 +45,7 @@ The following table lists the configurable parameters of the Front Matter Servic
 
 | Parameter | Description | Default |
 | --- | ---| ---|
-| **image.repository** | Front Matter Service image repository | `eu.gcr.io/kyma-project/rafter-frontmatter-service` |
+| **image.repository** | Front Matter Service image repository | `eu.gcr.io/kyma-project/rafter-front-matter-service` |
 | **image.tag** | Front Matter Service image tag | `{TAG_NAME}` |
 | **image.pullPolicy** | Pull policy for the Front Matter Service image | `IfNotPresent` |
 | **nameOverride** | String that partially overrides the **rafterFrontmatterService.name** template | `nil` |
@@ -79,9 +79,9 @@ The following table lists the configurable parameters of the Front Matter Servic
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
 ``` bash
-helm install --name rafter-frontmatter-release \
+helm install --name rafter-front-matter-release \
   --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
-    incubator/rafter-frontmatter-service
+    incubator/rafter-front-matter-service
 ```
 
 That command installs the release with the `rafter-service-monitor` name for the ServiceMonitor custom resource.
@@ -89,7 +89,7 @@ That command installs the release with the `rafter-service-monitor` name for the
 Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
-helm install --name rafter-frontmatter-release -f values.yaml incubator/rafter-frontmatter-service
+helm install --name rafter-front-matter-release -f values.yaml incubator/rafter-front-matter-service
 ```
 
 ### values.yaml as a template
@@ -114,6 +114,6 @@ envs:
   verbose:
     valueFrom:
       configMapKeyRef:
-        name: rafter-frontmatter-service-config
+        name: rafter-front-matter-service-config
         key: RAFTER_FRONT_MATTER_SERVICE_VERBOSE
 ```

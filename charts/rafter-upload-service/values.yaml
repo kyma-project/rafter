@@ -6,7 +6,7 @@ nameOverride:
 fullnameOverride:
 
 minio:
-  enabled: false
+  enabled: true
 
 image:
   repository: eu.gcr.io/kyma-project/rafter-upload-service
@@ -81,7 +81,7 @@ envs:
     workers:
       value: "10"
     endpoint:
-      value: '{{ include "rafterUploadService.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local'
+      value: 'rafter-upload-service-minio.{{ .Release.Namespace }}.svc.cluster.local'
     externalEndpoint:
       value: 'http://localhost:9000'
     port:
