@@ -1,9 +1,11 @@
 rafter-controller-manager:
   enabled: true
 
+  fullnameOverride: "rafter-controller-manager"
+
   image:
-    repository: eu.gcr.io/kyma-project/pr/rafter-controller-manager
-    tag: PR-15
+    repository: eu.gcr.io/kyma-project/rafter-controller-manager
+    tag: 3778b2ec
     pullPolicy: IfNotPresent
 
   installCRDs: true
@@ -34,7 +36,7 @@ rafter-controller-manager:
         {
           "metadataExtractors":[
             {
-              "name": "rafter-frontmatter-service",
+              "name": "rafter-front-matter-service",
               "namespace": "{{ .Release.Namespace }}",
               "endpoint": "/v1/extract",
               "filter": "\\.md$"
@@ -161,12 +163,14 @@ rafter-controller-manager:
 rafter-upload-service:
   enabled: true
 
+  fullnameOverride: "rafter-upload-service"
+
   minio:
     enabled: false
 
   image:
-    repository: eu.gcr.io/kyma-project/pr/rafter-upload-service
-    tag: PR-15
+    repository: eu.gcr.io/kyma-project/rafter-upload-service
+    tag: 3778b2ec
     pullPolicy: IfNotPresent
 
   pod:
@@ -221,9 +225,11 @@ rafter-upload-service:
 rafter-front-matter-service:
   enabled: true
 
+  fullnameOverride: "rafter-front-matter-service"
+
   image:
-    repository: eu.gcr.io/kyma-project/pr/rafter-front-matter-service
-    tag: PR-15
+    repository: eu.gcr.io/kyma-project/rafter-front-matter-service
+    tag: 3778b2ec
     pullPolicy: IfNotPresent
 
   pod:
@@ -246,9 +252,11 @@ rafter-front-matter-service:
 rafter-asyncapi-service:
   enabled: true
 
+  fullnameOverride: "rafter-asyncapi-service"
+
   image:
-    repository: eu.gcr.io/kyma-project/pr/rafter-asyncapi-service
-    tag: PR-15
+    repository: eu.gcr.io/kyma-project/rafter-asyncapi-service
+    tag: 3778b2ec
     pullPolicy: IfNotPresent
 
   pod:
