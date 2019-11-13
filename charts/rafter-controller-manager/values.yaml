@@ -9,8 +9,8 @@ minio:
   enabled: true
 
 image:
-  repository: eu.gcr.io/kyma-project/rafter-controller-manager
-  tag: latest
+  repository: eu.gcr.io/kyma-project/pr/rafter-controller-manager
+  tag: PR-15
   pullPolicy: IfNotPresent
 
 installCRDs: true
@@ -130,11 +130,11 @@ metrics:
 
 envs:
   clusterAssetGroup:
-    # relistInterval: 
-    #   value: 5m
+    relistInterval:
+      # value: 5m
   assetGroup:
-    # relistInterval: 
-    #   value: 5m
+    relistInterval:
+      # value: 5m
   clusterBucket:
     relistInterval: 
       # value: 30s

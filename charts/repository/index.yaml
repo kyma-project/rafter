@@ -3,9 +3,9 @@ entries:
   rafter-asyncapi-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-13T13:18:31.798196+01:00"
+    created: "2019-11-13T14:00:50.112849+01:00"
     description: A Helm chart for AsyncAPI Service
-    digest: 267ea4ac74123018eb50a19b5010b60e3f09208ac9aacc13287680a78fed2162
+    digest: 4249a0a030f6565e446dfccdbfdd97bc3cc16660a38dc54d6336966ec6327b22
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -36,9 +36,9 @@ entries:
   rafter-controller-manager:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-13T13:18:31.800511+01:00"
+    created: "2019-11-13T14:00:50.116123+01:00"
     description: A Helm chart for Rafter Controller Manager
-    digest: a7c6bf9da4343155f9ca93a420f66b2f75f0c626845889344383c0d0118616d5
+    digest: a35706d29e7205bdeccb6d9b9d01398406a12b24745936ba26a92a00dbc53528
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -68,9 +68,9 @@ entries:
   rafter-front-matter-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-13T13:18:31.801195+01:00"
+    created: "2019-11-13T14:00:50.116807+01:00"
     description: A Helm chart for Front Matter Service
-    digest: cbeb2dcebf071f3e54dd72dc04e6128665291fd513c3d2dd1a657a72f7a15dc9
+    digest: f4219680e05a5ff217c1ba0a606d108a04834277335fd932f08dca6fe4b11b65
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -101,9 +101,9 @@ entries:
   rafter-upload-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-13T13:18:31.802389+01:00"
+    created: "2019-11-13T14:00:50.118805+01:00"
     description: A Helm chart for Upload Service
-    digest: ba563af19a491062b58d6108a2bcede2edf706e314e5a41032661835007fe35a
+    digest: c06ee8c08e6ae0d60d7b1a2fe64c5a1f1e5e7a853f4c23f2b9658f0f6f3e208d
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -131,4 +131,4 @@ entries:
     urls:
     - http://127.0.0.1:8879/rafter-upload-service-0.1.0.tgz
     version: 0.1.0
-generated: "2019-11-13T13:18:31.797424+01:00"
+generated: "2019-11-13T14:00:50.111537+01:00"
