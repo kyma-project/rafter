@@ -6,14 +6,14 @@ nameOverride:
 fullnameOverride:
 
 minio:
-  enabled: false
+  enabled: true
   persistence:
     enabled: true
     size: 10Gi
 
 image:
   repository: eu.gcr.io/kyma-project/rafter-upload-service
-  tag: v1.0.0
+  tag: latest
   pullPolicy: IfNotPresent
 
 deployment:
@@ -67,47 +67,47 @@ serviceMonitor:
 
 envs:
   host:
-    value: "0.0.0.0"
+    # value: "0.0.0.0"
   verbose: 
-    value: "true"
+    # value: "true"
   kubeconfigPath:
   upload:
     timeout:
-      value: "30m"
+      # value: "30m"
     workers:
-      value: "10"
+      # value: "10"
     endpoint:
-      value: 'rafter-upload-service-minio.{{ .Release.Namespace }}.svc.cluster.local'
+      # value: 'rafter-upload-service-minio.{{ .Release.Namespace }}.svc.cluster.local'
     externalEndpoint:
-      value: 'http://localhost:9000'
+      # value: 'http://localhost:9000'
     port:
-      value: "9000"
+      # value: "9000"
     accessKey:
-      valueFrom:
-        secretKeyRef:
-          name: '{{ include "rafterUploadService.fullname" . }}-minio'
-          key: accesskey
+      # valueFrom:
+      #   secretKeyRef:
+      #     name: '{{ include "rafterUploadService.fullname" . }}-minio'
+      #     key: accesskey
     secretKey:
-      valueFrom:
-        secretKeyRef:
-          name: '{{ include "rafterUploadService.fullname" . }}-minio'
-          key: secretkey
+      # valueFrom:
+      #   secretKeyRef:
+      #     name: '{{ include "rafterUploadService.fullname" . }}-minio'
+      #     key: secretkey
     secure: 
-      value: "false"
+      # value: "false"
   bucket:
     privatePrefix:
-      value: system-private
+      # value: system-private
     publicPrefix:
-      value: system-public
+      # value: system-public
     region:
-      value: "us-east-1"
+      # value: "us-east-1"
   configMap:
     enabled:
-      value: "true"
+      # value: "true"
     name:
-      value: "rafter-upload-service"
+      # value: "rafter-upload-service"
     namespace:
-      value: "{{ .Release.Namespace }}"
+      # value: "{{ .Release.Namespace }}"
 
 migrator:
   images:

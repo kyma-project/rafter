@@ -9,9 +9,9 @@ minio:
   enabled: true
 
 image:
-  repository: rafter-controller-manager
+  repository: eu.gcr.io/kyma-project/rafter-controller-manager
   tag: latest
-  pullPolicy: Never
+  pullPolicy: IfNotPresent
 
 installCRDs: true
 
@@ -130,70 +130,70 @@ metrics:
 
 envs:
   clusterAssetGroup:
-    relistInterval: 
-      value: 5m
+    # relistInterval: 
+    #   value: 5m
   assetGroup:
-    relistInterval: 
-      value: 5m
+    # relistInterval: 
+    #   value: 5m
   clusterBucket:
     relistInterval: 
-      value: 30s
+      # value: 30s
     maxConcurrentReconciles: 
-      value: "1"
+      # value: "1"
     region: 
-      value: us-east-1
+      # value: us-east-1
   bucket:
     relistInterval: 
-      value: 30s
+      # value: 30s
     maxConcurrentReconciles: 
-      value: "1"
+      # value: "1"
     region: 
-      value: us-east-1
+      # value: us-east-1
   clusterAsset:
     relistInterval: 
-      value: 30s
+      # value: 30s
     maxConcurrentReconciles: 
-      value: "1"
+      # value: "1"
   asset:
     relistInterval: 
-      value: 30s
+      # value: 30s
     maxConcurrentReconciles: 
-      value: "1"
+      # value: "1"
   store:
     endpoint: 
-      value: '{{ include "rafter.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000'
+      # value: '{{ include "rafter.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000'
     externalEndpoint:
-      value: 'http://localhost:9000'
+      # value: 'http://localhost:9000'
     accessKey:
-      valueFrom:
-        secretKeyRef:
-          name: '{{ include "rafter.fullname" . }}-minio'
-          key: accesskey
+      # valueFrom:
+      #   secretKeyRef:
+      #     name: '{{ include "rafter.fullname" . }}-minio'
+      #     key: accesskey
     secretKey:
-      valueFrom:
-        secretKeyRef:
-          name: '{{ include "rafter.fullname" . }}-minio'
-          key: secretkey
+      # valueFrom:
+      #   secretKeyRef:
+      #     name: '{{ include "rafter.fullname" . }}-minio'
+      #     key: secretkey
     useSSL: 
-      value: "false"
+      # value: "false"
     uploadWorkers: 
-      value: "10"
+      # value: "10"
   loader:
     verifySSL: 
-      value: "false"
+      # value: "false"
     tempDir: 
-      value: "/tmp"
+      # value: "/tmp"
   webhooks:
     validation:
       timeout: 
-        value: 1m
+        # value: 1m
       workers: 
-        value: "10"
+        # value: "10"
     mutation:
       timeout: 
-        value: 1m
+        # value: 1m
       workers: 
-        value: "10"
+        # value: "10"
     metadata:
       timeout: 
-        value: 1m
+        # value: 1m

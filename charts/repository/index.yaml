@@ -3,9 +3,9 @@ entries:
   rafter-asyncapi-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-13T10:11:41.990419+01:00"
+    created: "2019-11-13T13:18:31.798196+01:00"
     description: A Helm chart for AsyncAPI Service
-    digest: cc3f594ad0cd3d31d96b7b2afbef47d635ee0fcbf5c15c4164040325692aaac6
+    digest: 267ea4ac74123018eb50a19b5010b60e3f09208ac9aacc13287680a78fed2162
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -31,14 +31,14 @@ entries:
     sources:
     - https://github.com/kyma-project/rafter
     urls:
-    - rafter-asyncapi-service-0.1.0.tgz
+    - http://127.0.0.1:8879/rafter-asyncapi-service-0.1.0.tgz
     version: 0.1.0
   rafter-controller-manager:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-13T10:11:41.992047+01:00"
+    created: "2019-11-13T13:18:31.800511+01:00"
     description: A Helm chart for Rafter Controller Manager
-    digest: 3c097c081cb17e55b3e2708772d12915df42243684db219e92bb842722ec83d1
+    digest: a7c6bf9da4343155f9ca93a420f66b2f75f0c626845889344383c0d0118616d5
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -63,14 +63,14 @@ entries:
     sources:
     - https://github.com/kyma-project/rafter
     urls:
-    - rafter-controller-manager-0.1.0.tgz
+    - http://127.0.0.1:8879/rafter-controller-manager-0.1.0.tgz
     version: 0.1.0
   rafter-front-matter-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-13T10:11:41.992478+01:00"
+    created: "2019-11-13T13:18:31.801195+01:00"
     description: A Helm chart for Front Matter Service
-    digest: 0aa13da97c65fb24566c8c8b6dcdf1f9529dba0334a588408bc98a507e15898b
+    digest: cbeb2dcebf071f3e54dd72dc04e6128665291fd513c3d2dd1a657a72f7a15dc9
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -96,14 +96,14 @@ entries:
     sources:
     - https://github.com/kyma-project/rafter
     urls:
-    - rafter-front-matter-service-0.1.0.tgz
+    - http://127.0.0.1:8879/rafter-front-matter-service-0.1.0.tgz
     version: 0.1.0
   rafter-upload-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-13T10:11:41.994453+01:00"
+    created: "2019-11-13T13:18:31.802389+01:00"
     description: A Helm chart for Upload Service
-    digest: f11bd3b7541ce6b843d65a2a00362368f1f26da5f1022e869bfc963d93b1dc56
+    digest: ba563af19a491062b58d6108a2bcede2edf706e314e5a41032661835007fe35a
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -129,6 +129,6 @@ entries:
     sources:
     - https://github.com/kyma-project/rafter
     urls:
-    - rafter-upload-service-0.1.0.tgz
+    - http://127.0.0.1:8879/rafter-upload-service-0.1.0.tgz
     version: 0.1.0
-generated: "2019-11-13T10:11:41.988059+01:00"
+generated: "2019-11-13T13:18:31.797424+01:00"

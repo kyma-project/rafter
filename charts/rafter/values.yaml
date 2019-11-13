@@ -1,0 +1,287 @@
+rafter-controller-manager:
+  enabled: true
+
+  image:
+    repository: eu.gcr.io/kyma-project/rafter-controller-manager
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  installCRDs: true
+
+  pod:
+    resources:
+      limits:
+        cpu: 150m
+        memory: 128Mi
+      requests:
+        cpu: 10m
+        memory: 32Mi
+    volumes:
+      - name: tmp-empty-dir
+        emptyDir: {}
+    volumeMounts:
+      - mountPath: /tmp
+        name: tmp-empty-dir
+    extraProperties:
+      terminationGracePeriodSeconds: 10
+
+  webhooksConfigMap:
+    create: true
+    name: rafter-webhooks-cfg
+    namespace: "{{ .Release.Namespace }}"
+    hooks:
+      markdown: |-
+        {
+          "metadataExtractors":[
+            {
+              "name": "rafter-frontmatter-service",
+              "namespace": "{{ .Release.Namespace }}",
+              "endpoint": "/v1/extract",
+              "filter": "\\.md$"
+            }
+          ]
+        }
+      asyncapi: |-
+        {
+          "validations":[
+            {
+              "name": "rafter-asyncapi-service",
+              "namespace": "{{ .Release.Namespace }}",
+              "endpoint": "/v1/validate"
+            }
+          ],
+          "mutations":[
+            {
+              "name": "rafter-asyncapi-service",
+              "namespace": "{{ .Release.Namespace }}",
+              "endpoint": "/v1/convert"
+            }
+          ]
+        }
+
+  envs:
+    clusterAssetGroup:
+      relistInterval:
+        value: 5m
+    assetGroup:
+      relistInterval:
+        value: 5m
+    clusterBucket:
+      relistInterval:
+        value: 30s
+      maxConcurrentReconciles:
+        value: "1"
+      region:
+        valueFrom:
+          configMapKeyRef:
+            name: rafter-minio-docs-upload
+            key: APP_BUCKET_REGION
+    bucket:
+      relistInterval:
+        value: 30s
+      maxConcurrentReconciles:
+        value: "1"
+      region:
+        valueFrom:
+          configMapKeyRef:
+            name: rafter-minio-docs-upload
+            key: APP_BUCKET_REGION
+    clusterAsset:
+      relistInterval:
+        value: 30s
+      maxConcurrentReconciles:
+        value: "1"
+    asset:
+      relistInterval:
+        value: 30s
+      maxConcurrentReconciles:
+        value: "1"
+    store:
+      endpoint:
+        valueFrom:
+          configMapKeyRef:
+            name: rafter-minio-docs-upload
+            key: APP_UPLOAD_ENDPOINT_WITH_PORT
+      accessKey:
+        valueFrom:
+          secretKeyRef:
+            name: rafter-minio
+            key: accesskey
+      secretKey:
+        valueFrom:
+          secretKeyRef:
+            name: rafter-minio
+            key: secretkey
+      useSSL:
+        valueFrom:
+          configMapKeyRef:
+            name: rafter-minio-docs-upload
+            key: APP_UPLOAD_SECURE
+      uploadWorkers:
+        value: "10"
+    loader:
+      verifySSL:
+        value: "false"
+      tempDir:
+        value: "/tmp"
+    webhooks:
+      validation:
+        timeout:
+          value: 1m
+        workers:
+          value: "10"
+      mutation:
+        timeout:
+          value: 1m
+        workers:
+          value: "10"
+      metadata:
+        timeout:
+          value: 1m
+
+  minio:
+    enabled: true
+
+    image:
+      tag: RELEASE.2019-06-04T01-15-58Z
+
+    persistence:
+      enabled: true
+      size: 10Gi
+
+    DeploymentUpdate:
+      type: Recreate
+
+    environment:
+      MINIO_BROWSER: "off"
+
+    defaultBucket:
+      enabled: false
+
+    resources:
+      requests:
+        memory: 32Mi
+        cpu: 10m
+      limits:
+        memory: 128Mi
+        cpu: 100m
+
+    gcsgateway:
+      replicas: 2
+
+rafter-upload-service:
+  enabled: true
+
+  minio:
+    enabled: false
+
+  image:
+    repository: eu.gcr.io/kyma-project/rafter-upload-service
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  pod:
+    extraProperties:
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 0
+
+  envs:
+    host:
+      value: "0.0.0.0"
+    verbose:
+      value: "true"
+    upload:
+      timeout:
+        value: "30m"
+      workers:
+        value: "10"
+      endpoint:
+        valueFrom:
+          configMapKeyRef:
+            name: rafter-minio-docs-upload
+            key: APP_UPLOAD_ENDPOINT
+      port:
+        valueFrom:
+          configMapKeyRef:
+            name: rafter-minio-docs-upload
+            key: APP_UPLOAD_PORT
+      accessKey:
+        valueFrom:
+          secretKeyRef:
+            name: rafter-minio
+            key: accesskey
+      secretKey:
+        valueFrom:
+          secretKeyRef:
+            name: rafter-minio
+            key: secretkey
+      secure:
+        valueFrom:
+          configMapKeyRef:
+            name: rafter-minio-docs-upload
+            key: APP_UPLOAD_SECURE
+    bucket:
+      privatePrefix:
+        value: system-private
+      publicPrefix:
+        value: system-public
+      region:
+        valueFrom:
+          configMapKeyRef:
+            name: rafter-minio-docs-upload
+            key: APP_BUCKET_REGION
+    configMap:
+      enabled:
+        value: "true"
+      name:
+        value: "rafter-upload-service"
+      namespace:
+        value: "{{ .Release.Namespace }}"
+
+rafter-frontmatter-service:
+  enabled: true
+
+  image:
+    repository: eu.gcr.io/kyma-project/rafter-frontmatter-service
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  pod:
+    extraProperties:
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 0
+
+  envs:
+    host:
+      value: "0.0.0.0"
+    verbose:
+      value: "true"
+    timeout:
+      value: "1m"
+    workers:
+      value: "10"
+
+rafter-asyncapi-service:
+  enabled: true
+
+  image:
+    repository: eu.gcr.io/kyma-project/rafter-asyncapi-service
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  pod:
+    extraProperties:
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 0
+
+  envs:
+    host:
+      value: "0.0.0.0"
+    verbose:
+      value: "true"
