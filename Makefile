@@ -98,8 +98,8 @@ vet:
 
 # Run tests
 test: clean manifests vet fmt
-	GO111MODULE=on go test -short -coverprofile=${COVERAGE_OUTPUT_PATH} ${ROOT}/...
-	@GO111MODULE=on go tool cover -func=${COVERAGE_OUTPUT_PATH} \
+	go test -short -coverprofile=${COVERAGE_OUTPUT_PATH} ${ROOT}/...
+	@go tool cover -func=${COVERAGE_OUTPUT_PATH} \
 		| grep total \
 		| awk '{print "Total test coverage: " $$3}'
 
