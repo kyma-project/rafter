@@ -6,7 +6,10 @@ nameOverride:
 fullnameOverride:
 
 minio:
-  enabled: true
+  enabled: false
+  persistence:
+    enabled: false
+    size: 10Gi
 
 image:
   repository: eu.gcr.io/kyma-project/rafter-upload-service
@@ -112,3 +115,14 @@ envs:
       value: "rafter-upload-service"
     namespace:
       value: "{{ .Release.Namespace }}"
+
+migrator:
+  images:
+    alpine_kubectl:
+      repository: eu.gcr.io/kyma-project/test-infra/alpine-kubectl
+      tag: 'v20190325-ff66a3a'
+      pullPolicy: IfNotPresent
+    minio_client:
+      repository: 'minio/mc'
+      tag: 'RELEASE.2019-04-03T17-59-57Z'
+      pullPolicy: IfNotPresent

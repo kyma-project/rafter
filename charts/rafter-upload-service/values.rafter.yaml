@@ -7,6 +7,9 @@ fullnameOverride:
 
 minio:
   enabled: false
+  persistence:
+    enabled: false
+    size: 10Gi
 
 image:
   repository: rafter-upload-service

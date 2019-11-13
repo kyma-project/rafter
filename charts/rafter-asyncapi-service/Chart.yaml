@@ -1,6 +1,6 @@
 apiVersion: v1
-version: 1.0.0
-appVersion: 1.0.0
+version: 0.1.0
+appVersion: 0.1.0
 name: rafter-asyncapi-service
 description: A Helm chart for AsyncAPI Service
 home: https://github.com/kyma-project/rafter
@@ -17,12 +17,12 @@ keywords:
   - minio
 maintainers:
   - name: derberg
-    email: ""
+    email: "lukasz.gornicki.83@gmail.com"
   - name: michal-hudy
-    email: ""
+    email: "michal@hudy.pl"
   - name: m00g3n
-    email: ""
+    email: "marcin.witalis@gmail.com"
   - name: aerfio
-    email: ""
+    email: "mati6095@gmail.com"
   - name: magicmatatjahu
-    email: ""
+    email: "urbanczyk.maciej.95@gmail.com"
