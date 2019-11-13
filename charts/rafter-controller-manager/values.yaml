@@ -24,8 +24,6 @@ deployment:
 pod:
   labels: {}
   annotations: {}
-    # sidecar.istio.io/inject: "false"
-    # recreate: "{{ .Release.Time.Seconds }}"
   resources:
     limits:
       cpu: 150m
@@ -39,12 +37,7 @@ pod:
   volumeMounts:
     - mountPath: /tmp
       name: tmp-empty-dir
-  extraProperties:
-    terminationGracePeriodSeconds: 10
-    # hostAliases:
-    #   - ip: {{ .Values.global.minikubeIP }}
-    #     hostnames:
-    #       - "minio.{{ .Values.global.ingress.domainName }}"
+  extraProperties: {}
   extraContainerProperties: {}
 
 serviceAccount:
@@ -87,7 +80,7 @@ webhooksConfigMap:
         "metadataExtractors":[
           {
             "name": "rafter-frontmatter-service",
-            "namespace": "default",
+            "namespace": "{{ .Release.Namespace }}",
             "endpoint": "/v1/extract",
             "filter": "\\.md$"
           }
@@ -98,14 +91,14 @@ webhooksConfigMap:
         "validations":[
           {
             "name": "rafter-asyncapi-service",
-            "namespace": "default",
+            "namespace": "{{ .Release.Namespace }}",
             "endpoint": "/v1/validate"
           }
         ],
         "mutations":[
           {
             "name": "rafter-asyncapi-service",
-            "namespace": "default",
+            "namespace": "{{ .Release.Namespace }}",
             "endpoint": "/v1/convert"
           }
         ]
@@ -134,9 +127,6 @@ metrics:
   pod:
     labels: {}
     annotations: {}
-      # prometheus.io/scrape: "true"
-      # prometheus.io/port: "8080"
-      # prometheus.io/path: "/metrics"
 
 envs:
   clusterAssetGroup:
@@ -172,10 +162,6 @@ envs:
   store:
     endpoint: 
       value: '{{ include "rafter.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000'
-      # valueFrom:
-      #   configMapKeyRef:
-      #     name: '{{ include "rafter.fullname" . }}-minio'
-      #     key: APP_UPLOAD_ENDPOINT_WITH_PORT
     externalEndpoint:
       value: 'http://localhost:9000'
     accessKey:
@@ -190,10 +176,6 @@ envs:
           key: secretkey
     useSSL: 
       value: "false"
-      # valueFrom:
-      #   configMapKeyRef:
-      #     name: '{{ include "rafter.fullname" . }}-minio'
-      #     key: APP_UPLOAD_SECURE
     uploadWorkers: 
       value: "10"
   loader:

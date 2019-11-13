@@ -25,13 +25,7 @@ deployment:
 pod:
   labels: {}
   annotations: {}
-    # sidecar.istio.io/inject: "false"
-    # recreate: {{ .Release.Time.Seconds | quote }}
   extraProperties: {}
-    # strategy:
-    #   type: RollingUpdate
-    #   rollingUpdate:
-    #     maxUnavailable: 0
   extraContainerProperties: {}
 
 service:
@@ -44,7 +38,6 @@ service:
     protocol: TCP
   labels: {}
   annotations: {}
-    # auth.istio.io/80: NONE
 
 serviceAccount:
   create: true
