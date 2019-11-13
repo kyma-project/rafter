@@ -43,6 +43,9 @@ spec:
               properties:
                 name:
                   type: string
+              required:
+              - name
+              type: object
             description:
               type: string
             displayName:
