@@ -71,21 +71,15 @@ rafter-controller-manager:
         value: 30s
       maxConcurrentReconciles:
         value: "1"
-      region:
-        valueFrom:
-          configMapKeyRef:
-            name: rafter-minio-docs-upload
-            key: APP_BUCKET_REGION
+      region: 
+        value: us-east-1
     bucket:
       relistInterval:
         value: 30s
       maxConcurrentReconciles:
         value: "1"
-      region:
-        valueFrom:
-          configMapKeyRef:
-            name: rafter-minio-docs-upload
-            key: APP_BUCKET_REGION
+      region: 
+        value: us-east-1
     clusterAsset:
       relistInterval:
         value: 30s
@@ -97,26 +91,21 @@ rafter-controller-manager:
       maxConcurrentReconciles:
         value: "1"
     store:
-      endpoint:
-        valueFrom:
-          configMapKeyRef:
-            name: rafter-minio-docs-upload
-            key: APP_UPLOAD_ENDPOINT_WITH_PORT
+      endpoint: 
+        value: "{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000"
+      externalEndpoint: ""
       accessKey:
         valueFrom:
           secretKeyRef:
-            name: rafter-minio
+            name: "{{ .Release.Name }}-minio"
             key: accesskey
       secretKey:
         valueFrom:
           secretKeyRef:
-            name: rafter-minio
+            name: "{{ .Release.Name }}-minio"
             key: secretkey
-      useSSL:
-        valueFrom:
-          configMapKeyRef:
-            name: rafter-minio-docs-upload
-            key: APP_UPLOAD_SECURE
+      useSSL: 
+        value: "false"
       uploadWorkers:
         value: "10"
     loader:
@@ -197,41 +186,30 @@ rafter-upload-service:
         value: "30m"
       workers:
         value: "10"
-      endpoint:
-        valueFrom:
-          configMapKeyRef:
-            name: rafter-minio-docs-upload
-            key: APP_UPLOAD_ENDPOINT
+      endpoint: 
+        value: "{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local"
+      externalEndpoint: ""
       port:
-        valueFrom:
-          configMapKeyRef:
-            name: rafter-minio-docs-upload
-            key: APP_UPLOAD_PORT
+        value: "9000"
       accessKey:
         valueFrom:
           secretKeyRef:
-            name: rafter-minio
+            name: "{{ .Release.Name }}-minio"
             key: accesskey
       secretKey:
         valueFrom:
           secretKeyRef:
-            name: rafter-minio
+            name: "{{ .Release.Name }}-minio"
             key: secretkey
       secure:
-        valueFrom:
-          configMapKeyRef:
-            name: rafter-minio-docs-upload
-            key: APP_UPLOAD_SECURE
+        value: "false"
     bucket:
       privatePrefix:
         value: system-private
       publicPrefix:
         value: system-public
       region:
-        valueFrom:
-          configMapKeyRef:
-            name: rafter-minio-docs-upload
-            key: APP_BUCKET_REGION
+        value: "us-east-1"
     configMap:
       enabled:
         value: "true"

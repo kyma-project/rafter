@@ -42,10 +42,10 @@ serviceMonitor:
 
 envs:
   host:
-    # value: "0.0.0.0"
+    value: "0.0.0.0"
   verbose: 
-    # value: "true"
+    value: "true"
   timeout:
-    # value: "1m"
+    value: "1m"
   workers:
-    # value: "10"
+    value: "10"
