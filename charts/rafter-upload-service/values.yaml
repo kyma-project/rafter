@@ -8,7 +8,7 @@ fullnameOverride:
 minio:
   enabled: false
   persistence:
-    enabled: false
+    enabled: true
     size: 10Gi
 
 image:
