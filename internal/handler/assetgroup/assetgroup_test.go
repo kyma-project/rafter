@@ -689,7 +689,7 @@ func testData(name string, bucketRef string, sources []v1beta1.Source) *v1beta1.
 		},
 		Spec: v1beta1.AssetGroupSpec{
 			CommonAssetGroupSpec: v1beta1.CommonAssetGroupSpec{
-				BucketRef: v1beta1.AssetBucketRef{
+				BucketRef: v1beta1.AssetGroupBucketRef{
 					Name: bucketRef,
 				},
 				DisplayName: fmt.Sprintf("%s Display", name),
