@@ -79,10 +79,21 @@ Create the name of the rbac cluster role binding
 Create the name of the service monitor
 */}}
 {{- define "rafterUploadService.serviceMonitorName" -}}
-{{- if and .Values.serviceMonitor.create }}
+{{- if .Values.serviceMonitor.create }}
     {{ default (include "rafterUploadService.fullname" .) .Values.serviceMonitor.name }}
 {{- else -}}
     {{ default "default" .Values.serviceMonitor.name }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create the reference name for minio release
+*/}}
+{{- define "rafterUploadService.minioRefName" -}}
+{{- if .Values.minio.refName -}}
+{{- .Values.minio.refName | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-minio" .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 

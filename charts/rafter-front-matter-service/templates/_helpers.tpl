@@ -46,7 +46,7 @@ Create the name of the service
 Create the name of the service monitor
 */}}
 {{- define "rafterFrontMatterService.serviceMonitorName" -}}
-{{- if and .Values.serviceMonitor.create }}
+{{- if .Values.serviceMonitor.create }}
     {{ default (include "rafterFrontMatterService.fullname" .) .Values.serviceMonitor.name }}
 {{- else -}}
     {{ default "default" .Values.serviceMonitor.name }}

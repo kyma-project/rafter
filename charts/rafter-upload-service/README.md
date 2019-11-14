@@ -51,6 +51,7 @@ The following table lists the configurable parameters of the Upload Service char
 | **nameOverride** | String that partially overrides the **rafterUploadService.name** template | `nil` |
 | **fullnameOverride** | String that fully overrides the **rafterUploadService.fullname** template | `nil` |
 | **minio.enabled** | Parameter that defines whether to deploy MinIO | `true` |
+| **minio.refName** | Name of MinIO release used in migration job. If not set, it is generated using the **Release.Name** template with `-minio` suffix. | `nil` |
 | **deployment.labels** | Custom labels for the Deployment | `{}` |
 | **deployment.annotations** | Custom annotations for the Deployment | `{}` |
 | **deployment.replicas** | Number of Upload Service nodes | `1` |

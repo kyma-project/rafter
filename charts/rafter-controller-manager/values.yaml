@@ -161,18 +161,18 @@ envs:
       value: "1"
   store:
     endpoint: 
-      value: '{{ include "rafter.fullname" . }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000'
+      value: "{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000"
     externalEndpoint:
       value: 'http://localhost:9000'
     accessKey:
       valueFrom:
         secretKeyRef:
-          name: '{{ include "rafter.fullname" . }}-minio'
+          name: "{{ .Release.Name }}-minio"
           key: accesskey
     secretKey:
       valueFrom:
         secretKeyRef:
-          name: '{{ include "rafter.fullname" . }}-minio'
+          name: "{{ .Release.Name }}-minio"
           key: secretkey
     useSSL: 
       value: "false"
