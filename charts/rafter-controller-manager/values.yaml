@@ -9,8 +9,8 @@ minio:
   enabled: true
 
 image:
-  repository: eu.gcr.io/kyma-project/pr/rafter-controller-manager
-  tag: PR-15
+  repository: eu.gcr.io/kyma-project/rafter-controller-manager
+  tag: 3778b2ec
   pullPolicy: IfNotPresent
 
 installCRDs: true
