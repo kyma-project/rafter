@@ -56,72 +56,72 @@ function start_docker() {
 #  - INSTALL_DIR
 #
 # usage: env INSTALL_DIR=/tmp KIND_VERSION=v0.4.0 install::local::kind
-install::kind() {
-    mkdir -p "${INSTALL_DIR}/bin"
-    export PATH="${INSTALL_DIR}/bin:${PATH}"
-
-    pushd "${INSTALL_DIR}"
-
-    os=$(host::os)
-    arch=$(host::arch)
-
-    shout "- Install kind ${KIND_VERSION} locally to a tempdir..."
-
-    curl -sSLo kind "https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-${os}-${arch}"
-    chmod +x kind
-    mv kind "${INSTALL_DIR}/bin"
-
-    popd
-}
-
-host::os() {
-  local host_os
-  case "$(uname -s)" in
-    Darwin)
-      host_os=darwin
-      ;;
-    Linux)
-      host_os=linux
-      ;;
-    *)
-      kube::log::error "Unsupported host OS.  Must be Linux or Mac OS X."
-      exit 1
-      ;;
-  esac
-  echo "${host_os}"
-}
-
-host::arch() {
-  local host_arch
-  case "$(uname -m)" in
-    x86_64*)
-      host_arch=amd64
-      ;;
-    i?86_64*)
-      host_arch=amd64
-      ;;
-    amd64*)
-      host_arch=amd64
-      ;;
-    aarch64*)
-      host_arch=arm64
-      ;;
-    arm64*)
-      host_arch=arm64
-      ;;
-    arm*)
-      host_arch=arm
-      ;;
-    ppc64le*)
-      host_arch=ppc64le
-      ;;
-    *)
-      kube::log::error "Unsupported host arch. Must be x86_64, arm, arm64, or ppc64le."
-      exit 1
-      ;;
-  esac
-  echo "${host_arch}"
-}
+#install::kind() {
+#    mkdir -p "${INSTALL_DIR}/bin"
+#    export PATH="${INSTALL_DIR}/bin:${PATH}"
+#
+#    pushd "${INSTALL_DIR}"
+#
+#    os=$(host::os)
+#    arch=$(host::arch)
+#
+#    shout "- Install kind ${KIND_VERSION} locally to a tempdir..."
+#
+#    curl -sSLo kind "https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-${os}-${arch}"
+#    chmod +x kind
+#    mv kind "${INSTALL_DIR}/bin"
+#
+#    popd
+#}
+#
+#host::os() {
+#  local host_os
+#  case "$(uname -s)" in
+#    Darwin)
+#      host_os=darwin
+#      ;;
+#    Linux)
+#      host_os=linux
+#      ;;
+#    *)
+#      kube::log::error "Unsupported host OS.  Must be Linux or Mac OS X."
+#      exit 1
+#      ;;
+#  esac
+#  echo "${host_os}"
+#}
+#
+#host::arch() {
+#  local host_arch
+#  case "$(uname -m)" in
+#    x86_64*)
+#      host_arch=amd64
+#      ;;
+#    i?86_64*)
+#      host_arch=amd64
+#      ;;
+#    amd64*)
+#      host_arch=amd64
+#      ;;
+#    aarch64*)
+#      host_arch=arm64
+#      ;;
+#    arm64*)
+#      host_arch=arm64
+#      ;;
+#    arm*)
+#      host_arch=arm
+#      ;;
+#    ppc64le*)
+#      host_arch=ppc64le
+#      ;;
+#    *)
+#      kube::log::error "Unsupported host arch. Must be x86_64, arm, arm64, or ppc64le."
+#      exit 1
+#      ;;
+#  esac
+#  echo "${host_arch}"
+#}
 
 #
 # 'kind'(kubernetes-in-docker) functions
