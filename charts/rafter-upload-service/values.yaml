@@ -78,7 +78,6 @@ envs:
     endpoint:
       value: "{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local"
     externalEndpoint:
-      value: 'http://localhost:9000'
     port:
       value: "9000"
     accessKey:

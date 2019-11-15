@@ -163,7 +163,6 @@ envs:
     endpoint: 
       value: "{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000"
     externalEndpoint:
-      value: 'http://localhost:9000'
     accessKey:
       valueFrom:
         secretKeyRef:

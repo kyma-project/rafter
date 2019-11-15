@@ -95,7 +95,7 @@ rafter-controller-manager:
     store:
       endpoint: 
         value: "{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000"
-      externalEndpoint: ""
+      externalEndpoint:
       accessKey:
         valueFrom:
           secretKeyRef:
@@ -191,7 +191,7 @@ rafter-upload-service:
         value: "10"
       endpoint: 
         value: "{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local"
-      externalEndpoint: ""
+      externalEndpoint:
       port:
         value: "9000"
       accessKey:
