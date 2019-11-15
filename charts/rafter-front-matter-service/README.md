@@ -5,7 +5,7 @@ This project contains the Helm chart for the Front Matter Service.
 ## Prerequisites
 
 - Kubernetes v1.14 or higher
-- Helm v2.15 or higher
+- Helm v2.10 or higher
 
 ## Details
 
@@ -19,10 +19,10 @@ Use this command to install the chart:
 helm install incubator/rafter-front-matter-service
 ```
 
-To install the chart with the `rafter-front-matter-release` release name, use:
+To install the chart with the `rafter-front-matter-service` release name, use:
 
 ``` bash
-helm install --name rafter-front-matter-release incubator/rafter-front-matter-service
+helm install --name rafter-front-matter-service incubator/rafter-front-matter-service
 ```
 
 The command deploys the Front Matter Service on the Kubernetes cluster with the default configuration. The [**Configuration**](#configuration) section lists the parameters that you can configure during installation.
@@ -31,10 +31,10 @@ The command deploys the Front Matter Service on the Kubernetes cluster with the 
 
 ### Uninstall the chart
 
-To uninstall the `rafter-front-matter-release` release, run:
+To uninstall the `rafter-front-matter-service` release, run:
 
 ``` bash
-helm delete rafter-front-matter-release
+helm delete rafter-front-matter-service
 ```
 
 That command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -71,7 +71,6 @@ The following table lists the configurable parameters of the Front Matter Servic
 | **serviceMonitor.scrapeInterval** | Scrape interval for the ServiceMonitor custom resource | `30s` |
 | **serviceMonitor.labels** | Custom labels for the ServiceMonitor custom resource | `{}` |
 | **serviceMonitor.annotations** | Custom annotations for the ServiceMonitor custom resource | `{}` |
-| **envs.host** | Front Matter Service host | `0.0.0.0` |
 | **envs.verbose** | Parameter that defines if logs from the Front Matter Service should be visible | `true` |
 | **envs.timeout** | File processing time-out | `1m` |
 | **envs.workers** | Maximum number of concurrent metadata extraction workers | `10` |
@@ -79,7 +78,7 @@ The following table lists the configurable parameters of the Front Matter Servic
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
 ``` bash
-helm install --name rafter-front-matter-release \
+helm install --name rafter-front-matter-service \
   --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
     incubator/rafter-front-matter-service
 ```
@@ -89,7 +88,7 @@ That command installs the release with the `rafter-service-monitor` name for the
 Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
-helm install --name rafter-front-matter-release -f values.yaml incubator/rafter-front-matter-service
+helm install --name rafter-front-matter-service -f values.yaml incubator/rafter-front-matter-service
 ```
 
 ### values.yaml as a template
@@ -109,8 +108,8 @@ You can define values for all **envs.** parameters as objects by providing the p
 
 ``` yaml
 envs:
-  host:
-    value: "0.0.0.0"
+  workers:
+    value: "10"
   verbose:
     valueFrom:
       configMapKeyRef:

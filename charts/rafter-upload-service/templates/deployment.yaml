@@ -54,7 +54,8 @@ spec:
           env:
             - name: APP_PORT
               value: {{ .Values.service.port.internal | quote }}
-            {{ include "rafterUploadService.createEnv" ( dict "name" "APP_HOST" "value" .Values.envs.host "context" . ) | nindent 12 }}
+            - name: APP_HOST
+              value: "0.0.0.0"
             {{ include "rafterUploadService.createEnv" ( dict "name" "APP_VERBOSE" "value" .Values.envs.verbose "context" . ) | nindent 12 }}
             {{ include "rafterUploadService.createEnv" ( dict "name" "APP_KUBECONFIG_PATH" "value" .Values.envs.kubeconfigPath "context" . ) | nindent 12 }}
             # Upload

@@ -5,7 +5,7 @@ This project contains the Helm chart for the Rafter Controller Manager.
 ## Prerequisites
 
 - Kubernetes v1.14 or higher
-- Helm v2.15 or higher
+- Helm v2.10 or higher
 
 ## Details
 
@@ -19,10 +19,10 @@ Use this command to install the chart:
 helm install incubator/rafter-controller-manager
 ```
 
-To install the chart with the `rafter-release` release name, use:
+To install the chart with the `rafter-controller-manager` release name, use:
 
 ``` bash
-helm install --name rafter-release incubator/rafter-controller-manager
+helm install --name rafter-controller-manager incubator/rafter-controller-manager
 ```
 
 The command deploys the Rafter Controller Manager on the Kubernetes cluster with the default configuration. The [**Configuration**](#configuration) section lists the parameters that you can configure during installation.
@@ -31,10 +31,10 @@ The command deploys the Rafter Controller Manager on the Kubernetes cluster with
 
 ### Uninstall the chart
 
-To uninstall the `rafter-release` release, run:
+To uninstall the `rafter-controller-manager` release, run:
 
 ``` bash
-helm delete rafter-release
+helm delete rafter-controller-manager
 ```
 
 That command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -130,7 +130,7 @@ The following table lists the configurable parameters of the Rafter Controller M
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
 ``` bash
-helm install --name rafter-release \
+helm install --name rafter-controller-manager \
   --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
     incubator/rafter-controller-manager
 ```
@@ -140,7 +140,7 @@ That command installs the release with the `rafter-service-monitor` name for the
 Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
-helm install --name rafter-release -f values.yaml incubator/rafter-controller-manager
+helm install --name rafter-controller-manager -f values.yaml incubator/rafter-controller-manager
 ```
 
 ### values.yaml as a template

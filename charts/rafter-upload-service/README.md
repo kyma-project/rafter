@@ -5,7 +5,7 @@ This project contains the Helm chart for the Upload Service.
 ## Prerequisites
 
 - Kubernetes v1.14 or higher
-- Helm v2.15 or higher
+- Helm v2.10 or higher
 
 ## Details
 
@@ -19,10 +19,10 @@ Use this command to install the chart:
 helm install incubator/rafter-upload-service
 ```
 
-To install the chart with the `rafter-upload-release` release name, use:
+To install the chart with the `rafter-upload-service` release name, use:
 
 ``` bash
-helm install --name rafter-upload-release incubator/rafter-upload-service
+helm install --name rafter-upload-service incubator/rafter-upload-service
 ```
 
 The command deploys the Upload Service on the Kubernetes cluster with the default configuration. The [**Configuration**](#configuration) section lists the parameters that you can configure during installation.
@@ -31,10 +31,10 @@ The command deploys the Upload Service on the Kubernetes cluster with the defaul
 
 ### Uninstall the chart
 
-To uninstall the `rafter-upload-release` release, run:
+To uninstall the `rafter-upload-service` release, run:
 
 ``` bash
-helm delete rafter-upload-release
+helm delete rafter-upload-service
 ```
 
 That command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -52,6 +52,8 @@ The following table lists the configurable parameters of the Upload Service char
 | **fullnameOverride** | String that fully overrides the **rafterUploadService.fullname** template | `nil` |
 | **minio.enabled** | Parameter that defines whether to deploy MinIO | `true` |
 | **minio.refName** | Name of MinIO release used in migration job. If not set, it is generated using the **Release.Name** template with `-minio` suffix. | `nil` |
+| **minio.persistence.enabled** | Use persistent volume to store data in MinIO. | `true` |
+| **minio.persistence.size** | Size of persistent volume claim for MinIO. | `10Gi` |
 | **deployment.labels** | Custom labels for the Deployment | `{}` |
 | **deployment.annotations** | Custom annotations for the Deployment | `{}` |
 | **deployment.replicas** | Number of Upload Service nodes | `1` |
@@ -85,7 +87,6 @@ The following table lists the configurable parameters of the Upload Service char
 | **serviceMonitor.scrapeInterval** | Scrape interval for the ServiceMonitor custom resource | `30s` |
 | **serviceMonitor.labels** | Custom labels for the ServiceMonitor custom resource | `{}` |
 | **serviceMonitor.annotations** | Custom annotations for the ServiceMonitor custom resource | `{}` |
-| **envs.host** | Upload Service host | `0.0.0.0` |
 | **envs.verbose** | Parameter that defines if logs from the Upload Service should be visible | `true` |
 | **envs.kubeconfigPath** | Path to the `kubeconfig` file needed to run the Upload Service outside of a cluster | `nil` |
 | **envs.upload.timeout** | File processing time-out | `30m` |
@@ -106,7 +107,7 @@ The following table lists the configurable parameters of the Upload Service char
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
 ``` bash
-helm install --name rafter-upload-release \
+helm install --name rafter-upload-service \
   --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
     incubator/rafter-upload-service
 ```
@@ -116,7 +117,7 @@ That command installs the release with the `rafter-service-monitor` name for the
 Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
-helm install --name rafter-upload-release -f values.yaml incubator/rafter-upload-service
+helm install --name rafter-upload-service -f values.yaml incubator/rafter-upload-service
 ```
 
 ### values.yaml as a template
@@ -136,8 +137,9 @@ You can define values for all **envs.** parameters as objects by providing the p
 
 ``` yaml
 envs:
-  host:
-    value: "0.0.0.0"
+  upload:
+    workers:
+      value: "0.0.0.0"
   verbose:
     valueFrom:
       configMapKeyRef:

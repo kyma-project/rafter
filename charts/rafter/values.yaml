@@ -157,9 +157,6 @@ rafter-controller-manager:
         memory: 128Mi
         cpu: 100m
 
-    gcsgateway:
-      replicas: 2
-
 rafter-upload-service:
   enabled: true
 
@@ -167,6 +164,10 @@ rafter-upload-service:
 
   minio:
     enabled: false
+    refName:
+    persistence:
+      enabled: true
+      size: 10Gi
 
   image:
     repository: eu.gcr.io/kyma-project/rafter-upload-service
@@ -181,8 +182,6 @@ rafter-upload-service:
           maxUnavailable: 0
 
   envs:
-    host:
-      value: "0.0.0.0"
     verbose:
       value: "true"
     upload:
@@ -240,8 +239,6 @@ rafter-front-matter-service:
           maxUnavailable: 0
 
   envs:
-    host:
-      value: "0.0.0.0"
     verbose:
       value: "true"
     timeout:
@@ -267,7 +264,5 @@ rafter-asyncapi-service:
           maxUnavailable: 0
 
   envs:
-    host:
-      value: "0.0.0.0"
     verbose:
       value: "true"

@@ -5,7 +5,7 @@ This project contains the Helm chart for the AsyncAPI Service.
 ## Prerequisites
 
 - Kubernetes v1.14 or higher
-- Helm v2.15 or higher
+- Helm v2.10 or higher
 
 ## Details
 
@@ -19,10 +19,10 @@ Use this command to install the chart:
 helm install incubator/rafter-asyncapi-service
 ```
 
-To install the chart with the `rafter-asyncapi-release` release name, use:
+To install the chart with the `rafter-asyncapi-service` release name, use:
 
 ``` bash
-helm install --name rafter-asyncapi-release incubator/rafter-asyncapi-service
+helm install --name rafter-asyncapi-service incubator/rafter-asyncapi-service
 ```
 
 The command deploys the AsyncAPI Service on the Kubernetes cluster with the default configuration. The [**Configuration**](#configuration) section lists the parameters that you can configure during installation.
@@ -31,10 +31,10 @@ The command deploys the AsyncAPI Service on the Kubernetes cluster with the defa
 
 ### Uninstall the chart
 
-To uninstall the `rafter-asyncapi-release` release, run:
+To uninstall the `rafter-asyncapi-service` release, run:
 
 ``` bash
-helm delete rafter-asyncapi-release
+helm delete rafter-asyncapi-service
 ```
 
 That command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -71,13 +71,12 @@ The following table lists the configurable parameters of the AsyncAPI Service ch
 | **serviceMonitor.scrapeInterval** | Scrape interval for the ServiceMonitor custom resource | `30s` |
 | **serviceMonitor.labels** | Custom labels for the ServiceMonitor custom resource | `{}` |
 | **serviceMonitor.annotations** | Custom annotations for the ServiceMonitor custom resource | `{}` |
-| **envs.host** | AsyncAPI Service host | `0.0.0.0` |
 | **envs.verbose** | Parameter that defines if logs from the AsyncAPI Service should be visible | `true` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
 ``` bash
-helm install --name rafter-asyncapi-release \
+helm install --name rafter-asyncapi-service \
   --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
     incubator/rafter-asyncapi-service
 ```
@@ -87,7 +86,7 @@ That command installs the release with the `rafter-service-monitor` name for the
 Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
-helm install --name rafter-asyncapi-release -f values.yaml incubator/rafter-asyncapi-service
+helm install --name rafter-asyncapi-service -f values.yaml incubator/rafter-asyncapi-service
 ```
 
 ### values.yaml as a template
@@ -107,8 +106,6 @@ You can define values for all **envs.** parameters as objects by providing the p
 
 ``` yaml
 envs:
-  host:
-    value: "0.0.0.0"
   verbose:
     valueFrom:
       configMapKeyRef:
