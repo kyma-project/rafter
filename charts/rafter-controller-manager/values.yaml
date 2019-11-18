@@ -76,35 +76,35 @@ webhooksConfigMap:
   create: true
   name:
   namespace: "{{ .Release.Namespace }}"
-  hooks:
-    markdown: |-
-      {
-        "metadataExtractors":[
-          {
-            "name": "rafter-frontmatter-service",
-            "namespace": "{{ .Release.Namespace }}",
-            "endpoint": "/v1/extract",
-            "filter": "\\.md$"
-          }
-        ]
-      }
-    asyncapi: |-
-      {
-        "validations":[
-          {
-            "name": "rafter-asyncapi-service",
-            "namespace": "{{ .Release.Namespace }}",
-            "endpoint": "/v1/validate"
-          }
-        ],
-        "mutations":[
-          {
-            "name": "rafter-asyncapi-service",
-            "namespace": "{{ .Release.Namespace }}",
-            "endpoint": "/v1/convert"
-          }
-        ]
-      }
+  hooks: {}
+    # markdown: |-
+    #   {
+    #     "metadataExtractors":[
+    #       {
+    #         "name": "rafter-frontmatter-service",
+    #         "namespace": "{{ .Release.Namespace }}",
+    #         "endpoint": "/v1/extract",
+    #         "filter": "\\.md$"
+    #       }
+    #     ]
+    #   }
+    # asyncapi: |-
+    #   {
+    #     "validations":[
+    #       {
+    #         "name": "rafter-asyncapi-service",
+    #         "namespace": "{{ .Release.Namespace }}",
+    #         "endpoint": "/v1/validate"
+    #       }
+    #     ],
+    #     "mutations":[
+    #       {
+    #         "name": "rafter-asyncapi-service",
+    #         "namespace": "{{ .Release.Namespace }}",
+    #         "endpoint": "/v1/convert"
+    #       }
+    #     ]
+    #   }
   labels: {}
   annotations: {}
 
