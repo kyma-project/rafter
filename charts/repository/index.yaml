@@ -3,9 +3,9 @@ entries:
   rafter:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T13:36:40.257354+01:00"
+    created: "2019-11-18T13:42:12.181289+01:00"
     description: A umbrella Helm chart for Rafter Controller Manager and Rafter services
-    digest: cc360ae44986d53f40817e81d54f1212ed0922cdca2c4a3b4746420377383577
+    digest: e8c8116b90be1129d9fb0cb257a105a9962d261fcd316df0522dc7feee99f1c8
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -41,7 +41,7 @@ entries:
   rafter-asyncapi-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T13:36:40.258013+01:00"
+    created: "2019-11-18T13:42:12.182404+01:00"
     description: A Helm chart for AsyncAPI Service
     digest: 03708f1ed032e97e232ff84955aaae2744b48c744beea6b905c54ecc3e8deeb3
     home: https://github.com/kyma-project/rafter
@@ -76,7 +76,7 @@ entries:
   rafter-controller-manager:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T13:36:40.260185+01:00"
+    created: "2019-11-18T13:42:12.185066+01:00"
     description: A Helm chart for Rafter Controller Manager
     digest: 115ab3d243257a4fdfef05fc1615ee4ed46ede4ea4fb6da8fc81e0e36521c754
     home: https://github.com/kyma-project/rafter
@@ -110,7 +110,7 @@ entries:
   rafter-front-matter-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T13:36:40.260874+01:00"
+    created: "2019-11-18T13:42:12.186073+01:00"
     description: A Helm chart for Front Matter Service
     digest: dc8f53dcf6ed6dab18ec2bf46977db79631016e9aeb6852b32d14cedecc087e1
     home: https://github.com/kyma-project/rafter
@@ -145,7 +145,7 @@ entries:
   rafter-upload-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T13:36:40.263001+01:00"
+    created: "2019-11-18T13:42:12.188583+01:00"
     description: A Helm chart for Upload Service
     digest: d6f0bb11967f6833f16503734052336fa176ebc25531748e4b1631a2a4ea9c75
     home: https://github.com/kyma-project/rafter
@@ -177,4 +177,4 @@ entries:
     urls:
     - rafter-upload-service-0.1.0.tgz
     version: 0.1.0
-generated: "2019-11-18T13:36:40.251977+01:00"
+generated: "2019-11-18T13:42:12.175494+01:00"
