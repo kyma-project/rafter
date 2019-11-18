@@ -97,7 +97,7 @@ The following table lists the configurable parameters of the Upload Service char
 | **envs.upload.timeout** | File processing time-out | `30m` |
 | **envs.upload.workers** | Maximum number of concurrent metadata extraction workers | `10` |
 | **envs.upload.endpoint** | Address of the content storage server | `{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local` |
-| **envs.upload.externalEndpoint** | External address of the content storage server | `nil` |
+| **envs.upload.externalEndpoint** | External address of the content storage server | `http://{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000` |
 | **envs.upload.port** | Port on which the content storage server listens | `9000` |
 | **envs.upload.accessKey** | Access key required to sign in to the content storage server | Value from `{{ .Release.Name }}-minio` ConfigMap |
 | **envs.upload.secretKey** | Secret key required to sign in to the content storage server | Value from `{{ .Release.Name }}-minio` ConfigMap |
