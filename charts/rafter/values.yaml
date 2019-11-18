@@ -94,6 +94,7 @@ rafter-controller-manager:
       endpoint: 
         value: "{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000"
       externalEndpoint:
+        value: "{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local:9000"
       accessKey:
         valueFrom:
           secretKeyRef:
