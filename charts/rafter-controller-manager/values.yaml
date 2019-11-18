@@ -7,8 +7,8 @@ fullnameOverride:
 
 minio:
   enabled: true
-  accessKey:
-  secretKey:
+  accessKey: ""
+  secretKey: ""
 
 image:
   repository: eu.gcr.io/kyma-project/rafter-controller-manager

@@ -3,9 +3,9 @@ entries:
   rafter:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T14:40:12.32371+01:00"
+    created: "2019-11-18T16:04:46.652472+01:00"
     description: A umbrella Helm chart for Rafter Controller Manager and Rafter services
-    digest: 111d1ed33c41461cf9e9b6824269a6ea5932e9a29606b19b21c0286635996f11
+    digest: cfebbc7635ca4853a79ab3df452430546bccbebbb64668bde2ed0ec9fb8f917a
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -41,9 +41,9 @@ entries:
   rafter-asyncapi-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T14:40:12.324351+01:00"
+    created: "2019-11-18T16:04:46.653284+01:00"
     description: A Helm chart for AsyncAPI Service
-    digest: 03708f1ed032e97e232ff84955aaae2744b48c744beea6b905c54ecc3e8deeb3
+    digest: 47171b32fbff68a8355da84036795fb03187a2084c99cbc6cefd7d9b3435f4cb
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -76,9 +76,9 @@ entries:
   rafter-controller-manager:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T14:40:12.325878+01:00"
+    created: "2019-11-18T16:04:46.654645+01:00"
     description: A Helm chart for Rafter Controller Manager
-    digest: 0086dd05bf1c4827758e2a8fc40a09292f01c435933c23655a5937eab84e77d5
+    digest: 63898f7df6e2b2b4f23e25588522eaf7dd3cf7bef3c1b99927d4f7058dc01f30
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -110,9 +110,9 @@ entries:
   rafter-front-matter-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T14:40:12.32632+01:00"
+    created: "2019-11-18T16:04:46.655652+01:00"
     description: A Helm chart for Front Matter Service
-    digest: dc8f53dcf6ed6dab18ec2bf46977db79631016e9aeb6852b32d14cedecc087e1
+    digest: 94f4128c6bdbe8a466bf3d546c8098215e67717d0114b4010ecb46a7926ecfd5
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -145,9 +145,9 @@ entries:
   rafter-upload-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T14:40:12.327771+01:00"
+    created: "2019-11-18T16:04:46.657711+01:00"
     description: A Helm chart for Upload Service
-    digest: ae440d9d9fae4c13e9588e00c5ab938a70489c3af63d92bab8d840cf92fd1107
+    digest: 52ae2e7a4a9049719cbaf645ad591ed88bbe700921c8507d56e8128978449838
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -177,4 +177,4 @@ entries:
     urls:
     - rafter-upload-service-0.1.0.tgz
     version: 0.1.0
-generated: "2019-11-18T14:40:12.319187+01:00"
+generated: "2019-11-18T16:04:46.647329+01:00"
