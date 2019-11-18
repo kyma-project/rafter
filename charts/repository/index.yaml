@@ -3,9 +3,9 @@ entries:
   rafter-asyncapi-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T11:46:36.777727+01:00"
+    created: "2019-11-18T11:54:59.958986+01:00"
     description: A Helm chart for AsyncAPI Service
-    digest: 15c05b7a5efa8fbc2dcb2dea29c1cc73c9ea4c920658cfe3fc9c9653c30d8fba
+    digest: 03708f1ed032e97e232ff84955aaae2744b48c744beea6b905c54ecc3e8deeb3
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -25,20 +25,22 @@ entries:
       name: m00g3n
     - email: mati6095@gmail.com
       name: aerfio
+    - email: filip.strozik@outlook.com
+      name: pPrecel
     - email: urbanczyk.maciej.95@gmail.com
       name: magicmatatjahu
     name: rafter-asyncapi-service
     sources:
     - https://github.com/kyma-project/rafter
     urls:
-    - rafter-asyncapi-service-0.1.0.tgz
+    - http://127.0.0.1:8879/rafter-asyncapi-service-0.1.0.tgz
     version: 0.1.0
   rafter-controller-manager:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T11:46:36.779927+01:00"
+    created: "2019-11-18T11:54:59.960755+01:00"
     description: A Helm chart for Rafter Controller Manager
-    digest: abe5e13ca6594975b127f3de27511404ce5db55846f1fef24f923fdd69168d45
+    digest: 4cf04a5a0a0a2f16098f44ef113785475bf872d71a12190884dc46f7ea7c51cf
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -57,20 +59,22 @@ entries:
       name: m00g3n
     - email: mati6095@gmail.com
       name: aerfio
+    - email: filip.strozik@outlook.com
+      name: pPrecel
     - email: urbanczyk.maciej.95@gmail.com
       name: magicmatatjahu
     name: rafter-controller-manager
     sources:
     - https://github.com/kyma-project/rafter
     urls:
-    - rafter-controller-manager-0.1.0.tgz
+    - http://127.0.0.1:8879/rafter-controller-manager-0.1.0.tgz
     version: 0.1.0
   rafter-front-matter-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T11:46:36.780529+01:00"
+    created: "2019-11-18T11:54:59.961159+01:00"
     description: A Helm chart for Front Matter Service
-    digest: c273042d4c47d0bb526dadc1376e25b487ff37aca1cad65652505aa7770282da
+    digest: dc8f53dcf6ed6dab18ec2bf46977db79631016e9aeb6852b32d14cedecc087e1
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -90,20 +94,22 @@ entries:
       name: m00g3n
     - email: mati6095@gmail.com
       name: aerfio
+    - email: filip.strozik@outlook.com
+      name: pPrecel
     - email: urbanczyk.maciej.95@gmail.com
       name: magicmatatjahu
     name: rafter-front-matter-service
     sources:
     - https://github.com/kyma-project/rafter
     urls:
-    - rafter-front-matter-service-0.1.0.tgz
+    - http://127.0.0.1:8879/rafter-front-matter-service-0.1.0.tgz
     version: 0.1.0
   rafter-upload-service:
   - apiVersion: v1
     appVersion: 0.1.0
-    created: "2019-11-18T11:46:36.78488+01:00"
+    created: "2019-11-18T11:54:59.963635+01:00"
     description: A Helm chart for Upload Service
-    digest: ac23c063d78f6a84ba463fc6eeb7f18fbc0b432bc22fcaaf2d6269fd403449fc
+    digest: d6f0bb11967f6833f16503734052336fa176ebc25531748e4b1631a2a4ea9c75
     home: https://github.com/kyma-project/rafter
     keywords:
     - rafter
@@ -123,12 +129,14 @@ entries:
       name: m00g3n
     - email: mati6095@gmail.com
       name: aerfio
+    - email: filip.strozik@outlook.com
+      name: pPrecel
     - email: urbanczyk.maciej.95@gmail.com
       name: magicmatatjahu
     name: rafter-upload-service
     sources:
     - https://github.com/kyma-project/rafter
     urls:
-    - rafter-upload-service-0.1.0.tgz
+    - http://127.0.0.1:8879/rafter-upload-service-0.1.0.tgz
     version: 0.1.0
-generated: "2019-11-18T11:46:36.776075+01:00"
+generated: "2019-11-18T11:54:59.958327+01:00"
