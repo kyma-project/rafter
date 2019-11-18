@@ -17,7 +17,6 @@ type config struct {
 }
 
 func TestAssetStore(t *testing.T) {
-	t.Skip("Disable, will be rewritten")
 	g := gomega.NewGomegaWithT(t)
 
 	cfg, err := loadConfig("APP")

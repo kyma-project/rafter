@@ -148,6 +148,17 @@ ci-master: docker-build docker-push
 
 ci-release: docker-build docker-push ci-release-push-latest
 
+integration-test:
+	# build-uploader \
+	build-manager \
+	build-frontmatter \
+	build-asyncapi
+	${ROOT}/hack/ci/run-integration-tests.sh \
+		${UPLOADER_IMG_NAME} \
+		${MANAGER_IMG_NAME} \
+		${FRONT_MATTER_IMG_NAME} \
+		${ASYNCAPI_IMG_NAME}
+
 .PHONY: all \
 		build-uploader \
 		push-uploader \
