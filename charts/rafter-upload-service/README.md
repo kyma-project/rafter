@@ -96,11 +96,11 @@ The following table lists the configurable parameters of the Upload Service char
 | **envs.kubeconfigPath** | Path to the `kubeconfig` file needed to run the Upload Service outside of a cluster | `nil` |
 | **envs.upload.timeout** | File processing time-out | `30m` |
 | **envs.upload.workers** | Maximum number of concurrent metadata extraction workers | `10` |
-| **envs.upload.endpoint** | Address of the content storage server | `rafter-upload-service-minio.{{ .Release.Namespace }}.svc.cluster.local` |
+| **envs.upload.endpoint** | Address of the content storage server | `{{ .Release.Name }}-minio.{{ .Release.Namespace }}.svc.cluster.local` |
 | **envs.upload.externalEndpoint** | External address of the content storage server | `nil` |
 | **envs.upload.port** | Port on which the content storage server listens | `9000` |
-| **envs.upload.accessKey** | Access key required to sign in to the content storage server | Value from `{{ include "rafterUploadService.fullname" . }}-minio` ConfigMap |
-| **envs.upload.secretKey** | Secret key required to sign in to the content storage server | Value from `{{ include "rafterUploadService.fullname" . }}-minio` ConfigMap |
+| **envs.upload.accessKey** | Access key required to sign in to the content storage server | Value from `{{ .Release.Name }}-minio` ConfigMap |
+| **envs.upload.secretKey** | Secret key required to sign in to the content storage server | Value from `{{ .Release.Name }}-minio` ConfigMap |
 | **envs.upload.secure** | HTTPS connection with the content storage server | `false` |
 | **envs.bucket.privatePrefix** | Prefix of the private system bucket | `system-private` |
 | **envs.bucket.publicPrefix** | Prefix of the public system bucket | `system-public` |
@@ -151,3 +151,7 @@ envs:
         name: rafter-upload-service-config
         key: RAFTER_UPLOAD_SERVICE_VERBOSE
 ```
+
+### Switch MinIO to Gateway mode
+
+If you want switch MinIO to Gateway mode (by default, you install Upload Service with MinIO stand-alone mode) and you don't want to lose you buckets uploaded by the Upload Service, you must change parameter **minio.persistence.enabled** to `false`, overload parameters for minio under **minio** object and then you can upgrade release.

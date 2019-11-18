@@ -99,3 +99,7 @@ rafter-controller-manager:
           name: rafter-config
           key: RAFTER_ASSET_GROUP_RELIST_INTERVALL
 ```
+
+### Switch MinIO to Gateway mode
+
+If you want switch MinIO to Gateway mode (by default, you install Rafter and Rafter Upload Service with MinIO stand-alone mode) and you don't want to lose you buckets uploaded by the Rafter Upload Service, you must change parameters **rafter-upload-service.minio.persistence.enabled** and **rafter-controller-manager.minio.persistence.enabled** to `false`, overload parameters for minio under **rafter-controller-manager.minio** object and then you can upgrade release.
