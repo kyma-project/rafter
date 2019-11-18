@@ -6,6 +6,11 @@ This project contains the Helm chart for the Rafter Controller Manager.
 
 - Kubernetes v1.14 or higher
 - Helm v2.10 or higher
+- Add the `rafter-charts` repository to your Helm client using this command:
+
+```bash
+helm repo add rafter-charts https://rafter-charts.storage.googleapis.com
+```
 
 ## Details
 
@@ -16,13 +21,13 @@ Read how to install, uninstall, and configure the chart.
 Use this command to install the chart:
 
 ``` bash
-helm install incubator/rafter-controller-manager
+helm install rafter-charts/rafter-controller-manager
 ```
 
 To install the chart with the `rafter-controller-manager` release name, use:
 
 ``` bash
-helm install --name rafter-controller-manager incubator/rafter-controller-manager
+helm install --name rafter-controller-manager rafter-charts/rafter-controller-manager
 ```
 
 The command deploys the Rafter Controller Manager on the Kubernetes cluster with the default configuration. The [**Configuration**](#configuration) section lists the parameters that you can configure during installation.
@@ -132,7 +137,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument for `hel
 ``` bash
 helm install --name rafter-controller-manager \
   --set serviceMonitor.create=true,serviceMonitor.name="rafter-service-monitor" \
-    incubator/rafter-controller-manager
+    rafter-charts/rafter-controller-manager
 ```
 
 That command installs the release with the `rafter-service-monitor` name for the ServiceMonitor custom resource.
@@ -140,7 +145,7 @@ That command installs the release with the `rafter-service-monitor` name for the
 Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
-helm install --name rafter-controller-manager -f values.yaml incubator/rafter-controller-manager
+helm install --name rafter-controller-manager -f values.yaml rafter-charts/rafter-controller-manager
 ```
 
 ### values.yaml as a template
