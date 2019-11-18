@@ -132,6 +132,9 @@ rafter-controller-manager:
 
   minio:
     enabled: true
+  
+    accessKey:
+    secretKey:
 
     image:
       tag: RELEASE.2019-06-04T01-15-58Z

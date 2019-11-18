@@ -11,6 +11,8 @@ minio:
   persistence:
     enabled: true
     size: 10Gi
+  accessKey:
+  secretKey:
 
 image:
   repository: eu.gcr.io/kyma-project/rafter-upload-service
