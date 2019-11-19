@@ -6,7 +6,7 @@ This project contains the Helm chart for the AsyncAPI Service.
 
 - Kubernetes v1.14 or higher
 - Helm v2.10 or higher
-- Add the `rafter-charts` repository to your Helm client using this command:
+- The `rafter-charts` repository added to your Helm client with this command:
 
 ```bash
 helm repo add rafter-charts https://rafter-charts.storage.googleapis.com
@@ -88,7 +88,7 @@ helm install --name rafter-asyncapi-service \
 
 That command installs the release with the `rafter-service-monitor` name for the ServiceMonitor custom resource.
 
-Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
+Alternatively, use the default values in [`values.yaml`](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
 helm install --name rafter-asyncapi-service -f values.yaml rafter-charts/rafter-asyncapi-service
@@ -107,7 +107,7 @@ pod:
 
 ### Change values for envs. parameters
 
-You can define values for all **envs.** parameters as objects by providing the parameters as the inline `value` or the `valueFrom` object. See the following example:
+You can define values for all **envs.** parameters as objects by providing the parameters as the inline `value` or the **valueFrom** object. See the following example:
 
 ``` yaml
 envs:

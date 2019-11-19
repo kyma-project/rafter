@@ -1,6 +1,6 @@
-# Rafter Umbrella Chart
+# Rafter
 
-This project contains the Helm chart for the ecosystem of the Rafter. It includes:
+This project contains the main Helm chart for Rafter. It includes:
 
 - [Controller Manager](../rafter-controller-manager)
 - [Upload Service](../rafter-upload-service)
@@ -11,7 +11,7 @@ This project contains the Helm chart for the ecosystem of the Rafter. It include
 
 - Kubernetes v1.14 or higher
 - Helm v2.10 or higher
-- Add the `rafter-charts` repository to your Helm client using this command:
+- The `rafter-charts` repository added to your Helm client with this command:
 
 ```bash
 helm repo add rafter-charts https://rafter-charts.storage.googleapis.com
@@ -35,7 +35,7 @@ To install the chart with the `rafter` release name, use:
 helm install --name rafter rafter-charts/rafter
 ```
 
-The command deploys the ecosystem of the Rafter on the Kubernetes cluster with the default configuration. For more information, please see the [**Configuration**](#configuration) section.
+The command deploys Rafter on the Kubernetes cluster with the default configuration. For more information, see the [**Configuration**](#configuration) section.
 
 > **TIP:** To list all releases, use `helm list`.
 
@@ -51,9 +51,9 @@ That command removes all the Kubernetes components associated with the chart and
 
 ### Configuration
 
-For list of the parameters that you can configure during installation appropriate component, please read **Configuration** section of main doc of relevant component.
+For a list of the parameters that you can configure during the installation of a given component, read the **Configuration** section in the component's `README.md` document.
 
-> **NOTE:** Remember about using values for appropriate component in an object named as a component. For example, for overriding values for [**Controller Manager**](../rafter-controller-manager) use `rafter-controller-manager` object.
+> **NOTE:** Use values for the appropriate component in an object named as this component. For example, to override values for the [**Controller Manager**](../rafter-controller-manager), use the **rafter-controller-manager** object.
 
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
@@ -63,9 +63,9 @@ helm install --name rafter \
     rafter-charts/rafter
 ```
 
-That command installs the release with the `rafter-controller-manager-service-monitor` name for the ServiceMonitor custom resource of Rafter Controller Manager.
+That command installs the release with the `rafter-controller-manager-service-monitor` name for the ServiceMonitor custom resource created based on the template from the Rafter Controller Manager.
 
-Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
+Alternatively, use the default values in [`values.yaml`](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
 helm install --name rafter -f values.yaml rafter-charts/rafter
@@ -85,7 +85,7 @@ rafter-controller-manager:
 
 ### Change values for envs. parameters
 
-You can define values for all **envs.** parameters as objects by providing the parameters as the inline `value` or the `valueFrom` object. See the following example:
+You can define values for all **envs.** parameters as objects by providing the parameters as the inline `value` or the **valueFrom** object. See the following example:
 
 ``` yaml
 rafter-controller-manager:
@@ -102,4 +102,4 @@ rafter-controller-manager:
 
 ### Switch MinIO to Gateway mode
 
-If you want switch MinIO to Gateway mode (by default, you install Rafter and Rafter Upload Service with MinIO stand-alone mode) and you don't want to lose you buckets uploaded by the Rafter Upload Service, you must change parameters **rafter-upload-service.minio.persistence.enabled** and **rafter-controller-manager.minio.persistence.enabled** to `false`, overload parameters for minio under **rafter-controller-manager.minio** object and then you can upgrade release.
+By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must change the **rafter-upload-service.minio.persistence.enabled** and **rafter-controller-manager.minio.persistence.enabled** parameters to`false` and overload parameters for MinIO under the **rafter-controller-manager.minio** object.

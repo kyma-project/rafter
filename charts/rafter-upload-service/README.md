@@ -6,7 +6,7 @@ This project contains the Helm chart for the Upload Service.
 
 - Kubernetes v1.14 or higher
 - Helm v2.10 or higher
-- Add the `rafter-charts` repository to your Helm client using this command:
+- The `rafter-charts` repository added to your Helm client with this command:
 
 ```bash
 helm repo add rafter-charts https://rafter-charts.storage.googleapis.com
@@ -119,7 +119,7 @@ helm install --name rafter-upload-service \
 
 That command installs the release with the `rafter-service-monitor` name for the ServiceMonitor custom resource.
 
-Alternatively, use the default values in [values.yaml](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
+Alternatively, use the default values in [`values.yaml`](./values.yaml) or provide a YAML file while installing the chart to specify the values for configurable parameters. See this example:
 
 ``` bash
 helm install --name rafter-upload-service -f values.yaml rafter-charts/rafter-upload-service
@@ -138,7 +138,7 @@ pod:
 
 ### Change values for envs. parameters
 
-You can define values for all **envs.** parameters as objects by providing the parameters as the inline `value` or the `valueFrom` object. See the following example:
+You can define values for all **envs.** parameters as objects by providing the parameters as the inline `value` or the **valueFrom** object. See the following example:
 
 ``` yaml
 envs:
@@ -154,4 +154,4 @@ envs:
 
 ### Switch MinIO to Gateway mode
 
-If you want switch MinIO to Gateway mode (by default, you install Upload Service with MinIO stand-alone mode) and you don't want to lose you buckets uploaded by the Upload Service, you must change parameter **minio.persistence.enabled** to `false`, overload parameters for minio under **minio** object and then you can upgrade release.
+By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must first change the **minio.persistence.enabled** parameter to `false` and overload parameters for MinIO under the **minio** object.
