@@ -124,7 +124,7 @@ helm::check_version() {
 }
 
 main() {
-    # trap installation::cleanup EXIT
+    trap installation::cleanup EXIT
     
     kind::create_cluster \
     "${CLUSTER_NAME}" \
