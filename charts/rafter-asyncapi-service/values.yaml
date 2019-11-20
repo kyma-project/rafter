@@ -42,4 +42,4 @@ serviceMonitor:
 
 envs:
   verbose: 
-    value: "true"
+    value: "false"

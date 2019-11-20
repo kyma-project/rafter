@@ -92,7 +92,7 @@ The following table lists the configurable parameters of the Upload Service char
 | **serviceMonitor.scrapeInterval** | Scrape interval for the ServiceMonitor custom resource | `30s` |
 | **serviceMonitor.labels** | Custom labels for the ServiceMonitor custom resource | `{}` |
 | **serviceMonitor.annotations** | Custom annotations for the ServiceMonitor custom resource | `{}` |
-| **envs.verbose** | Parameter that defines if logs from the Upload Service should be visible | `true` |
+| **envs.verbose** | Parameter that defines if logs from the Upload Service should be visible | `false` |
 | **envs.kubeconfigPath** | Path to the `kubeconfig` file needed to run the Upload Service outside of a cluster | `nil` |
 | **envs.upload.timeout** | File processing time-out | `30m` |
 | **envs.upload.workers** | Maximum number of concurrent metadata extraction workers | `10` |
@@ -154,4 +154,4 @@ envs:
 
 ### Switch MinIO to Gateway mode
 
-By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must first change the **minio.persistence.enabled** parameter to `false` and overload parameters for MinIO under the **minio** object.
+By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must first change the **minio.persistence.enabled** parameter to `false` and override parameters for MinIO under the **minio** object.

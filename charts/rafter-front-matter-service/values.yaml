@@ -42,7 +42,7 @@ serviceMonitor:
 
 envs:
   verbose: 
-    value: "true"
+    value: "false"
   timeout:
     value: "1m"
   workers:

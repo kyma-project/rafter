@@ -102,4 +102,4 @@ rafter-controller-manager:
 
 ### Switch MinIO to Gateway mode
 
-By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must change the **rafter-upload-service.minio.persistence.enabled** and **rafter-controller-manager.minio.persistence.enabled** parameters to`false` and overload parameters for MinIO under the **rafter-controller-manager.minio** object.
+By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must change the **rafter-upload-service.minio.persistence.enabled** and **rafter-controller-manager.minio.persistence.enabled** parameters to`false` and override parameters for MinIO under the **rafter-controller-manager.minio** object.

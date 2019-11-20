@@ -76,7 +76,7 @@ The following table lists the configurable parameters of the AsyncAPI Service ch
 | **serviceMonitor.scrapeInterval** | Scrape interval for the ServiceMonitor custom resource | `30s` |
 | **serviceMonitor.labels** | Custom labels for the ServiceMonitor custom resource | `{}` |
 | **serviceMonitor.annotations** | Custom annotations for the ServiceMonitor custom resource | `{}` |
-| **envs.verbose** | Parameter that defines if logs from the AsyncAPI Service should be visible | `true` |
+| **envs.verbose** | Parameter that defines if logs from the AsyncAPI Service should be visible | `false` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 

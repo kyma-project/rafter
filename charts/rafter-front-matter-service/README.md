@@ -76,7 +76,7 @@ The following table lists the configurable parameters of the Front Matter Servic
 | **serviceMonitor.scrapeInterval** | Scrape interval for the ServiceMonitor custom resource | `30s` |
 | **serviceMonitor.labels** | Custom labels for the ServiceMonitor custom resource | `{}` |
 | **serviceMonitor.annotations** | Custom annotations for the ServiceMonitor custom resource | `{}` |
-| **envs.verbose** | Parameter that defines if logs from the Front Matter Service should be visible | `true` |
+| **envs.verbose** | Parameter that defines if logs from the Front Matter Service should be visible | `false` |
 | **envs.timeout** | File processing time-out | `1m` |
 | **envs.workers** | Maximum number of concurrent metadata extraction workers | `10` |
 

@@ -183,7 +183,7 @@ rafter-upload-service:
 
   envs:
     verbose:
-      value: "true"
+      value: "false"
     upload:
       timeout:
         value: "30m"
@@ -239,7 +239,7 @@ rafter-front-matter-service:
 
   envs:
     verbose:
-      value: "true"
+      value: "false"
     timeout:
       value: "1m"
     workers:
@@ -262,4 +262,4 @@ rafter-asyncapi-service:
 
   envs:
     verbose:
-      value: "true"
+      value: "false"

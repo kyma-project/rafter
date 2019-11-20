@@ -70,7 +70,7 @@ serviceMonitor:
 
 envs:
   verbose: 
-    value: "true"
+    value: "false"
   kubeconfigPath:
   upload:
     timeout:

@@ -100,7 +100,7 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
-      serviceAccountName: {{ include "rafterUploadService.fullname" . }}-migration
+      serviceAccountName: {{ include "rafterUploadService.fullname" . }}-migrator
       restartPolicy: OnFailure
       volumes:
         - name: minio-configuration
@@ -281,7 +281,7 @@ spec:
         sidecar.istio.io/inject: "false"
     spec:
       restartPolicy: OnFailure
-      serviceAccountName: {{ include "rafterUploadService.fullname" . }}-migration-delete-pvc
+      serviceAccountName: {{ include "rafterUploadService.fullname" . }}-migrator-delete-pvc
       containers:
       - name: pvc-remover
         image: "{{ .Values.migrator.images.alpine_kubectl.repository }}:{{ .Values.migrator.images.alpine_kubectl.tag }}"
