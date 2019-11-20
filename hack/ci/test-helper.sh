@@ -39,17 +39,21 @@ source "${LIB_DIR}/docker.sh" || {
     exit 1
 }
 
+source "${LIB_DIR}/docker.sh" || {
+    echo 'Cannot load docker utilities.'
+    exit 1
+}
+
+
 # kind cluster configuration
 readonly CLUSTER_CONFIG=${CURRENT_DIR}/config/kind/cluster-config.yaml
-# required for kind
-readonly KUBECONFIG="$(kind get kubeconfig-path --name=${CLUSTER_NAME})"
+
 readonly INSTALL_TIMEOUT=180
 # minio access key that will be used during rafter installation
 export APP_TEST_MINIO_ACCESSKEY=4j4gEuRH96ZFjptUFeFm
 # minio secret key that will be used during the rafter installation
 export APP_TEST_MINIO_SECRETKEY=UJnce86xA7hK01WblDdbmXg4gwjKwpFypdLJCvJ3
-# required by integration suite
-export APP_KUBECONFIG_PATH=$KUBECONFIG
+
 # the addres of the ingress that exposes upload and minio endpoints
 export INGRESS_ADDRESS=http://localhost:30080
 # URL of the uploader that will be used to upload test data in tests,
@@ -111,6 +115,8 @@ testHelper::cleanup() {
 }
 
 testHelper::start_integration_tests() {
+    # required by integration suite
+    export APP_KUBECONFIG_PATH="$(kind get kubeconfig-path --name=${CLUSTER_NAME})"
     log::info "Starting integration tests..."
     go test ${CURRENT_DIR}/../../tests/asset-store/main_test.go -count 1
 }

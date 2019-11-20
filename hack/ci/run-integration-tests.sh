@@ -17,9 +17,9 @@ main() {
     
     infraHelper::install_helm_tiller
 
-    kubernetes::ensure_kubectl "${STABLE_KUBERNETES_VERSION}" "$(host::os)" "${TMP_BIN_DIR}"
-    testHelper::check_kind_version
     testHelper::check_helm_version
+    testHelper::check_kind_version
+    kubernetes::ensure_kubectl "${STABLE_KUBERNETES_VERSION}" "$(host::os)" "${TMP_BIN_DIR}"
     
     kind::create_cluster \
     "${CLUSTER_NAME}" \
