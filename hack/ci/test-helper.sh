@@ -160,3 +160,10 @@ infraHelper::install_helm_tiller(){
     tar -xzvf helm-"${STABLE_HELM_VERSION}"-linux-amd64.tar.gz
     mv ./linux-amd64/{helm,tiller} /usr/local/bin
 }
+
+infraHelper::install_kind(){
+    log::info "Installing kind..."
+    curl -LO https://github.com/kubernetes-sigs/kind/releases/download/v0.5.1/kind-linux-amd64
+    chmod +x kind-linux-amd64
+    mv kind-linux-amd64 /usr/local/bin/kind
+}

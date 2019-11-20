@@ -16,7 +16,7 @@ main() {
     trap testHelper::cleanup EXIT
     
     infraHelper::install_helm_tiller
-
+    infraHelper::install_kind
     # testHelper::check_helm_version
     testHelper::check_kind_version
     kubernetes::ensure_kubectl "${STABLE_KUBERNETES_VERSION}" "$(host::os)" "${TMP_BIN_DIR}"
