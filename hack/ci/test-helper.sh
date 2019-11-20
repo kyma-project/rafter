@@ -6,10 +6,15 @@ readonly STABLE_HELM_VERSION=v2.16.0
 readonly CT_VERSION=v2.3.3
 readonly CLUSTER_NAME=ci-test-cluster
 # docker images to load into kind
+readonly ARTIFACTS_DIR="${ARTIFACTS:-"${TMP_DIR}/artifacts"}"
 readonly UPLOADER_IMG_NAME="${1}"
 readonly MANAGER_IMG_NAME="${2}"
 readonly FRONT_MATTER_IMG_NAME="${3}"
 readonly ASYNCAPI_IMG_NAME="${4}"
+readonly TMP_DIR="$(mktemp -d)"
+readonly TMP_BIN_DIR="${TMP_DIR}/bin"
+mkdir -p "${TMP_BIN_DIR}"
+export PATH="${TMP_BIN_DIR}:${PATH}"
 
 # external dependencies
 readonly LIB_DIR="$(cd "${GOPATH}/src/github.com/kyma-project/test-infra/prow/scripts/lib" && pwd)"
@@ -23,6 +28,17 @@ source "${LIB_DIR}/log.sh" || {
     echo 'Cannot load log utilities.'
     exit 1
 }
+
+source "${LIB_DIR}/host.sh" || {
+    echo 'Cannot load host utilities.'
+    exit 1
+}
+
+source "${LIB_DIR}/docker.sh" || {
+    echo 'Cannot load docker utilities.'
+    exit 1
+}
+
 # kind cluster configuration
 readonly CLUSTER_CONFIG=${CURRENT_DIR}/config/kind/cluster-config.yaml
 # required for kind
@@ -130,4 +146,11 @@ testHelper::check_kind_version(){
         exit 1
     fi
 
+}
+
+infraHelper::install_helm_tiller(){
+    log::info "Installing Helm and Tiller..."
+    curl -LO https://get.helm.sh/helm-"${STABLE_HELM_VERSION}"-linux-amd64.tar.gz
+    tar -xzvf helm-"${STABLE_HELM_VERSION}"-linux-amd64.tar.gz
+    mv ./linux-amd64/{helm,tiller} /usr/local/bin
 }
