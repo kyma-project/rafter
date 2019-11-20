@@ -93,9 +93,9 @@ spec:
           {{- end }}
           env:
             # ClusterAssetsGroup
-            {{ include "rafter.createEnv" ( dict "name" "APP_CLUSTER_ASSET_GROUP_RELIST_INTERVALL" "value" .Values.envs.clusterAssetGroup.relistInterval "context" . ) | nindent 12 }}
+            {{ include "rafter.createEnv" ( dict "name" "APP_CLUSTER_ASSET_GROUP_RELIST_INTERVAL" "value" .Values.envs.clusterAssetGroup.relistInterval "context" . ) | nindent 12 }}
             # AssetsGroup
-            {{ include "rafter.createEnv" ( dict "name" "APP_ASSET_GROUP_RELIST_INTERVALL" "value" .Values.envs.assetGroup.relistInterval "context" . ) | nindent 12 }}
+            {{ include "rafter.createEnv" ( dict "name" "APP_ASSET_GROUP_RELIST_INTERVAL" "value" .Values.envs.assetGroup.relistInterval "context" . ) | nindent 12 }}
             # ClusterBuckets
             {{ include "rafter.createEnv" ( dict "name" "APP_CLUSTER_BUCKET_RELIST_INTERVAL" "value" .Values.envs.clusterBucket.relistInterval "context" . ) | nindent 12 }}
             {{ include "rafter.createEnv" ( dict "name" "APP_CLUSTER_BUCKET_MAX_CONCURRENT_RECONCILES" "value" .Values.envs.clusterBucket.maxConcurrentReconciles "context" . ) | nindent 12 }}
