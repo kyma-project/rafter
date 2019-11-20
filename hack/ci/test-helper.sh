@@ -5,7 +5,6 @@ readonly STABLE_KIND_VERSION=v0.5.1
 readonly STABLE_HELM_VERSION=v2.16.0
 readonly CT_VERSION=v2.3.3
 readonly CLUSTER_NAME=ci-test-cluster
-
 # docker images to load into kind
 readonly UPLOADER_IMG_NAME="${1}"
 readonly MANAGER_IMG_NAME="${2}"
@@ -116,13 +115,21 @@ testHelper::load_images() {
     kind::load_image "${CLUSTER_NAME}" "${ASYNCAPI_IMG_NAME}"
 }
 
-readonly RECOMENDED_HELM_VERSION=v2.16.1
-
-testHelper::check_version() {
+testHelper::check_helm_version() {
     readonly HELM_VERSION=$(helm version --short)
     if [[ $(helm version 2>/dev/null| sed 's/.*v\([0-9][0-9]*\)\..*$/\1/g') > 2 ]];
     then
-        log::error "Invalid helm version ${HELM_VERSION}, recomended version is ${RECOMENDED_HELM_VERSION}!"
+        log::error "Invalid helm version ${HELM_VERSION}, required version is ${STABLE_HELM_VERSION}!"
         exit 1
     fi
+}
+
+testHelper::check_kind_version(){
+    readonly KIND_VERSION=$(kind version)
+    if [ "$KIND_VERSION" != "$STABLE_KIND_VERSION" ]; 
+    then
+        log::error "Invalid kind version ${KIND_VERSION}, required version is ${STABLE_KIND_VERSION}!"
+        exit 1
+    fi
+
 }

@@ -15,12 +15,14 @@ source "${CURRENT_DIR}/test-helper.sh" || {
 main() {
     trap testHelper::cleanup EXIT
     
+    testHelper::check_kind_version
+    testHelper::check_helm_version
+    
     kind::create_cluster \
     "${CLUSTER_NAME}" \
     "${STABLE_KUBERNETES_VERSION}" \
     "${CLUSTER_CONFIG}" 2>&1
     
-    testHelper::check_version
 
     testHelper::install_tiller
 

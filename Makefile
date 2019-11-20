@@ -149,7 +149,7 @@ ci-master: docker-build docker-push
 ci-release: docker-build docker-push ci-release-push-latest
 
 integration-test:
-	# build-uploader \
+	build-uploader \
 	build-manager \
 	build-frontmatter \
 	build-asyncapi
