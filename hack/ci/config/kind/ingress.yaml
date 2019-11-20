@@ -10,4 +10,8 @@ spec:
           - backend:
               serviceName: rafter-rafter-upload-service
               servicePort: 80
+            path: /v1/upload
+          - backend:
+              serviceName: rafter-minio
+              servicePort: 9000
             path: /

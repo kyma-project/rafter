@@ -32,78 +32,120 @@ readonly KUBECONFIG="$(kind get kubeconfig-path --name=${CLUSTER_NAME})"
 readonly HELM_CHARTS_RELATIVE_PATH=../../charts
 readonly RAFTER_CHART_DIR=${CURRENT_DIR}/${HELM_CHARTS_RELATIVE_PATH}/rafter
 readonly UPLOAD_SERVICE_CHART_DIR=${CURRENT_DIR}/${HELM_CHARTS_RELATIVE_PATH}/rafter-upload-service
-INSTALL_TIMEOUT=180
+readonly INSTALL_TIMEOUT=180
 
-readonly APP_TEST_MINIO_ACCESSKEY=AKIAIOSFODNN7EXAMPLE 
-readonly APP_TEST_MINIO_SECRETKEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-readonly APP_KUBECONFIG_PATH=$KUBECONFIG
-readonly APP_TEST_UPLOAD_SERVICE_URL=http://localhost:30080/rafter-upload-service
+# minio access key that will be used during rafter installation
+export APP_TEST_MINIO_ACCESSKEY=4j4gEuRH96ZFjptUFeFm
+# minio secret key that will be used during the rafter installation
+export APP_TEST_MINIO_SECRETKEY=UJnce86xA7hK01WblDdbmXg4gwjKwpFypdLJCvJ3
+# required by integration suite
+export APP_KUBECONFIG_PATH=$KUBECONFIG
+export INGRESS_ADDRESS=http://localhost:30080
+# URL of the uploader that will be used to upload test data in tests,
+# it must be visible from outside of the cluster 
+export APP_TEST_UPLOAD_SERVICE_URL=${INGRESS_ADDRESS}/v1/upload
+export APP_TEST_MINIO_USE_SSL="false"
+export APP_TEST_MINIO_ENDPOINT=localhost:30080
 
-helm::installRafter() {
+helm::install_rafter() {
     log::info '- Installing rafter'
-    helm repo add rafter-charts https://rafter-charts.storage.googleapis.com
-    helm install --name rafter rafter-charts/rafter --wait --timeout ${INSTALL_TIMEOUT}
-#    helm install ${RAFTER_CHART_DIR} --wait --timeout ${INSTALL_TIMEOUT}
+    helm install --name rafter \
+    rafter-charts/rafter \
+    --set rafter-controller-manager.minio.accessKey=${APP_TEST_MINIO_ACCESSKEY} \
+    --set rafter-controller-manager.minio.secretKey=${APP_TEST_MINIO_SECRETKEY} \
+    --set rafter-controller-manager.envs.store.externalEndpoint.value=${INGRESS_ADDRESS} \
+    --wait \
+    --timeout ${INSTALL_TIMEOUT}
 }
 
-kubectl::installTiller() {
+kubectl::install_tiller() {
     log::info '- Installing Tiller...'
     kubectl --namespace kube-system create sa tiller
-    kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-    helm init --service-account tiller --upgrade --wait --history-max 200
+    kubectl create clusterrolebinding tiller-cluster-rule \
+    --clusterrole=cluster-admin \
+    --serviceaccount=kube-system:tiller \
+    
+    helm init \
+    --service-account tiller \
+    --upgrade --wait  \
+    --history-max 200
 }
 
-helm::installIngress() {
+readonly NODE_PORT_HTTP=30080
+readonly NODE_PORT_HTTPS=30443
+
+helm::install_ingress() {
     log::info '- Installing ingress...'
-    helm install -n my-ingress stable/nginx-ingress \
-        --set controller.service.type=NodePort \
-        --set controller.service.nodePorts.http=30080 \
-        --set controller.service.nodePorts.https=30443 \
-        --wait
+    helm install --name my-ingress stable/nginx-ingress \
+    --set controller.service.type=NodePort \
+    --set controller.service.nodePorts.http=${NODE_PORT_HTTP} \
+    --set controller.service.nodePorts.https=${NODE_PORT_HTTPS} \
+    --wait
 }
 
-kubectl::applyIngress() {
+helm::add_repos_and_update() {
+    log::info '- Adding helm repositories and updating helm...'
+    helm repo add rafter-charts https://rafter-charts.storage.googleapis.com
+    helm repo update
+}
+
+kubectl::apply_ingress() {
     log::info '- Applying ingress...'
-    kubectl apply -f ./config/ingress.yaml
+    kubectl apply -f ${CURRENT_DIR}/config/kind/ingress.yaml
 }
 
 installation::cleanup() {
     kind::delete_cluster "${CLUSTER_NAME}" 2>&1
 }
 
-kind::loadImages() {
+kind::load_images() {
     log::info "- Loading image ${UPLOADER_IMG_NAME}..."
     kind::load_image "${CLUSTER_NAME}" "${UPLOADER_IMG_NAME}"
-
+    
     log::info "- Loading image ${MANAGER_IMG_NAME}..."
     kind::load_image "${CLUSTER_NAME}" "${MANAGER_IMG_NAME}"
-
+    
     log::info "- Loading image ${FRONT_MATTER_IMG_NAME}..."
     kind::load_image "${CLUSTER_NAME}" "${FRONT_MATTER_IMG_NAME}"
-
+    
     log::info "- Loading image ${ASYNCAPI_IMG_NAME}..."
     kind::load_image "${CLUSTER_NAME}" "${ASYNCAPI_IMG_NAME}"
 }
 
+readonly RECOMENDED_HELM_VERSION=v2.16.1
+
+helm::check_version() {
+    readonly HELM_VERSION=$(helm version --short)
+    if [[ $(helm version 2>/dev/null| sed 's/.*v\([0-9][0-9]*\)\..*$/\1/g') > 2 ]];
+    then
+        log::error "Invalid helm version ${HELM_VERSION}, recomended version is ${RECOMENDED_HELM_VERSION}"
+        exit 1
+    fi
+}
+
 main() {
     # trap installation::cleanup EXIT
+    
+    kind::create_cluster \
+    "${CLUSTER_NAME}" \
+    "${STABLE_KUBERNETES_VERSION}" \
+    "${CLUSTER_CONFIG}" 2>&1
+    
+    helm::check_version
 
-     kind::create_cluster \
-         "${CLUSTER_NAME}" \
-         "${STABLE_KUBERNETES_VERSION}" \
-         "${CLUSTER_CONFIG}" 2>&1
+    kubectl::install_tiller
 
-     kubectl::installTiller
-
-     helm::installIngress
-
-     kind::loadImages
-
-     helm::installRafter
-
-     kubectl::applyIngress
-
-    go test ${CURRENT_DIR}/../../tests/asset-store/main_test.go
+    helm::add_repos_and_update
+    
+    helm::install_ingress
+    
+    kind::load_images
+    
+    helm::install_rafter
+    
+    kubectl::apply_ingress
+    
+    go test ${CURRENT_DIR}/../../tests/asset-store/main_test.go -count 1
 }
 
 main
