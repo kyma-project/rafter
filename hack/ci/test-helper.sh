@@ -137,7 +137,7 @@ testHelper::load_images() {
 
 testHelper::check_helm_version() {
     readonly HELM_VERSION=$(helm version --short)
-    if [[ $(helm version 2>/dev/null || echo "-1" | sed 's/.*v\([0-9][0-9]*\)\..*$/\1/g') > 2 ]];
+    if [[ $(helm version 2>/dev/null | sed 's/.*v\([0-9][0-9]*\)\..*$/\1/g') > 2 ]];
     then
         log::error "Invalid helm version ${HELM_VERSION}, required version is ${STABLE_HELM_VERSION}!"
         exit 1
