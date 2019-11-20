@@ -14,7 +14,7 @@ source "${CURRENT_DIR}/test-helper.sh" || {
 
 main() {
     trap testHelper::cleanup EXIT
-    
+
     testHelper::check_kind_version
     testHelper::check_helm_version
     
@@ -23,7 +23,6 @@ main() {
     "${STABLE_KUBERNETES_VERSION}" \
     "${CLUSTER_CONFIG}" 2>&1
     
-
     testHelper::install_tiller
 
     testHelper::add_repos_and_update
@@ -33,8 +32,6 @@ main() {
     testHelper::load_images
     
     testHelper::install_rafter
-    
-    testHelper::apply_ingress
     
     testHelper::start_integration_tests
 }

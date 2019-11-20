@@ -78,17 +78,15 @@ testHelper::install_ingress() {
     --set controller.service.nodePorts.http=${NODE_PORT_HTTP} \
     --set controller.service.nodePorts.https=${NODE_PORT_HTTPS} \
     --wait
+
+    log::info '- Applying ingress...'
+    kubectl apply -f ${CURRENT_DIR}/config/kind/ingress.yaml
 }
 
 testHelper::add_repos_and_update() {
     log::info '- Adding helm repositories and updating helm...'
     helm repo add rafter-charts https://rafter-charts.storage.googleapis.com
     helm repo update
-}
-
-testHelper::apply_ingress() {
-    log::info '- Applying ingress...'
-    kubectl apply -f ${CURRENT_DIR}/config/kind/ingress.yaml
 }
 
 testHelper::cleanup() {
