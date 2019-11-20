@@ -39,8 +39,8 @@ source "${LIB_DIR}/docker.sh" || {
     exit 1
 }
 
-source "${LIB_DIR}/docker.sh" || {
-    echo 'Cannot load docker utilities.'
+source "${LIB_DIR}/kubernetes.sh" || {
+    echo 'Cannot load kubernetes utilities.'
     exit 1
 }
 
@@ -163,7 +163,7 @@ infraHelper::install_helm_tiller(){
 
 infraHelper::install_kind(){
     log::info "Installing kind..."
-    curl -LO https://github.com/kubernetes-sigs/kind/releases/download/v0.5.1/kind-linux-amd64
+    curl -LO https://github.com/kubernetes-sigs/kind/releases/download/"${STABLE_KIND_VERSION}"/kind-linux-amd64
     chmod +x kind-linux-amd64
     mv kind-linux-amd64 /usr/local/bin/kind
 }
