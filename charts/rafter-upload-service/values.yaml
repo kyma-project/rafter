@@ -13,6 +13,8 @@ minio:
     size: 10Gi
   accessKey: ""
   secretKey: ""
+  podAnnotations:
+    persistence: "true"
 
 image:
   repository: eu.gcr.io/kyma-project/rafter-upload-service

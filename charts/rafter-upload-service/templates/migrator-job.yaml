@@ -62,8 +62,8 @@ metadata:
     helm.sh/hook-delete-policy: hook-succeeded
     helm.sh/hook-weight: "1"
 rules:
-- apiGroups: ["extensions"]
-  resources: [ "deployments" ]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
   verbs: ["get"]
 ---
 apiVersion: v1
@@ -120,7 +120,7 @@ spec:
         command:
         - bash
         - -c
-        - "kubectl -n {{ .Release.Namespace }} get deployment {{ include "rafterUploadService.minioRefName" . }} -o jsonpath=\"{.spec.template.metadata.annotations.persistance}\" > /export/persistance.enabled"
+        - "kubectl -n {{ .Release.Namespace }} get deployment {{ include "rafterUploadService.minioRefName" . }} -o jsonpath=\"{.spec.template.metadata.annotations.persistence}\" > /export/persistence.enabled"
         volumeMounts:
         - name: export
           mountPath: /export
@@ -243,7 +243,7 @@ metadata:
     helm.sh/hook-weight: "1"
 rules:
 - apiGroups: [""]
-  resources: [ "persistentvolumeclaims" ]
+  resources: ["persistentvolumeclaims"]
   verbs: ["delete"]
 ---
 apiVersion: v1

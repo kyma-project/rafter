@@ -106,7 +106,7 @@ The following table lists the configurable parameters of the Upload Service char
 | **envs.bucket.publicPrefix** | Prefix of the public system bucket | `system-public` |
 | **envs.bucket.region** | Region of the system buckets | `us-east-1` |
 | **envs.configMap.enabled** | Toggle used to save and load the configuration using the ConfigMap | `true` |
-| **envs.configMap.name** | ConfigMap name | `{{ include "rafterUploadService.fullname" . }}` |
+| **envs.configMap.name** | ConfigMap name | `rafter-upload-service` |
 | **envs.configMap.namespace** | Namespace in which the ConfigMap is created | `{{ .Release.Namespace }}` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
@@ -154,4 +154,4 @@ envs:
 
 ### Switch MinIO to Gateway mode
 
-By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must first change the **minio.persistence.enabled** parameter to `false` and override parameters for MinIO under the **minio** object.
+By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must first change the **minio.persistence.enabled** and   **minio.podAnnotations.persistence** parameters to `false` and override parameters for MinIO under the **minio** object.

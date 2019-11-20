@@ -65,16 +65,16 @@ copyFromBucket() {
   fi
 }
 
-isPersistance() {
-  if grep -q "true" "/export/persistance.enabled"; then
+isPersistence() {
+  if grep -q "true" "/export/persistence.enabled"; then
     return 0
   fi
 
   return 1
 }
 
-if ! isPersistance; then
-  echo "Persistance is not enabled, skipping..."
+if ! isPersistence; then
+  echo "Persistence is not enabled, skipping..."
   exit 0
 fi
 

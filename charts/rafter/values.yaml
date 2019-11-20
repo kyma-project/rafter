@@ -142,6 +142,9 @@ rafter-controller-manager:
       enabled: true
       size: 10Gi
 
+    podAnnotations:
+      persistence: "true"
+
     DeploymentUpdate:
       type: Recreate
 
@@ -168,6 +171,8 @@ rafter-upload-service:
     persistence:
       enabled: true
       size: 10Gi
+    podAnnotations:
+      persistence: "true"
 
   image:
     repository: eu.gcr.io/kyma-project/rafter-upload-service
