@@ -17,7 +17,7 @@ main() {
     
     infraHelper::install_helm_tiller
 
-    testHelper::check_helm_version
+    # testHelper::check_helm_version
     testHelper::check_kind_version
     kubernetes::ensure_kubectl "${STABLE_KUBERNETES_VERSION}" "$(host::os)" "${TMP_BIN_DIR}"
     

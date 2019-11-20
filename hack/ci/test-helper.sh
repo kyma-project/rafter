@@ -135,14 +135,14 @@ testHelper::load_images() {
     kind::load_image "${CLUSTER_NAME}" "${ASYNCAPI_IMG_NAME}"
 }
 
-testHelper::check_helm_version() {
-    readonly HELM_VERSION=$(helm version --short)
-    if [[ $(helm version 2>/dev/null | sed 's/.*v\([0-9][0-9]*\)\..*$/\1/g') > 2 ]];
-    then
-        log::error "Invalid helm version ${HELM_VERSION}, required version is ${STABLE_HELM_VERSION}!"
-        exit 1
-    fi
-}
+# testHelper::check_helm_version() {
+#     readonly HELM_VERSION=$(helm version --short)
+#     if [[ $(helm version 2>/dev/null | sed 's/.*v\([0-9][0-9]*\)\..*$/\1/g') > 2 ]];
+#     then
+#         log::error "Invalid helm version ${HELM_VERSION}, required version is ${STABLE_HELM_VERSION}!"
+#         exit 1
+#     fi
+# }
 
 testHelper::check_kind_version(){
     readonly KIND_VERSION=$(kind version)
