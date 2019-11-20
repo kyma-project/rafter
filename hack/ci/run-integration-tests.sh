@@ -5,11 +5,19 @@ set -o nounset
 set -o pipefail
 set -e
 
+readonly STABLE_KUBERNETES_VERSION=v1.16.2
+readonly STABLE_KIND_VERSION=v0.5.1
+readonly STABLE_HELM_VERSION=v2.16.0
+readonly CT_VERSION=v2.3.3
+readonly CLUSTER_NAME=ci-test-cluster
+
+# docker images to load into kind
 readonly UPLOADER_IMG_NAME="${1}"
 readonly MANAGER_IMG_NAME="${2}"
 readonly FRONT_MATTER_IMG_NAME="${3}"
 readonly ASYNCAPI_IMG_NAME="${4}"
 
+# external dependencies
 readonly LIB_DIR="$(cd "${GOPATH}/src/github.com/kyma-project/test-infra/prow/scripts/lib" && pwd)"
 readonly CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -21,25 +29,18 @@ source "${LIB_DIR}/log.sh" || {
     echo 'Cannot load log utilities.'
     exit 1
 }
-source "${CURRENT_DIR}/var.sh" || {
-    echo 'Cannot load variables.'
-    exit 1
-}
-
+# kind cluster configuration
 readonly CLUSTER_CONFIG=${CURRENT_DIR}/config/kind/cluster-config.yaml
+# required for kind
 readonly KUBECONFIG="$(kind get kubeconfig-path --name=${CLUSTER_NAME})"
-
-readonly HELM_CHARTS_RELATIVE_PATH=../../charts
-readonly RAFTER_CHART_DIR=${CURRENT_DIR}/${HELM_CHARTS_RELATIVE_PATH}/rafter
-readonly UPLOAD_SERVICE_CHART_DIR=${CURRENT_DIR}/${HELM_CHARTS_RELATIVE_PATH}/rafter-upload-service
 readonly INSTALL_TIMEOUT=180
-
 # minio access key that will be used during rafter installation
 export APP_TEST_MINIO_ACCESSKEY=4j4gEuRH96ZFjptUFeFm
 # minio secret key that will be used during the rafter installation
 export APP_TEST_MINIO_SECRETKEY=UJnce86xA7hK01WblDdbmXg4gwjKwpFypdLJCvJ3
 # required by integration suite
 export APP_KUBECONFIG_PATH=$KUBECONFIG
+# the addres of the ingress that exposes upload and minio endpoints
 export INGRESS_ADDRESS=http://localhost:30080
 # URL of the uploader that will be used to upload test data in tests,
 # it must be visible from outside of the cluster 
@@ -71,7 +72,9 @@ kubectl::install_tiller() {
     --history-max 200
 }
 
+# ingress http port
 readonly NODE_PORT_HTTP=30080
+# ingress https port
 readonly NODE_PORT_HTTPS=30443
 
 helm::install_ingress() {
@@ -95,7 +98,13 @@ kubectl::apply_ingress() {
 }
 
 installation::cleanup() {
+    log::info "- Cleaning up cluster ${CLUSTER_NAME}..."
     kind::delete_cluster "${CLUSTER_NAME}" 2>&1
+}
+
+installation::start_integration_tests() {
+    log::info "Starting integration tests..."
+    go test ${CURRENT_DIR}/../../tests/asset-store/main_test.go -count 1
 }
 
 kind::load_images() {
@@ -145,7 +154,7 @@ main() {
     
     kubectl::apply_ingress
     
-    go test ${CURRENT_DIR}/../../tests/asset-store/main_test.go -count 1
+    installation::start_integration_tests
 }
 
 main
