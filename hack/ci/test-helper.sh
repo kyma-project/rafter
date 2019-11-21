@@ -11,10 +11,6 @@ readonly UPLOADER_IMG_NAME="${1}"
 readonly MANAGER_IMG_NAME="${2}"
 readonly FRONT_MATTER_IMG_NAME="${3}"
 readonly ASYNCAPI_IMG_NAME="${4}"
-readonly TMP_DIR="$(mktemp -d)"
-readonly TMP_BIN_DIR="${TMP_DIR}/bin"
-mkdir -p "${TMP_BIN_DIR}"
-export PATH="${TMP_BIN_DIR}:${PATH}"
 
 # external dependencies
 readonly LIB_DIR="$(cd "${GOPATH}/src/github.com/kyma-project/test-infra/prow/scripts/lib" && pwd)"
@@ -133,25 +129,6 @@ testHelper::load_images() {
     
     log::info "- Loading image ${ASYNCAPI_IMG_NAME}..."
     kind::load_image "${CLUSTER_NAME}" "${ASYNCAPI_IMG_NAME}"
-}
-
-# testHelper::check_helm_version() {
-#     readonly HELM_VERSION=$(helm version --short)
-#     if [[ $(helm version 2>/dev/null | sed 's/.*v\([0-9][0-9]*\)\..*$/\1/g') > 2 ]];
-#     then
-#         log::error "Invalid helm version ${HELM_VERSION}, required version is ${STABLE_HELM_VERSION}!"
-#         exit 1
-#     fi
-# }
-
-testHelper::check_kind_version(){
-    readonly KIND_VERSION=$(kind version)
-    if [ "$KIND_VERSION" != "$STABLE_KIND_VERSION" ]; 
-    then
-        log::error "Invalid kind version ${KIND_VERSION}, required version is ${STABLE_KIND_VERSION}!"
-        exit 1
-    fi
-
 }
 
 infraHelper::install_helm_tiller(){
