@@ -6,6 +6,7 @@ The repository has the following structure:
 
 ```txt
 ├── .github                     # Pull request and issue templates
+├── charts                      # Configuration of component charts 
 ├── cmd                         # Rafter's applications
 ├── config                      # Configuration file templates
 ├── deploy                      # Dockerfiles for Rafter's applications
