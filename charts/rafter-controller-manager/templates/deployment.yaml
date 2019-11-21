@@ -39,8 +39,9 @@ spec:
       {{- if and .Values.metrics.enabled .Values.metrics.pod.labels }}
         {{ include "rafter.tplValue" ( dict "value" .Values.metrics.pod.labels "context" . ) | nindent 8 }}
       {{- end }}
-      {{- if or .Values.pod.annotations (and .Values.metrics.enabled .Values.metrics.pod.annotations) }}
       annotations:
+        recreate: {{ .Release.Time.Seconds | quote }}
+      {{- if or .Values.pod.annotations (and .Values.metrics.enabled .Values.metrics.pod.annotations) }}
       {{- if .Values.pod.annotations }}
         {{ include "rafter.tplValue" ( dict "value" .Values.pod.annotations "context" . ) | nindent 8 }}
       {{- end }}

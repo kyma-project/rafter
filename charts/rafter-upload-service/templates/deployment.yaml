@@ -35,8 +35,9 @@ spec:
       {{- if .Values.pod.labels }}
         {{ include "rafterUploadService.tplValue" ( dict "value" .Values.pod.labels "context" . ) | nindent 8 }}
       {{- end }}
-      {{- if .Values.pod.annotations }}
       annotations:
+        recreate: {{ .Release.Time.Seconds | quote }}
+      {{- if .Values.pod.annotations }}
         {{ include "rafterUploadService.tplValue" ( dict "value" .Values.pod.annotations "context" . ) | nindent 8 }}
       {{- end }}
     spec:
