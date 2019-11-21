@@ -59,12 +59,26 @@ export APP_TEST_MINIO_USE_SSL="false"
 export APP_TEST_MINIO_ENDPOINT=localhost:30080
 
 testHelper::install_rafter() {
+    readonly TAG=latest
+    readonly PULL_POLICY=Never
     log::info '- Installing rafter...'
     helm install --name rafter \
     rafter-charts/rafter \
     --set rafter-controller-manager.minio.accessKey=${APP_TEST_MINIO_ACCESSKEY} \
     --set rafter-controller-manager.minio.secretKey=${APP_TEST_MINIO_SECRETKEY} \
     --set rafter-controller-manager.envs.store.externalEndpoint.value=${INGRESS_ADDRESS} \
+    --set rafter-controller-manager.image.pullPolicy="${PULL_POLICY}" \
+    --set rafter-upload-service.image.pullPolicy="${PULL_POLICY}" \
+    --set rafter-asyncapi-service.image.pullPolicy="${PULL_POLICY}" \
+    --set rafter-front-matter-service.image.pullPolicy="${PULL_POLICY}" \
+    --set rafter-controller-manager.image.tag="${TAG}" \
+    --set rafter-asyncapi-service.image.tag="${TAG}" \
+    --set rafter-front-matter-service.image.tag="${TAG}" \
+    --set rafter-upload-service.image.tag="${TAG}" \
+    --set rafter-controller-manager.image.repository=rafter-controller-manager \
+    --set rafter-asyncapi-service.image.repository=rafter-asyncapi-service \
+    --set rafter-front-matter-service.image.repository=rafter-front-matter-service \
+    --set rafter-upload-service.image.repository=rafter-upload-service \
     --wait \
     --timeout ${INSTALL_TIMEOUT}
 }
