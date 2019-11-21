@@ -62,4 +62,4 @@ go run cmd/extension/frontmatter/main.go --stderrthreshold=INFO -logtostderr=fal
 
 ## Development
 
-Rafter has a unified way of testing all component changes. For details on how to run unit and integration tests, read [this](../../../docs/development-guide.md) development guide.
+There is a unified way of testing all changes in Rafter components. For details on how to run unit and integration tests, read [this](../../../docs/development-guide.md) development guide.
