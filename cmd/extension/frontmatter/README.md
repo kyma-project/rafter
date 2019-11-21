@@ -62,10 +62,4 @@ go run cmd/extension/frontmatter/main.go --stderrthreshold=INFO -logtostderr=fal
 
 ## Development
 
-### Run tests
-
-To run all unit tests, use this command:
-
-```bash
-make test
-```
+Rafter has a unified way of testing all component changes. For details on how to run unit and integration tests, read [this](../../../docs/development-guide.md) development guide.

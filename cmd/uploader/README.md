@@ -64,7 +64,7 @@ Use these environment variables to configure the service:
 | **APP_BUCKET_PUBLIC_PREFIX** | No | `public` | The prefix of the public system bucket |
 | **APP_BUCKET_REGION** | No | `us-east-1` | The region of system buckets |
 | **APP_CONFIG_MAP_ENABLED** | No | `true` | The toggle used to save and load the configuration using the ConfigMap resource |
-| **APP_CONFIG_MAP_NAME** | No | `rafter-upload-service` | The name of the ConfigMap resource |
+| **APP_CONFIG_MAP_NAME** | No | `asset-upload-service` | The name of the ConfigMap resource |
 | **APP_CONFIG_MAP_NAMESPACE** | No | `kyma-system` | The Namespace in which the ConfigMap resource is created |
 
 
@@ -79,10 +79,4 @@ go run ./cmd/uploader/main.go --stderrthreshold=INFO -logtostderr=false
 
 ## Development
 
-### Run tests
-
-To run all unit tests, use this command:
-
-```bash
-go test ./...
-```
+Rafter has a unified way of testing all component changes. For details on how to run unit and integration tests, read [this](../../docs/development-guide.md) development guide.

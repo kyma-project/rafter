@@ -66,3 +66,7 @@ Use these environment variables to configure the controller manager:
 | **APP_WEBHOOK_METADATA_EXTRACTION_TIMEOUT** | No | `1m` | The period of time after which metadata extraction is canceled |
 | **APP_WEBHOOK_CONFIG_MAP_CFG_MAP_NAME** | No | `webhook-configmap` | The name of the ConfigMap that contains webhook definitions |
 | **APP_WEBHOOK_CONFIG_MAP_CFG_MAP_NAMESPACE** | No | `kyma-system` | The Namespace of the ConfigMap that contains webhook definitions |
+
+## Development
+
+Rafter has a unified way of testing all component changes. For details on how to run unit and integration tests, read [this](../../docs/development-guide.md) development guide.
