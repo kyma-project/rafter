@@ -145,16 +145,25 @@ testHelper::load_images() {
     kind::load_image "${CLUSTER_NAME}" "${ASYNCAPI_IMG_NAME}"
 }
 
+# Arguments:
+#   $1 - Host OS
+#   $2 - Destination directory
 infraHelper::install_helm_tiller(){
-    log::info "Installing Helm and Tiller..."
-    curl -LO https://get.helm.sh/helm-"${STABLE_HELM_VERSION}"-linux-amd64.tar.gz
-    tar -xzvf helm-"${STABLE_HELM_VERSION}"-linux-amd64.tar.gz
-    mv ./linux-amd64/{helm,tiller} /usr/local/bin
+    log::info "Installing Helm and Tiller in version ${STABLE_HELM_VERSION}"
+    curl -LO "https://get.helm.sh/helm-${STABLE_HELM_VERSION}-${1}-amd64.tar.gz" --fail \
+        && tar -xzvf "helm-${STABLE_HELM_VERSION}-${1}-amd64.tar.gz" \
+        && mv "./${1}-amd64/helm" "${2}/helm" \
+        && mv "./${1}-amd64/tiller" "${2}/tiller" \
+        && rm -rf "helm-${STABLE_HELM_VERSION}-${1}-amd64.tar.gz" \
+        && rm -rf "${1}-amd64"
 }
 
+# Arguments:
+#   $1 - Host OS
+#   $2 - Destination directory
 infraHelper::install_kind(){
     log::info "Installing kind..."
-    curl -LO https://github.com/kubernetes-sigs/kind/releases/download/"${STABLE_KIND_VERSION}"/kind-linux-amd64
-    chmod +x kind-linux-amd64
-    mv kind-linux-amd64 /usr/local/bin/kind
+    curl -LO "https://github.com/kubernetes-sigs/kind/releases/download/${STABLE_KIND_VERSION}/kind-${1}-amd64" --fail \
+        && chmod +x "kind-${1}-amd64" \
+        && mv "kind-${1}-amd64" "${2}/kind"
 }

@@ -21,8 +21,8 @@ source "${CURRENT_DIR}/test-helper.sh" || {
 main() {
     trap testHelper::cleanup EXIT
     
-    infraHelper::install_helm_tiller
-    infraHelper::install_kind
+    infraHelper::install_helm_tiller "$(host::os)" "${TMP_BIN_DIR}"
+    infraHelper::install_kind "$(host::os)" "${TMP_BIN_DIR}"
     
     kubernetes::ensure_kubectl "${STABLE_KUBERNETES_VERSION}" "$(host::os)" "${TMP_BIN_DIR}"
     
