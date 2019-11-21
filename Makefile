@@ -148,11 +148,15 @@ ci-master: docker-build docker-push
 
 ci-release: docker-build docker-push ci-release-push-latest
 
+start-docker: 
+	${ROOT}/hack/ci/start_docker.sh
+
 integration-test: \
+	start-docker \
 	build-uploader \
 	build-manager \
 	build-frontmatter \
-	build-asyncapi
+	build-asyncapi 
 	${ROOT}/hack/ci/run-integration-tests.sh \
 		${UPLOADER_IMG_NAME} \
 		${MANAGER_IMG_NAME} \
@@ -183,4 +187,5 @@ integration-test: \
 		push-uploader-latest \
 		push-manager-latest \
 		push-frontmatter-latest \
-		push-asyncapi-latest
+		push-asyncapi-latest \
+		start-docker
