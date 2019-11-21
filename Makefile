@@ -136,7 +136,7 @@ else
 CONTROLLER_GEN=$(shell which controller-gen)
 endif
 
-ci-pr: docker-build docker-push integration-test
+ci-pr: docker-build docker-push
 
 ci-release-push-latest: \
 		   push-uploader-latest \
