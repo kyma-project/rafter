@@ -14,6 +14,7 @@ The whole structure of the repository looks as follows:
 ├── cmd                         # Rafter's applications
 ├── config                      # Configuration file templates
 ├── deploy                      # Dockerfiles for Rafter's applications
+├── Docs                        # Rafter-related documentation
 ├── hack                        # Information, scripts, and files useful for development
 ├── internal                    # Private application and library code
 ├── pkg                         # Library code to be used by external applications
@@ -26,10 +27,10 @@ After you make changes to a given Rafter component, build it to see if it works 
 
 Follow these links for details:
 
-- [AsyncAPI Service](./cmd/extension/asyncapi#usage)
-- [Front Matter Service](./cmd/extension/frontmatter#usage)
-- [Rafter Controller Manager](./cmd/manager/README.md#usage)
-- [Upload Service](./cmd/uploader#usage)
+- [AsyncAPI Service](../cmd/extension/asyncapi#usage)
+- [Front Matter Service](../cmd/extension/frontmatter#usage)
+- [Rafter Controller Manager](../cmd/manager/README.md#usage)
+- [Upload Service](../cmd/uploader#usage)
 
 ## Unit tests
 
