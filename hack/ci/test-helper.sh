@@ -119,9 +119,13 @@ testHelper::add_repos_and_update() {
     helm repo update
 }
 
+# Arguments:
+#   $1 - tmp directory with binaries used during test
 testHelper::cleanup() {
     log::info "- Cleaning up cluster ${CLUSTER_NAME}..."
     kind::delete_cluster "${CLUSTER_NAME}" 2>&1
+    log::info "- Deleting directory with temporary binaries used in tests..."
+    rm -rf "${1}"
 }
 
 testHelper::start_integration_tests() {

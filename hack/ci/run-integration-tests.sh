@@ -19,7 +19,7 @@ source "${CURRENT_DIR}/test-helper.sh" || {
 }
 
 main() {
-    trap testHelper::cleanup EXIT
+    trap "testHelper::cleanup ${TMP_DIR}" EXIT
     
     infraHelper::install_helm_tiller "$(host::os)" "${TMP_BIN_DIR}"
     infraHelper::install_kind "$(host::os)" "${TMP_BIN_DIR}"
