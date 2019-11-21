@@ -25,4 +25,4 @@ Rafter comes with the following set of services and extensions compatible with R
 
 Read [this](./docs/development-guide.md) development guide to start developing the project.
 
->**NOTE:** If you want to learn how Rafter was implemented in [Kyma](https://kyma-project.io), read the [Asset Store](https://kyma-project.io/docs/components/asset-store/) and [Headless CMS](https://kyma-project.io/docs/components/headless-cms/) documentation.
+>**NOTE:** If you want to learn how Rafter is implemented in [Kyma](https://kyma-project.io), read the [Asset Store](https://kyma-project.io/docs/components/asset-store/) and [Headless CMS](https://kyma-project.io/docs/components/headless-cms/) documentation.
