@@ -1,4 +1,4 @@
-apiVersion: cms.kyma-project.io/v1alpha1
+apiVersion: rafter.kyma-project.io/v1alpha1
 kind: AssetGroup
 metadata:
   name: assetgroup-sample
