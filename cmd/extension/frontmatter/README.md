@@ -43,11 +43,11 @@ Use these environment variables to configure the service:
 
 | Name | Required | Default | Description |
 |------|:----------:|---------|-------------|
-| **APP_HOST** | No | `127.0.0.1` | The host on which the HTTP server listens |
-| **APP_MAX_WORKERS** | No | `10` | The maximum number of concurrent metadata extraction workers |
 | **APP_PORT** | No | `3000` | The port on which the HTTP server listens |
+| **APP_HOST** | No | `127.0.0.1` | The host on which the HTTP server listens |
+| **APP_VERBOSE** | No | `false` | The toggle used to enable detailed logs in the service |
 | **APP_PROCESS_TIMEOUT** | No | `10m` | The file process timeout |
-| **APP_VERBOSE** | No | None | The toggle used to enable detailed logs in the service |
+| **APP_MAX_WORKERS** | No | `10` | The maximum number of concurrent metadata extraction workers |
 
 
 ### Configure the logger
