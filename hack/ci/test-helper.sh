@@ -28,6 +28,11 @@ source "${LIB_DIR}/kubernetes.sh" || {
     exit 1
 }
 
+source "${LIB_DIR}/junit.sh" || {
+    echo 'Cannot load JUnit utilities.'
+    exit 1
+}
+
 # Arguments:
 #   $1 - minio access key that will be used during rafter installation
 #   $2 - minio secret key that will be used during the rafter installation
