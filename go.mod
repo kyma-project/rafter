@@ -9,6 +9,7 @@ require (
 	github.com/go-ini/ini v1.46.0 // indirect
 	github.com/go-logr/logr v0.1.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+	github.com/jstemmer/go-junit-report v0.9.1 // indirect
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/onsi/ginkgo v1.8.0

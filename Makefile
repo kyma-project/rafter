@@ -96,12 +96,15 @@ vet:
 	| grep -v "automock" \
 	| xargs -L1 go vet
 
+gojunit:
+	go get -u github.com/jstemmer/go-junit-report
+
 # Run tests
 # Default is 20s - available since controller-runtime 0.1.5
 test: export KUBEBUILDER_CONTROLPLANE_START_TIMEOUT = 2m
 # Default is 20s - available since controller-runtime 0.1.5
 test: export KUBEBUILDER_CONTROLPLANE_STOP_TIMEOUT = 2m
-test: clean manifests vet fmt
+test: clean manifests vet fmt gojunit
 	go test -short -coverprofile=${COVERAGE_OUTPUT_PATH} ${ROOT}/...
 	@go tool cover -func=${COVERAGE_OUTPUT_PATH} \
 		| grep total \
@@ -192,4 +195,5 @@ integration-test: \
 		push-manager-latest \
 		push-frontmatter-latest \
 		push-asyncapi-latest \
-		start-docker
+		start-docker \
+		gojunit
