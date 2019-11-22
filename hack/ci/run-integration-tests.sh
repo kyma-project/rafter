@@ -30,8 +30,6 @@ source "${CURRENT_DIR}/test-helper.sh" || {
     exit 1
 }
 
-
-
 finalize(){
     junit::test_start "Finalization"
     log::info "Finalizing job" 2>&1 | junit::test_output
