@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-readonly CLUSTER_NAME=ci-test-cluster
-
 # external dependencies
 readonly LIB_DIR="$(cd "${GOPATH}/src/github.com/kyma-project/test-infra/prow/scripts/lib" && pwd)"
-CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+readonly CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 source "${LIB_DIR}/kind.sh" || {
     echo 'Cannot load kind utilities.'
@@ -30,22 +28,10 @@ source "${LIB_DIR}/kubernetes.sh" || {
     exit 1
 }
 
-
-# kind cluster configuration
-readonly CLUSTER_CONFIG=${CURRENT_DIR}/config/kind/cluster-config.yaml
-# minio access key that will be used during rafter installation
-export APP_TEST_MINIO_ACCESSKEY=4j4gEuRH96ZFjptUFeFm
-# minio secret key that will be used during the rafter installation
-export APP_TEST_MINIO_SECRETKEY=UJnce86xA7hK01WblDdbmXg4gwjKwpFypdLJCvJ3
-
-# the addres of the ingress that exposes upload and minio endpoints
-export INGRESS_ADDRESS=http://localhost:30080
-# URL of the uploader that will be used to upload test data in tests,
-# it must be visible from outside of the cluster 
-export APP_TEST_UPLOAD_SERVICE_URL=${INGRESS_ADDRESS}/v1/upload
-export APP_TEST_MINIO_USE_SSL="false"
-export APP_TEST_MINIO_ENDPOINT=localhost:30080
-
+# Arguments:
+#   $1 - minio access key that will be used during rafter installation
+#   $2 - minio secret key that will be used during the rafter installation
+#   $3 - the addres of the ingress that exposes upload and minio endpoints
 testHelper::install_rafter() {
     local -r TAG=latest
     local -r PULL_POLICY=Never
@@ -53,9 +39,9 @@ testHelper::install_rafter() {
     log::info '- Installing rafter...'
     helm install --name rafter \
     rafter-charts/rafter \
-    --set rafter-controller-manager.minio.accessKey=${APP_TEST_MINIO_ACCESSKEY} \
-    --set rafter-controller-manager.minio.secretKey=${APP_TEST_MINIO_SECRETKEY} \
-    --set rafter-controller-manager.envs.store.externalEndpoint.value=${INGRESS_ADDRESS} \
+    --set rafter-controller-manager.minio.accessKey=${1} \
+    --set rafter-controller-manager.minio.secretKey=${2} \
+    --set rafter-controller-manager.envs.store.externalEndpoint.value=${3} \
     --set rafter-controller-manager.image.pullPolicy="${PULL_POLICY}" \
     --set rafter-upload-service.image.pullPolicy="${PULL_POLICY}" \
     --set rafter-asyncapi-service.image.pullPolicy="${PULL_POLICY}" \
@@ -99,7 +85,6 @@ testHelper::install_ingress() {
     --set controller.service.nodePorts.https=${NODE_PORT_HTTPS} \
     --wait
 
-    log::info '- Applying ingress...'
     kubectl apply -f ${CURRENT_DIR}/config/kind/ingress.yaml
 }
 
@@ -110,33 +95,50 @@ testHelper::add_repos_and_update() {
 }
 
 # Arguments:
-#   $1 - tmp directory with binaries used during test
+#   $1 - name of the kind cluster
+#   $2 - tmp directory with binaries used during test
 testHelper::cleanup() {
-    log::info "- Cleaning up cluster ${CLUSTER_NAME}..."
-    kind::delete_cluster "${CLUSTER_NAME}"
+    log::info "- Cleaning up cluster ${1}..."
+    kind::delete_cluster "${1}"
     log::info "- Deleting directory with temporary binaries used in tests..."
-    rm -rf "${1}"
+    rm -rf "${2}"
 }
 
+# Arguments:
+#   $1 - name of the kind cluster
+#   $2 - minio access key that will be used during rafter installation
+#   $3 - minio secret key that will be used during the rafter installation
+#   $4 - the addres of the ingress that exposes upload and minio endpoints
 testHelper::start_integration_tests() {
     # required by integration suite
-    export APP_KUBECONFIG_PATH="$(kind get kubeconfig-path --name=${CLUSTER_NAME})"
+    export APP_KUBECONFIG_PATH="$(kind get kubeconfig-path --name=${1})"
+    export APP_TEST_MINIO_USE_SSL="false"
+
+    export APP_TEST_MINIO_ENDPOINT=localhost:30080
+    # URL of the uploader that will be used to upload test data in tests,
+    # it must be visible from outside of the cluster 
+    export APP_TEST_MINIO_ACCESSKEY="${2}"
+    export APP_TEST_MINIO_SECRETKEY="${3}"
+    export APP_TEST_UPLOAD_SERVICE_URL="${4}/v1/upload"
     log::info "Starting integration tests..."
     go test ${CURRENT_DIR}/../../tests/asset-store/main_test.go -count 1
 }
 
+# Arguments:
+#   $1 - name of the cluser to load images to
+#   $2 - $5 - images to be loaded into cluster
 testHelper::load_images() {
-    log::info "- Loading image ${1}..."
-    kind::load_image "${CLUSTER_NAME}" "${1}"
-    
     log::info "- Loading image ${2}..."
-    kind::load_image "${CLUSTER_NAME}" "${2}"
+    kind::load_image "${1}" "${2}"
     
     log::info "- Loading image ${3}..."
-    kind::load_image "${CLUSTER_NAME}" "${3}"
+    kind::load_image "${1}" "${3}"
     
     log::info "- Loading image ${4}..."
-    kind::load_image "${CLUSTER_NAME}" "${4}"
+    kind::load_image "${1}" "${4}"
+    
+    log::info "- Loading image ${5}..."
+    kind::load_image "${1}" "${5}"
 }
 
 # Arguments:
@@ -144,9 +146,6 @@ testHelper::load_images() {
 #   $2 - Host OS
 #   $3 - Destination directory
 infraHelper::install_helm_tiller(){
-    echo "${1}"
-    echo "${2}"
-    echo "${3}"
     log::info "Installing Helm and Tiller in version ${1}"
     curl -LO "https://get.helm.sh/helm-${1}-${2}-amd64.tar.gz" --fail \
         && tar -xzvf "helm-${1}-${2}-amd64.tar.gz" \
