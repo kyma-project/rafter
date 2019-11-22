@@ -20,15 +20,17 @@ export PATH="${TMP_BIN_DIR}:${PATH}"
 readonly ARTIFACTS_DIR="${ARTIFACTS:-"${TMP_DIR}/artifacts"}"
 mkdir -p "${ARTIFACTS_DIR}"
 
+source "${CURRENT_DIR}/envs.sh" || {
+    echo 'Cannot load environment variables.'
+    exit 1
+}
+
 source "${CURRENT_DIR}/test-helper.sh" || {
     echo 'Cannot load test helper.'
     exit 1
 }
 
-source "${CURRENT_DIR}/envs.sh" || {
-    echo 'Cannot load environment variables.'
-    exit 1
-}
+
 
 finalize(){
     junit::test_start "Finalization"
