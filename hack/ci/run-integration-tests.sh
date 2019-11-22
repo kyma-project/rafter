@@ -3,7 +3,12 @@
 set -o errexit
 set -o nounset
 set -o pipefail
-set -e
+
+# docker images to load into kind
+readonly UPLOADER_IMG_NAME="${1}"
+readonly MANAGER_IMG_NAME="${2}"
+readonly FRONT_MATTER_IMG_NAME="${3}"
+readonly ASYNCAPI_IMG_NAME="${4}"
 
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -18,11 +23,16 @@ source "${CURRENT_DIR}/test-helper.sh" || {
     exit 1
 }
 
+source "${CURRENT_DIR}/envs.sh" || {
+    echo 'Cannot load environment variables.'
+    exit 1
+}
+
 main() {
     trap "testHelper::cleanup ${TMP_DIR}" EXIT
     
-    infraHelper::install_helm_tiller "$(host::os)" "${TMP_BIN_DIR}"
-    infraHelper::install_kind "$(host::os)" "${TMP_BIN_DIR}"
+    infraHelper::install_helm_tiller "${STABLE_HELM_VERSION}" "$(host::os)" "${TMP_BIN_DIR}"
+    infraHelper::install_kind "${STABLE_KIND_VERSION}" "$(host::os)" "${TMP_BIN_DIR}"
     
     kubernetes::ensure_kubectl "${STABLE_KUBERNETES_VERSION}" "$(host::os)" "${TMP_BIN_DIR}"
     
@@ -37,7 +47,7 @@ main() {
     
     testHelper::install_ingress
     
-    testHelper::load_images
+    testHelper::load_images "${UPLOADER_IMG_NAME}" "${MANAGER_IMG_NAME}" "${FRONT_MATTER_IMG_NAME}" "${ASYNCAPI_IMG_NAME}"
     
     testHelper::install_rafter
     

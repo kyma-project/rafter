@@ -1,21 +1,6 @@
 #!/usr/bin/env bash
 
-readonly STABLE_KUBERNETES_VERSION=v1.16.2
-readonly STABLE_KIND_VERSION=v0.5.1
-readonly STABLE_HELM_VERSION=v2.16.0
-readonly CT_VERSION=v2.3.3
 readonly CLUSTER_NAME=ci-test-cluster
-# docker images to load into kind
-readonly UPLOADER_IMG_NAME="${1}"
-readonly MANAGER_IMG_NAME="${2}"
-readonly FRONT_MATTER_IMG_NAME="${3}"
-readonly ASYNCAPI_IMG_NAME="${4}"
-# ingress http port
-readonly NODE_PORT_HTTP=30080
-# ingress https port
-readonly NODE_PORT_HTTPS=30443
-
-
 
 # external dependencies
 readonly LIB_DIR="$(cd "${GOPATH}/src/github.com/kyma-project/test-infra/prow/scripts/lib" && pwd)"
@@ -48,8 +33,6 @@ source "${LIB_DIR}/kubernetes.sh" || {
 
 # kind cluster configuration
 readonly CLUSTER_CONFIG=${CURRENT_DIR}/config/kind/cluster-config.yaml
-
-readonly INSTALL_TIMEOUT=180
 # minio access key that will be used during rafter installation
 export APP_TEST_MINIO_ACCESSKEY=4j4gEuRH96ZFjptUFeFm
 # minio secret key that will be used during the rafter installation
@@ -64,8 +47,9 @@ export APP_TEST_MINIO_USE_SSL="false"
 export APP_TEST_MINIO_ENDPOINT=localhost:30080
 
 testHelper::install_rafter() {
-    readonly TAG=latest
-    readonly PULL_POLICY=Never
+    local -r TAG=latest
+    local -r PULL_POLICY=Never
+    local -r INSTALL_TIMEOUT=180
     log::info '- Installing rafter...'
     helm install --name rafter \
     rafter-charts/rafter \
@@ -103,6 +87,11 @@ testHelper::install_tiller() {
 
 
 testHelper::install_ingress() {
+    # ingress http port
+    local -r NODE_PORT_HTTP=30080
+    # ingress https port
+    local -r NODE_PORT_HTTPS=30443
+
     log::info '- Installing ingress...'
     helm install --name my-ingress stable/nginx-ingress \
     --set controller.service.type=NodePort \
@@ -137,38 +126,43 @@ testHelper::start_integration_tests() {
 }
 
 testHelper::load_images() {
-    log::info "- Loading image ${UPLOADER_IMG_NAME}..."
-    kind::load_image "${CLUSTER_NAME}" "${UPLOADER_IMG_NAME}"
+    log::info "- Loading image ${1}..."
+    kind::load_image "${CLUSTER_NAME}" "${1}"
     
-    log::info "- Loading image ${MANAGER_IMG_NAME}..."
-    kind::load_image "${CLUSTER_NAME}" "${MANAGER_IMG_NAME}"
+    log::info "- Loading image ${2}..."
+    kind::load_image "${CLUSTER_NAME}" "${2}"
     
-    log::info "- Loading image ${FRONT_MATTER_IMG_NAME}..."
-    kind::load_image "${CLUSTER_NAME}" "${FRONT_MATTER_IMG_NAME}"
+    log::info "- Loading image ${3}..."
+    kind::load_image "${CLUSTER_NAME}" "${3}"
     
-    log::info "- Loading image ${ASYNCAPI_IMG_NAME}..."
-    kind::load_image "${CLUSTER_NAME}" "${ASYNCAPI_IMG_NAME}"
+    log::info "- Loading image ${4}..."
+    kind::load_image "${CLUSTER_NAME}" "${4}"
 }
 
 # Arguments:
-#   $1 - Host OS
-#   $2 - Destination directory
+#   $1 - Helm version
+#   $2 - Host OS
+#   $3 - Destination directory
 infraHelper::install_helm_tiller(){
-    log::info "Installing Helm and Tiller in version ${STABLE_HELM_VERSION}"
-    curl -LO "https://get.helm.sh/helm-${STABLE_HELM_VERSION}-${1}-amd64.tar.gz" --fail \
-        && tar -xzvf "helm-${STABLE_HELM_VERSION}-${1}-amd64.tar.gz" \
-        && mv "./${1}-amd64/helm" "${2}/helm" \
-        && mv "./${1}-amd64/tiller" "${2}/tiller" \
-        && rm -rf "helm-${STABLE_HELM_VERSION}-${1}-amd64.tar.gz" \
-        && rm -rf "${1}-amd64"
+    echo "${1}"
+    echo "${2}"
+    echo "${3}"
+    log::info "Installing Helm and Tiller in version ${1}"
+    curl -LO "https://get.helm.sh/helm-${1}-${2}-amd64.tar.gz" --fail \
+        && tar -xzvf "helm-${1}-${2}-amd64.tar.gz" \
+        && mv "./${2}-amd64/helm" "${3}/helm" \
+        && mv "./${2}-amd64/tiller" "${3}/tiller" \
+        && rm -rf "helm-${1}-${2}-amd64.tar.gz" \
+        && rm -rf "${2}-amd64"
 }
 
 # Arguments:
-#   $1 - Host OS
-#   $2 - Destination directory
+#   $1 - Kind version
+#   $2 - Host OS
+#   $3 - Destination directory
 infraHelper::install_kind(){
     log::info "Installing kind..."
-    curl -LO "https://github.com/kubernetes-sigs/kind/releases/download/${STABLE_KIND_VERSION}/kind-${1}-amd64" --fail \
-        && chmod +x "kind-${1}-amd64" \
-        && mv "kind-${1}-amd64" "${2}/kind"
+    curl -LO "https://github.com/kubernetes-sigs/kind/releases/download/${1}/kind-${2}-amd64" --fail \
+        && chmod +x "kind-${2}-amd64" \
+        && mv "kind-${2}-amd64" "${3}/kind"
 }
