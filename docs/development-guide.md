@@ -34,6 +34,8 @@ Follow these links for details:
 
 ## Unit tests
 
+>**NOTE:** Install [Go](https://golang.org) before you run unit tests.
+
 To perform unit tests, run this command from the root of the `rafter` repository:
 
 ```bash
@@ -42,4 +44,10 @@ make test
 
 ## Integration tests
 
-_TODO_
+>**NOTE:** Install [Go](https://golang.org) and [Docker](https://www.docker.com/) before you run integration tests.
+
+You can run the integration tests for Rafter with the same command both locally and on a cluster. To perform integration tests, copy the [`test-infra`](https://github.com/kyma-project/test-infra) repository under your `$GOPATH` workspace as `${GOPATH}/src/github.com/kyma-project/test-infra/` and run this command from the root of the `rafter` repository:
+
+```bash
+make integration-test
+```
