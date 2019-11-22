@@ -6,11 +6,16 @@ readonly STABLE_HELM_VERSION=v2.16.0
 readonly CT_VERSION=v2.3.3
 readonly CLUSTER_NAME=ci-test-cluster
 # docker images to load into kind
-readonly ARTIFACTS_DIR="${ARTIFACTS:-"${TMP_DIR}/artifacts"}"
 readonly UPLOADER_IMG_NAME="${1}"
 readonly MANAGER_IMG_NAME="${2}"
 readonly FRONT_MATTER_IMG_NAME="${3}"
 readonly ASYNCAPI_IMG_NAME="${4}"
+# ingress http port
+readonly NODE_PORT_HTTP=30080
+# ingress https port
+readonly NODE_PORT_HTTPS=30443
+
+
 
 # external dependencies
 readonly LIB_DIR="$(cd "${GOPATH}/src/github.com/kyma-project/test-infra/prow/scripts/lib" && pwd)"
@@ -96,10 +101,6 @@ testHelper::install_tiller() {
     --history-max 200
 }
 
-# ingress http port
-readonly NODE_PORT_HTTP=30080
-# ingress https port
-readonly NODE_PORT_HTTPS=30443
 
 testHelper::install_ingress() {
     log::info '- Installing ingress...'
@@ -123,7 +124,7 @@ testHelper::add_repos_and_update() {
 #   $1 - tmp directory with binaries used during test
 testHelper::cleanup() {
     log::info "- Cleaning up cluster ${CLUSTER_NAME}..."
-    kind::delete_cluster "${CLUSTER_NAME}" 2>&1
+    kind::delete_cluster "${CLUSTER_NAME}"
     log::info "- Deleting directory with temporary binaries used in tests..."
     rm -rf "${1}"
 }

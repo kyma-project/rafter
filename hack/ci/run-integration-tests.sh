@@ -29,7 +29,7 @@ main() {
     kind::create_cluster \
     "${CLUSTER_NAME}" \
     "${STABLE_KUBERNETES_VERSION}" \
-    "${CLUSTER_CONFIG}" 2>&1
+    "${CLUSTER_CONFIG}"
     
     testHelper::install_tiller
 
