@@ -17,13 +17,13 @@ readonly TMP_BIN_DIR="${TMP_DIR}/bin"
 mkdir -p "${TMP_BIN_DIR}"
 export PATH="${TMP_BIN_DIR}:${PATH}"
 
-source "${CURRENT_DIR}/test-helper.sh" || {
-    echo 'Cannot load test helper.'
+source "${CURRENT_DIR}/envs.sh" || {
+    echo 'Cannot load environment variables.'
     exit 1
 }
 
-source "${CURRENT_DIR}/envs.sh" || {
-    echo 'Cannot load environment variables.'
+source "${CURRENT_DIR}/test-helper.sh" || {
+    echo 'Cannot load test helper.'
     exit 1
 }
 
