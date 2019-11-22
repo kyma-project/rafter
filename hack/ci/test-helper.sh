@@ -113,7 +113,7 @@ testHelper::start_integration_tests() {
     # required by integration suite
     export APP_KUBECONFIG_PATH="$(kind get kubeconfig-path --name=${1})"
     export APP_TEST_MINIO_USE_SSL="false"
-
+    # port same as ingress http port
     export APP_TEST_MINIO_ENDPOINT=localhost:30080
     # URL of the uploader that will be used to upload test data in tests,
     # it must be visible from outside of the cluster 
