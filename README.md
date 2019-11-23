@@ -3,6 +3,10 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/kyma-project/rafter)](https://goreportcard.com/report/github.com/kyma-project/rafter)
 [![Slack](https://img.shields.io/badge/slack-%23rafter%20channel-yellow)](http://slack.kyma-project.io)
 
+<p align="center">
+  <img src="rafter_alpha.png" alt="rafter" width="300" />
+</p>
+
 ## Overview
 
 Rafter is a solution for storing and managing different types of files called assets. It uses [MinIO](https://min.io/) as object storage. The whole concept of Rafter relies on Kubernetes custom resources (CRs) managed by the [Rafter Controller Manager](./cmd/manager/README.md). These CRs include:
@@ -27,6 +31,14 @@ To see the implementation of Rafter in [Kyma](https://kyma-project.io), follow t
 
 - [Asset Store](https://kyma-project.io/docs/components/asset-store/)
 - [Headless CMS](https://kyma-project.io/docs/components/headless-cms/)
+
+## Quick start
+
+Try out this set of interactive tutorials to see Rafter in action, on Minikube. These tutorials show how to:
+- Quickly install Rafter with our Helm Chart
+- Host a simple static site
+- Use Rafter as headless CMS with support of Rafter metadata webhook and Front Matter service . This example is based on a use case of storing Markdown files
+- Use Rafter as headless CMS with support of Rafter validation and conversion webhooks. This example is based on a use case of storing [AsyncAPI](https://asyncapi.org/) specification
 
 ## Project structure
 
