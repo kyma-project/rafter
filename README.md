@@ -34,7 +34,7 @@ To see the implementation of Rafter in [Kyma](https://kyma-project.io), follow t
 
 ## Quick start
 
-Try out this set of interactive tutorials to see Rafter in action on Minikube. These tutorials show how to:
+Try out [this](https://katacoda.com/rafter/scenarios/rafter) set of interactive tutorials to see Rafter in action on Minikube. These tutorials show how to:
 - Quickly install Rafter with our Helm Chart
 - Host a simple static site
 - Use Rafter as headless CMS with support of Rafter metadata webhook and Front Matter service . This example is based on a use case of storing Markdown files
