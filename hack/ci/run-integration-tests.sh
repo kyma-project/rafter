@@ -81,7 +81,7 @@ main() {
     # kind cluster configuration
     local -r CLUSTER_CONFIG=${CURRENT_DIR}/config/kind/cluster-config.yaml
     # the addres of the ingress that exposes upload and minio endpoints
-    local -r INGRESS_ADDRESS=http://localhost:30080
+    local -r INGRESS_ADDRESS=http://localhost:30081
 
     
 
