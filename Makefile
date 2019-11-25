@@ -140,6 +140,11 @@ else
 CONTROLLER_GEN=$(shell which controller-gen)
 endif
 
+go-junit-report:
+ifeq (, $(shell which controller-gen))
+	go get -u github.com/jstemmer/go-junit-report 
+endif
+
 ci-pr: docker-build docker-push
 
 ci-release-push-latest: \
@@ -192,4 +197,5 @@ integration-test: \
 		push-manager-latest \
 		push-frontmatter-latest \
 		push-asyncapi-latest \
-		start-docker
+		start-docker \
+		go-junit-report

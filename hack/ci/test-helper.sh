@@ -33,6 +33,12 @@ source "${LIB_DIR}/junit.sh" || {
     exit 1
 }
 
+testHelper::install_go_junit_report(){
+    log::info '- Installing go-junit-reports...'
+    export GO111MODULE="off"
+    go get -u github.com/jstemmer/go-junit-report 
+}
+
 # Arguments:
 #   $1 - minio access key that will be used during rafter installation
 #   $2 - minio secret key that will be used during the rafter installation
@@ -122,8 +128,7 @@ testHelper::start_integration_tests() {
     local -r SUITE_NAME="Rafter_Integration_Go_Test"
     log::info "Starting integration tests..."
 
-    # temporary solution
-    go get -u github.com/jstemmer/go-junit-report 
+    
     go test "${CURRENT_DIR}"/../../tests/asset-store/main_test.go -count 1 -v 2>&1 | tee "${LOG_FILE}" || test_failed="true"
     < "${LOG_FILE}" go-junit-report > "${5}/junit_${SUITE_NAME}_suite.xml"
     rm -rf "${LOG_FILE}"
