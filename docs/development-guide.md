@@ -14,7 +14,7 @@ The whole structure of the repository looks as follows:
 ├── cmd                         # Rafter's applications
 ├── config                      # Configuration file templates
 ├── deploy                      # Dockerfiles for Rafter's applications
-├── Docs                        # Rafter-related documentation
+├── docs                        # Rafter-related documentation
 ├── hack                        # Information, scripts, and files useful for development
 ├── internal                    # Private application and library code
 ├── pkg                         # Library code to be used by external applications
