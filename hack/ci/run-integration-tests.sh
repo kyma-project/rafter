@@ -125,7 +125,7 @@ main() {
     junit::test_pass
 
     junit::test_start "Rafter_Integration_Test"
-    testHelper::start_integration_tests "${CLUSTER_NAME}" "${MINIO_ACCESSKEY}" "${MINIO_SECRETKEY}" "${INGRESS_ADDRESS}" 2>&1 | junit::test_output
+    testHelper::start_integration_tests "${CLUSTER_NAME}" "${MINIO_ACCESSKEY}" "${MINIO_SECRETKEY}" "${INGRESS_ADDRESS}" "${ARTIFACTS_DIR}" 2>&1 | junit::test_output
     junit::test_pass
 }
 
