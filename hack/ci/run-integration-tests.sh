@@ -81,7 +81,7 @@ main() {
     # kind cluster configuration
     local -r CLUSTER_CONFIG=${CURRENT_DIR}/config/kind/cluster-config.yaml
     # the addres of the ingress that exposes upload and minio endpoints
-    local -r INGRESS_ADDRESS=http://localhost:30081
+    local -r INGRESS_ADDRESS=http://localhost:30080
 
     junit::test_start "Install_go_junit_report"
     testHelper::install_go_junit_report   2>&1 | junit::test_output
