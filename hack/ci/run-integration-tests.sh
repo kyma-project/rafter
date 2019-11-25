@@ -83,7 +83,7 @@ main() {
     # the addres of the ingress that exposes upload and minio endpoints
     local -r INGRESS_ADDRESS=http://localhost:30081
 
-    junit::test_start "Install_Helm_Tiller"
+    junit::test_start "Install_go_junit_report"
     testHelper::install_go_junit_report   2>&1 | junit::test_output
     junit::test_pass
 
