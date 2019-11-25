@@ -30,15 +30,50 @@ source "${CURRENT_DIR}/test-helper.sh" || {
     exit 1
 }
 
-finalize(){
+
+# finalize stores logs, saves JUnit report and removes cluster
+function finalize {
+    local -r exit_status=$?
+    local finalization_failed="false"
+
     junit::test_start "Finalization"
     log::info "Finalizing job" 2>&1 | junit::test_output
+
+    log::info "Printing all docker processes" 2>&1 | junit::test_output
+    docker::print_processes 2>&1 | junit::test_output || finalization_failed="true"
+    
     log::info "Exporting cluster logs to ${ARTIFACTS_DIR}" 2>&1 | junit::test_output
-    kind::export_logs "${CLUSTER_NAME}" 2>&1 | junit::test_output
+    kind::export_logs "${CLUSTER_NAME}" 2>&1 | junit::test_output || finalization_failed="true"
+
+    log::info "Deleting cluster" 2>&1 | junit::test_output
+    kind::delete_cluster "${CLUSTER_NAME}" 2>&1 | junit::test_output || finalization_failed="true"
+    
+    
+    if [[ ${finalization_failed} = "true" ]]; then
+        junit::test_fail || true
+    else
+        junit::test_pass
+    fi
+
     junit::suite_save
+
+    log::info "Deleting temporary dir ${TMP_DIR}"
+    rm -rf "${TMP_DIR}" || true
+
+    if [[ ${exit_status} -eq 0 ]]; then
+        log::success "Job finished with success"
+    else
+        log::error "Job finished with error"
+    fi
+
+    return "${exit_status}"
 }
 
+trap finalize EXIT
+
 main() {
+    junit::suite_init "Rafter_Integration"
+    trap junit::test_fail ERR
     # minio access key that will be used during rafter installation
     local -r MINIO_ACCESSKEY=4j4gEuRH96ZFjptUFeFm
     # minio secret key that will be used during the rafter installation
@@ -47,10 +82,8 @@ main() {
     local -r CLUSTER_CONFIG=${CURRENT_DIR}/config/kind/cluster-config.yaml
     # the addres of the ingress that exposes upload and minio endpoints
     local -r INGRESS_ADDRESS=http://localhost:30080
+
     
-    trap "finalize && testHelper::cleanup ${CLUSTER_NAME} ${TMP_DIR}" EXIT
-    
-    junit::suite_init "Rafter_Integration"
 
     junit::test_start "Install_Helm_Tiller"
     infraHelper::install_helm_tiller "${STABLE_HELM_VERSION}" "$(host::os)" "${TMP_BIN_DIR}"  2>&1 | junit::test_output
@@ -91,7 +124,6 @@ main() {
     testHelper::install_rafter "${MINIO_ACCESSKEY}" "${MINIO_SECRETKEY}" "${INGRESS_ADDRESS}" 2>&1 | junit::test_output
     junit::test_pass
 
-    local test_failed="false"
     junit::test_start "Rafter_Integration_Test"
     testHelper::start_integration_tests "${CLUSTER_NAME}" "${MINIO_ACCESSKEY}" "${MINIO_SECRETKEY}" "${INGRESS_ADDRESS}" 2>&1 | junit::test_output || test_failed="true"
     if [[ ${test_failed} = "true" ]]; then

@@ -101,16 +101,6 @@ testHelper::add_repos_and_update() {
 
 # Arguments:
 #   $1 - name of the kind cluster
-#   $2 - tmp directory with binaries used during test
-testHelper::cleanup() {
-    log::info "- Cleaning up cluster ${1}..."
-    kind::delete_cluster "${1}"
-    log::info "- Deleting directory with temporary binaries used in tests..."
-    rm -rf "${2}"
-}
-
-# Arguments:
-#   $1 - name of the kind cluster
 #   $2 - minio access key that will be used during rafter installation
 #   $3 - minio secret key that will be used during the rafter installation
 #   $4 - the addres of the ingress that exposes upload and minio endpoints
@@ -119,7 +109,7 @@ testHelper::start_integration_tests() {
     export APP_KUBECONFIG_PATH="$(kind get kubeconfig-path --name=${1})"
     export APP_TEST_MINIO_USE_SSL="false"
     # port same as ingress http port
-    export APP_TEST_MINIO_ENDPOINT=localhost:30081
+    export APP_TEST_MINIO_ENDPOINT=localhost:30080
     # URL of the uploader that will be used to upload test data in tests,
     # it must be visible from outside of the cluster 
     export APP_TEST_MINIO_ACCESSKEY="${2}"
