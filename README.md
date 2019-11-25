@@ -4,7 +4,7 @@
 [![Slack](https://img.shields.io/badge/slack-%23rafter%20channel-yellow)](http://slack.kyma-project.io)
 
 <p align="center">
-  <img src="rafter_alpha.png" alt="rafter" width="300" />
+  <img src="rafter.png" alt="rafter" width="300" />
 </p>
 
 ## Overview
