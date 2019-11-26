@@ -28,15 +28,11 @@ source "${LIB_DIR}/kubernetes.sh" || {
     exit 1
 }
 
-source "${LIB_DIR}/junit.sh" || {
-    echo 'Cannot load JUnit utilities.'
-    exit 1
-}
-
 testHelper::install_go_junit_report(){
     log::info '- Installing go-junit-reports...'
     export GO111MODULE="off"
     go get -u github.com/jstemmer/go-junit-report 
+    export GO111MODULE="on"
 }
 
 # Arguments:
@@ -136,10 +132,8 @@ testHelper::start_integration_tests() {
     if [[ ${test_failed} = "true" ]]; then
         log::error "Job finished with error"
         return 1
-    else
-        log::success "Job finished with success"
-        return 0
     fi
+    log::success "Job finished with success"
 }
 
 # Arguments:
