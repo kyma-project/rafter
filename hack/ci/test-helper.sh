@@ -28,6 +28,11 @@ source "${LIB_DIR}/kubernetes.sh" || {
     exit 1
 }
 
+source "${LIB_DIR}/junit.sh" || {	
+    echo 'Cannot load JUnit utilities.'	
+    exit 1	
+}
+
 testHelper::install_go_junit_report(){
     log::info '- Installing go-junit-reports...'
     export GO111MODULE="off"
