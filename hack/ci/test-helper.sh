@@ -36,9 +36,7 @@ source "${LIB_DIR}/junit.sh" || {
 testHelper::install_go_junit_report(){
     log::info '- Installing go-junit-report...'
     if ! [ -x "$(command -v go-junit-report)" ]; then
-        export GO111MODULE="off"
         GO111MODULE=off go get -u github.com/jstemmer/go-junit-report 
-        export GO111MODULE="on"
         log::success "- go-junit-reports installed."
         return 0
     fi
@@ -56,9 +54,9 @@ testHelper::install_rafter() {
     log::info '- Installing rafter...'
     helm install --name rafter \
     rafter-charts/rafter \
-    --set rafter-controller-manager.minio.accessKey=${1} \
-    --set rafter-controller-manager.minio.secretKey=${2} \
-    --set rafter-controller-manager.envs.store.externalEndpoint.value=${3} \
+    --set rafter-controller-manager.minio.accessKey="${1}" \
+    --set rafter-controller-manager.minio.secretKey="${2}" \
+    --set rafter-controller-manager.envs.store.externalEndpoint.value="${3}" \
     --set rafter-controller-manager.image.pullPolicy="${PULL_POLICY}" \
     --set rafter-upload-service.image.pullPolicy="${PULL_POLICY}" \
     --set rafter-asyncapi-service.image.pullPolicy="${PULL_POLICY}" \
@@ -102,7 +100,7 @@ testHelper::install_ingress() {
     --set controller.service.nodePorts.https=${NODE_PORT_HTTPS} \
     --wait
 
-    kubectl apply -f ${CURRENT_DIR}/config/kind/ingress.yaml
+    kubectl apply -f "${CURRENT_DIR}"/config/kind/ingress.yaml
 }
 
 testHelper::add_repos_and_update() {
@@ -134,7 +132,6 @@ testHelper::start_integration_tests() {
     local -r SUITE_NAME="Rafter_Integration_Go_Test"
     log::info "Starting integration tests..."
 
-    
     go test "${CURRENT_DIR}"/../../tests/asset-store/main_test.go -count 1 -v 2>&1 | tee "${LOG_FILE}" || test_failed="true"
     < "${LOG_FILE}" go-junit-report > "${5}/junit_${SUITE_NAME}_suite.xml"
     rm -rf "${LOG_FILE}"

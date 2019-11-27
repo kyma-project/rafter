@@ -1,5 +1,4 @@
 ROOT :=  $(shell pwd)
-COVERAGE_OUTPUT_PATH := ${ROOT}/cover.out
 LICENSES_PATH := ${ROOT}/licenses
 
 # Image URL to use all building/pushing image targets
@@ -76,7 +75,6 @@ push-asyncapi-latest:
 	docker push $(ASYNCAPI-CI-IMG-NAME-LATEST)
 
 clean:
-	rm -f ${COVERAGE_OUTPUT_PATH}
 	rm -rf ${LICENSES_PATH}
 
 pull-licenses:
@@ -96,16 +94,12 @@ vet:
 	| grep -v "automock" \
 	| xargs -L1 go vet
 
+unit-tests: 
+	${ROOT}/hack/ci/unit_tests.sh \
+		${ROOT}
+
 # Run tests
-# Default is 20s - available since controller-runtime 0.1.5
-test: export KUBEBUILDER_CONTROLPLANE_START_TIMEOUT = 2m
-# Default is 20s - available since controller-runtime 0.1.5
-test: export KUBEBUILDER_CONTROLPLANE_STOP_TIMEOUT = 2m
-test: clean manifests vet fmt
-	go test -short -coverprofile=${COVERAGE_OUTPUT_PATH} ${ROOT}/...
-	@go tool cover -func=${COVERAGE_OUTPUT_PATH} \
-		| grep total \
-		| awk '{print "Total test coverage: " $$3}'
+test: clean manifests vet fmt unit-tests
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests: controller-gen
@@ -192,4 +186,6 @@ integration-test: \
 		push-manager-latest \
 		push-frontmatter-latest \
 		push-asyncapi-latest \
-		start-docker
+		start-docker \
+		unit-tests
+
