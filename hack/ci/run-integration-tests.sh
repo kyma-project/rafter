@@ -43,7 +43,7 @@ function finalize {
     docker::print_processes 2>&1 | junit::test_output || finalization_failed="true"
     
     log::info "Exporting cluster logs to ${ARTIFACTS_DIR}" 2>&1 | junit::test_output
-    kind::export_logs "${CLUSTER_NAME}" 2>&1 | junit::test_output || finalization_failed="true"
+    kind::export_logs "${CLUSTER_NAME}" "${ARTIFACTS_DIR}" 2>&1 | junit::test_output || finalization_failed="true"
 
     log::info "Deleting cluster" 2>&1 | junit::test_output
     kind::delete_cluster "${CLUSTER_NAME}" 2>&1 | junit::test_output || finalization_failed="true"
