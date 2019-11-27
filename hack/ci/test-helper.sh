@@ -34,10 +34,15 @@ source "${LIB_DIR}/junit.sh" || {
 }
 
 testHelper::install_go_junit_report(){
-    log::info '- Installing go-junit-reports...'
-    export GO111MODULE="off"
-    go get -u github.com/jstemmer/go-junit-report 
-    export GO111MODULE="on"
+    log::info '- Installing go-junit-report...'
+    if ! [ -x "$(command -v go-junit-report)" ]; then
+        export GO111MODULE="off"
+        go get -u github.com/jstemmer/go-junit-report 
+        export GO111MODULE="on"
+        log::success "- go-junit-reports installed."
+        return 0
+    fi
+    log::info "- go-junit-reports already installed!"
 }
 
 # Arguments:
