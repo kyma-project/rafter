@@ -43,15 +43,16 @@ testHelper::install_go_junit_report(){
     log::info "- go-junit-reports already installed!"
 }
 
+# Arguments:
+#   $1 - path to charts folder
 testHelper::prepare_helm_chart_dependencies(){
     log::info 'Preparing dependencies for local charts'
-    local -r CHARTS_DIR="${CURRENT_DIR}/../../charts"
-    mkdir "${CHARTS_DIR}/rafter/charts"
-    cp -r "${CHARTS_DIR}/rafter-controller-manager" "${CHARTS_DIR}/rafter/charts"
-    cp -r "${CHARTS_DIR}/rafter-asyncapi-service" "${CHARTS_DIR}/rafter/charts"
-    cp -r "${CHARTS_DIR}/rafter-front-matter-service" "${CHARTS_DIR}/rafter/charts"
-    cp -r "${CHARTS_DIR}/rafter-upload-service" "${CHARTS_DIR}/rafter/charts"
-    helm dependency update "${CHARTS_DIR}/rafter/charts/rafter-controller-manager" # to fetch minio
+    mkdir "${1}/rafter/charts"
+    cp -r "${1}/rafter-controller-manager" "${1}/rafter/charts"
+    cp -r "${1}/rafter-asyncapi-service" "${1}/rafter/charts"
+    cp -r "${1}/rafter-front-matter-service" "${1}/rafter/charts"
+    cp -r "${1}/rafter-upload-service" "${1}/rafter/charts"
+    helm dependency update "${1}/rafter/charts/rafter-controller-manager" # to fetch minio
     log::success "- Updated charts dependencies!"
 }
 # Arguments:

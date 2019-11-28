@@ -20,6 +20,8 @@ export PATH="${TMP_BIN_DIR}:${PATH}"
 readonly ARTIFACTS_DIR="${ARTIFACTS:-"${TMP_DIR}/artifacts"}"
 mkdir -p "${ARTIFACTS_DIR}"
 
+readonly CHARTS_DIR="${CURRENT_DIR}/../../charts"
+
 source "${CURRENT_DIR}/envs.sh" || {
     echo 'Cannot load environment variables.'
     exit 1
@@ -47,8 +49,7 @@ function finalize {
 
     log::info "Deleting cluster" 2>&1 | junit::test_output
     kind::delete_cluster "${CLUSTER_NAME}" 2>&1 | junit::test_output || finalization_failed="true"
-    
-    
+
     if [[ ${finalization_failed} = "true" ]]; then
         junit::test_fail || true
     else
@@ -60,8 +61,18 @@ function finalize {
     log::info "Deleting temporary dir ${TMP_DIR}"
     rm -rf "${TMP_DIR}" || true
 
-    log::info "Deleting folder with charts' dependencies"
-    rm -rf "${CURRENT_DIR}/../../charts/rafter/charts"
+    log::info "Deleting files copied to charts directory"
+    log::info "Deleting ${CHARTS_DIR}/rafter/charts/rafter-controller-manager"
+    rm -rf "${CHARTS_DIR}/rafter/charts/rafter-controller-manager" || true
+
+    log::info "Deleting ${CHARTS_DIR}/rafter/charts/rafter-asyncapi-service"
+    rm -rf "${CHARTS_DIR}/rafter/charts/rafter-asyncapi-service" || true
+
+    log::info "Deleting ${CHARTS_DIR}/rafter/charts/rafter-front-matter-service"
+    rm -rf "${CHARTS_DIR}/rafter/charts/rafter-front-matter-service" || true
+
+    log::info "Deleting ${CHARTS_DIR}/rafter/charts/rafter-upload-service"
+    rm -rf "${CHARTS_DIR}/rafter/charts/rafter-upload-service" || true
 
     if [[ ${exit_status} -eq 0 ]]; then
         log::success "Job finished with success"
@@ -122,7 +133,7 @@ main() {
     junit::test_pass
 
     junit::test_start "Update_Charts_Dependencies"
-    testHelper::prepare_helm_chart_dependencies  2>&1 | junit::test_output
+    testHelper::prepare_helm_chart_dependencies "${CHARTS_DIR}" 2>&1 | junit::test_output
     junit::test_pass
 
     junit::test_start "Install_Rafter"
