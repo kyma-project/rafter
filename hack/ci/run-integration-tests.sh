@@ -122,7 +122,7 @@ main() {
     junit::test_pass
 
     junit::test_start "Update_Charts_Dependencies"
-    testHelper::prepare_helm_chart_dependencies
+    testHelper::prepare_helm_chart_dependencies  2>&1 | junit::test_output
     junit::test_pass
 
     junit::test_start "Install_Rafter"
