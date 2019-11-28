@@ -47,7 +47,7 @@ testHelper::install_go_junit_report(){
 #   $1 - path to charts folder
 testHelper::prepare_helm_chart_dependencies(){
     log::info 'Preparing dependencies for local charts'
-    mkdir "${1}/rafter/charts"
+    mkdir -p "${1}/rafter/charts"
     cp -r "${1}/rafter-controller-manager" "${1}/rafter/charts"
     cp -r "${1}/rafter-asyncapi-service" "${1}/rafter/charts"
     cp -r "${1}/rafter-front-matter-service" "${1}/rafter/charts"
