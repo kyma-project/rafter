@@ -98,7 +98,7 @@ __finalize() {
   log::info "- Exporting cluster logs to ${artifacts_dir}..." 2>&1 | junit::test_output
   kind::export_logs "${kind_cluster_name}" "${artifacts_dir}" 2>&1 | junit::test_output || finalization_failed="true"
 
-  log::info "- Cleaning up cluster ${kind_cluster_name}..."  | junit::test_output
+  log::info "- Cleaning up cluster ${kind_cluster_name}..." | junit::test_output
   kind::delete_cluster "${kind_cluster_name}" 2>&1 | junit::test_output || finalization_failed="true"
 
   if [[ ${finalization_failed} = "true" ]]; then
