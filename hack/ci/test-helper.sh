@@ -59,13 +59,14 @@ testHelper::prepare_helm_chart_dependencies(){
 #   $1 - minio access key that will be used during rafter installation
 #   $2 - minio secret key that will be used during the rafter installation
 #   $3 - the addres of the ingress that exposes upload and minio endpoints
+#   $4 - path to charts directory
 testHelper::install_rafter() {
     local -r TAG=latest
     local -r PULL_POLICY=Never
     local -r INSTALL_TIMEOUT=180
     log::info '- Installing rafter from local chart...'
     helm install --name rafter \
-    "${CURRENT_DIR}/../../charts/rafter" \
+    "${4}/rafter" \
     --set rafter-controller-manager.minio.accessKey="${1}" \
     --set rafter-controller-manager.minio.secretKey="${2}" \
     --set rafter-controller-manager.envs.store.externalEndpoint.value="${3}" \

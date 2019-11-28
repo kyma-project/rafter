@@ -97,10 +97,6 @@ main() {
     # the addres of the ingress that exposes upload and minio endpoints
     local -r INGRESS_ADDRESS=http://localhost:30080
 
-    junit::test_start "Update_Charts_Dependencies"
-    testHelper::prepare_helm_chart_dependencies "${CHARTS_DIR}" 2>&1 | junit::test_output
-    junit::test_pass
-
     junit::test_start "Install_go_junit_report"
     testHelper::install_go_junit_report 2>&1 | junit::test_output
     junit::test_pass
@@ -136,10 +132,12 @@ main() {
     testHelper::load_images "${CLUSTER_NAME}" "${UPLOADER_IMG_NAME}" "${MANAGER_IMG_NAME}" "${FRONT_MATTER_IMG_NAME}" "${ASYNCAPI_IMG_NAME}" 2>&1 | junit::test_output
     junit::test_pass
 
-
+    junit::test_start "Update_Charts_Dependencies"
+    testHelper::prepare_helm_chart_dependencies "${CHARTS_DIR}" 2>&1 | junit::test_output
+    junit::test_pass
 
     junit::test_start "Install_Rafter"
-    testHelper::install_rafter "${MINIO_ACCESSKEY}" "${MINIO_SECRETKEY}" "${INGRESS_ADDRESS}" 2>&1 | junit::test_output
+    testHelper::install_rafter "${MINIO_ACCESSKEY}" "${MINIO_SECRETKEY}" "${INGRESS_ADDRESS}" "${CHARTS_DIR}" 2>&1 | junit::test_output
     junit::test_pass
 
     junit::test_start "Rafter_Integration_Test"
