@@ -294,6 +294,7 @@ testHelpers::run_integration_tests() {
     local -r minio_host="${2}"
     local -r upload_service_address="${3}"
     local -r minio_secret_name="${4}"
+    local test_failed="false"
 
     local -r current_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
@@ -314,7 +315,6 @@ testHelpers::run_integration_tests() {
         local -r artifacts_dir="${5}"
         local -r log_file=unit_test_data.log
         local -r suite_name="Rafter_Integration_Go_Test"
-        local test_failed="false"
 
         go test ${current_dir}/../../../tests/asset-store/main_test.go -count 1 -v 2>&1 | tee "${log_file}" || test_failed="true"
         < "${log_file}" go-junit-report > "${artifacts_dir}/junit_${suite_name}_suite.xml"

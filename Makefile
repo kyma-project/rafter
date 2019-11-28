@@ -101,7 +101,7 @@ vet:
 	| xargs -L1 go vet
 
 unit-tests: 
-	${ROOT}/hack/ci/run_unit_tests.sh \
+	${ROOT}/hack/ci/run-unit-tests.sh \
 		${ROOT}
 
 # Run tests

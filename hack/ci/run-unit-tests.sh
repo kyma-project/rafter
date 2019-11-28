@@ -35,12 +35,11 @@ __cleanup() {
 main() {
   local -r root_path="${1}"
 
-  __init_environment
-
   local -r tmp_dir="$(mktemp -d)"
   export ARTIFACTS_DIR="${ARTIFACTS:-"${tmp_dir}/artifacts"}"
   mkdir -p "${ARTIFACTS_DIR}"
 
+  __init_environment
   trap "__cleanup ${tmp_dir}" EXIT
 
   local -r log_file=unit_test_data.log
