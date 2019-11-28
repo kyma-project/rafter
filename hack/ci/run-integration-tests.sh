@@ -60,6 +60,9 @@ function finalize {
     log::info "Deleting temporary dir ${TMP_DIR}"
     rm -rf "${TMP_DIR}" || true
 
+    log::info "Deleting folder with charts' dependencies"
+    rm -rf "${CURRENT_DIR}/../../charts/rafter/charts"
+
     if [[ ${exit_status} -eq 0 ]]; then
         log::success "Job finished with success"
     else
@@ -105,13 +108,9 @@ main() {
     "${STABLE_KUBERNETES_VERSION}" \
     "${CLUSTER_CONFIG}" 2>&1 | junit::test_output
     junit::test_pass
-    
+
     junit::test_start "Install_Tiller"
     testHelper::install_tiller 2>&1 | junit::test_output
-    junit::test_pass
-
-    junit::test_start "Helm_Add_Repo_And_Update"
-    testHelper::add_repos_and_update 2>&1 | junit::test_output
     junit::test_pass
 
     junit::test_start "Install_Ingress"
@@ -120,6 +119,10 @@ main() {
 
     junit::test_start "Load_Images"
     testHelper::load_images "${CLUSTER_NAME}" "${UPLOADER_IMG_NAME}" "${MANAGER_IMG_NAME}" "${FRONT_MATTER_IMG_NAME}" "${ASYNCAPI_IMG_NAME}" 2>&1 | junit::test_output
+    junit::test_pass
+
+    junit::test_start "Update_Charts_Dependencies"
+    testHelper::prepare_helm_chart_dependencies
     junit::test_pass
 
     junit::test_start "Install_Rafter"

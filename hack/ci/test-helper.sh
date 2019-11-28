@@ -43,6 +43,17 @@ testHelper::install_go_junit_report(){
     log::info "- go-junit-reports already installed!"
 }
 
+testHelper::prepare_helm_chart_dependencies(){
+    log::info 'Preparing dependencies for local charts'
+    local -r CHARTS_DIR="${CURRENT_DIR}/../../charts"
+    mkdir "${CHARTS_DIR}/rafter/charts"
+    cp -r "${CHARTS_DIR}/rafter-controller-manager" "${CHARTS_DIR}/rafter/charts"
+    cp -r "${CHARTS_DIR}/rafter-asyncapi-service" "${CHARTS_DIR}/rafter/charts"
+    cp -r "${CHARTS_DIR}/rafter-front-matter-service" "${CHARTS_DIR}/rafter/charts"
+    cp -r "${CHARTS_DIR}/rafter-upload-service" "${CHARTS_DIR}/rafter/charts"
+    helm dependency update "${CHARTS_DIR}/rafter/charts/rafter-controller-manager" # to fetch minio
+    log::success "- Updated charts dependencies!"
+}
 # Arguments:
 #   $1 - minio access key that will be used during rafter installation
 #   $2 - minio secret key that will be used during the rafter installation
@@ -51,9 +62,9 @@ testHelper::install_rafter() {
     local -r TAG=latest
     local -r PULL_POLICY=Never
     local -r INSTALL_TIMEOUT=180
-    log::info '- Installing rafter...'
+    log::info '- Installing rafter from local chart...'
     helm install --name rafter \
-    rafter-charts/rafter \
+    "${CURRENT_DIR}/../../charts/rafter" \
     --set rafter-controller-manager.minio.accessKey="${1}" \
     --set rafter-controller-manager.minio.secretKey="${2}" \
     --set rafter-controller-manager.envs.store.externalEndpoint.value="${3}" \
@@ -101,12 +112,6 @@ testHelper::install_ingress() {
     --wait
 
     kubectl apply -f "${CURRENT_DIR}/config/kind/ingress.yaml"
-}
-
-testHelper::add_repos_and_update() {
-    log::info '- Adding helm repositories and updating helm...'
-    helm repo add rafter-charts https://rafter-charts.storage.googleapis.com
-    helm repo update
 }
 
 # Arguments:
