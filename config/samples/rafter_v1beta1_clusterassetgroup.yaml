@@ -1,4 +1,4 @@
-apiVersion: rafter.kyma-project.io/v1alpha1
+apiVersion: rafter.kyma-project.io/v1beta1
 kind: ClusterAssetGroup
 metadata:
   name: clusterassetgroup-sample

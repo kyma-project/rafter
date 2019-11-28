@@ -69,7 +69,7 @@ function finalize {
     return "${exit_status}"
 }
 
-trap finalize EXIT
+#trap finalize EXIT
 
 main() {
     junit::suite_init "Rafter_Integration"
