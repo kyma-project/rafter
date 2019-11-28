@@ -100,7 +100,7 @@ testHelper::install_ingress() {
     --set controller.service.nodePorts.https=${NODE_PORT_HTTPS} \
     --wait
 
-    kubectl apply -f "${CURRENT_DIR}"/config/kind/ingress.yaml
+    kubectl apply -f "${CURRENT_DIR}/config/kind/ingress.yaml"
 }
 
 testHelper::add_repos_and_update() {
