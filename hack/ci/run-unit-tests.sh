@@ -61,4 +61,4 @@ main() {
   fi
   log::success "- Unit tests passed."
 }
-main
+main "$@"
