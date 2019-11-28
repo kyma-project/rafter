@@ -56,7 +56,6 @@ The following table lists the configurable parameters of the Upload Service char
 | **nameOverride** | String that partially overrides the **rafterUploadService.name** template | `nil` |
 | **fullnameOverride** | String that fully overrides the **rafterUploadService.fullname** template | `nil` |
 | **minio.enabled** | Parameter that defines whether to deploy MinIO | `true` |
-| **minio.refName** | Name of MinIO release used in migration job. If not set, it is generated using the **Release.Name** template with `-minio` suffix. | `nil` |
 | **minio.persistence.enabled** | Use persistent volume to store data in MinIO. | `true` |
 | **minio.persistence.size** | Size of persistent volume claim for MinIO. | `10Gi` |
 | **deployment.labels** | Custom labels for the Deployment | `{}` |
@@ -108,6 +107,9 @@ The following table lists the configurable parameters of the Upload Service char
 | **envs.configMap.enabled** | Toggle used to save and load the configuration using the ConfigMap | `true` |
 | **envs.configMap.name** | ConfigMap name | `rafter-upload-service` |
 | **envs.configMap.namespace** | Namespace in which the ConfigMap is created | `{{ .Release.Namespace }}` |
+| **migrator.pre.minioDeploymentRefName** | Name of the MinIO Deployment used in the pre-migration job. If not set, it is generated using the **Release.Name** template with the `-minio` suffix. | `nil` |
+| **migrator.pre.minioSecretRefName** | Name of the MinIO Secret used in the pre-migration job. If not set, it is generated using the **Release.Name** template with the `-minio` suffix. | `nil` |
+| **migrator.post.minioSecretRefName** | Name of the MinIO Secret used in the post-migration job. If not set, it is generated using the **Release.Name** template with the `-minio` suffix. | `nil` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument for `helm install`. See this example:
 
@@ -154,4 +156,9 @@ envs:
 
 ### Switch MinIO to Gateway mode
 
-By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must first change the **minio.persistence.enabled** and   **minio.podAnnotations.persistence** parameters to `false` and override parameters for MinIO under the **minio** object.
+By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must first override parameters for MinIO under the **minio** object and change these parameters to `false`: 
+
+- **minio.persistence.enabled**
+- **minio.podAnnotations.persistence**
+
+> **NOTE:** If the names of deployments or secrets used before and after switching to Gateway mode differ, you must update parameters under **migrator.pre** and **migrator.post** objects.

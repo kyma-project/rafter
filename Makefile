@@ -101,7 +101,7 @@ vet:
 	| xargs -L1 go vet
 
 unit-tests: 
-	${ROOT}/hack/ci/unit_tests.sh \
+	${ROOT}/hack/ci/run_unit_tests.sh \
 		${ROOT}
 
 # Run tests
@@ -152,20 +152,46 @@ ci-master: docker-build docker-push
 
 ci-release: docker-build docker-push ci-release-push-latest
 
-start-docker: 
-	${ROOT}/hack/ci/start_docker.sh
-
 integration-test: \
 	start-docker \
 	build-uploader \
 	build-manager \
 	build-frontmatter \
-	build-asyncapi 
-	${ROOT}/hack/ci/run-integration-tests.sh \
-		${UPLOADER_IMG_NAME} \
+	build-asyncapi
+	${ROOT}/hack/ci/run-integration-test.sh \
 		${MANAGER_IMG_NAME} \
+		${UPLOADER_IMG_NAME} \
 		${FRONT_MATTER_IMG_NAME} \
 		${ASYNCAPI_IMG_NAME}
+
+minio-gateway-test: \
+	start-docker \
+	build-uploader \
+	build-manager \
+	build-frontmatter \
+	build-asyncapi
+	${ROOT}/hack/ci/run-minio-gateway-test.sh \
+		"basic" \
+		${MANAGER_IMG_NAME} \
+		${UPLOADER_IMG_NAME} \
+		${FRONT_MATTER_IMG_NAME} \
+		${ASYNCAPI_IMG_NAME}
+
+minio-gateway-migration-test: \
+	start-docker \
+	build-uploader \
+	build-manager \
+	build-frontmatter \
+	build-asyncapi
+	${ROOT}/hack/ci/run-minio-gateway-test.sh \
+		"migration" \
+		${MANAGER_IMG_NAME} \
+		${UPLOADER_IMG_NAME} \
+		${FRONT_MATTER_IMG_NAME} \
+		${ASYNCAPI_IMG_NAME}
+
+start-docker: 
+	${ROOT}/hack/ci/lib/start_docker.sh
 
 .PHONY: all \
 		build-uploader \
@@ -188,12 +214,12 @@ integration-test: \
 		ci-pr \
 		ci-master \
 		ci-release \
+		integration-test \
+		minio-gateway-test \
+		minio-gateway-migration-test \
 		push-uploader-latest \
 		push-manager-latest \
 		push-frontmatter-latest \
 		push-asyncapi-latest \
 		start-docker \
-		unit-tests \
-		minio-gateway-test \
-		minio-gateway-migration-test
-
+		unit-tests

@@ -87,11 +87,33 @@ Create the name of the service monitor
 {{- end -}}
 
 {{/*
-Create the reference name for minio release
+Create the reference name for minio deployment in pre upgrade
 */}}
-{{- define "rafterUploadService.minioRefName" -}}
-{{- if .Values.minio.refName -}}
-{{- .Values.minio.refName | trunc 63 | trimSuffix "-" -}}
+{{- define "rafterUploadService.preUpgradeMinioDeploymentRefName" -}}
+{{- if .Values.migrator.pre.minioDeploymentRefName -}}
+{{- .Values.migrator.pre.minioDeploymentRefName | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-minio" .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create the reference name for minio secret in pre upgrade
+*/}}
+{{- define "rafterUploadService.preUpgradeMinioSecretRefName" -}}
+{{- if .Values.migrator.pre.minioSecretRefName -}}
+{{- .Values.migrator.pre.minioSecretRefName | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-minio" .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create the reference name for minio secret in post upgrade
+*/}}
+{{- define "rafterUploadService.postUpgradeMinioSecretRefName" -}}
+{{- if .Values.migrator.post.minioSecretRefName -}}
+{{- .Values.migrator.post.minioSecretRefName | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- printf "%s-minio" .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

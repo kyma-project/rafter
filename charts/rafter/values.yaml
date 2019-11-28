@@ -167,7 +167,6 @@ rafter-upload-service:
 
   minio:
     enabled: false
-    refName:
     persistence:
       enabled: true
       size: 10Gi
@@ -226,6 +225,22 @@ rafter-upload-service:
         value: "rafter-upload-service"
       namespace:
         value: "{{ .Release.Namespace }}"
+
+  migrator:
+    images:
+      alpine_kubectl:
+        repository: eu.gcr.io/kyma-project/test-infra/alpine-kubectl
+        tag: 'v20190325-ff66a3a'
+        pullPolicy: IfNotPresent
+      minio_client:
+        repository: 'minio/mc'
+        tag: 'RELEASE.2019-04-03T17-59-57Z'
+        pullPolicy: IfNotPresent
+    pre:
+      minioDeploymentRefName:
+      minioSecretRefName:
+    post:
+      minioSecretRefName:
 
 rafter-front-matter-service:
   enabled: true

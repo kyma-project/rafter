@@ -7,7 +7,6 @@ fullnameOverride:
 
 minio:
   enabled: true
-  refName:
   persistence:
     enabled: true
     size: 10Gi
@@ -122,3 +121,8 @@ migrator:
       repository: 'minio/mc'
       tag: 'RELEASE.2019-04-03T17-59-57Z'
       pullPolicy: IfNotPresent
+  pre:
+    minioDeploymentRefName:
+    minioSecretRefName:
+  post:
+    minioSecretRefName: dupa

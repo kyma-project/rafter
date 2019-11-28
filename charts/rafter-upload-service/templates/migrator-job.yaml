@@ -109,7 +109,7 @@ spec:
             - configMap:
                 name: {{ include "rafterUploadService.fullname" . }}-migrator
             - secret:
-                name: {{ include "rafterUploadService.minioRefName" . }}
+                name: {{ include "rafterUploadService.preUpgradeMinioSecretRefName" . }}
         - name: export
           persistentVolumeClaim:
             claimName: {{ include "rafterUploadService.fullname" . }}-migrator
@@ -120,7 +120,7 @@ spec:
         command:
         - bash
         - -c
-        - "kubectl -n {{ .Release.Namespace }} get deployment {{ include "rafterUploadService.minioRefName" . }} -o jsonpath=\"{.spec.template.metadata.annotations.persistence}\" > /export/persistence.enabled"
+        - "kubectl -n {{ .Release.Namespace }} get deployment {{ include "rafterUploadService.preUpgradeMinioDeploymentRefName" . }} -o jsonpath=\"{.spec.template.metadata.annotations.persistence}\" > /export/persistence.enabled"
         volumeMounts:
         - name: export
           mountPath: /export
@@ -186,7 +186,7 @@ spec:
             - configMap:
                 name: {{ include "rafterUploadService.fullname" . }}-migrator
             - secret:
-                name: {{ include "rafterUploadService.minioRefName" . }}
+                name: {{ include "rafterUploadService.postUpgradeMinioSecretRefName" . }}
         - name: export
           persistentVolumeClaim:
             claimName: {{ include "rafterUploadService.fullname" . }}-migrator
