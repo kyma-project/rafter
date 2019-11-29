@@ -104,6 +104,9 @@ unit-tests:
 	${ROOT}/hack/ci/run-unit-tests.sh \
 		${ROOT}
 
+start-docker: 
+	${ROOT}/hack/ci/start-docker.sh
+
 # Run tests
 test: clean manifests vet fmt unit-tests
 
@@ -153,6 +156,7 @@ ci-master: docker-build docker-push
 ci-release: docker-build docker-push ci-release-push-latest
 
 integration-test: \
+	start-docker \
 	build-uploader \
 	build-manager \
 	build-frontmatter \
@@ -161,6 +165,7 @@ integration-test: \
 		${ROOT}
 
 minio-gateway-test: \
+	start-docker \
 	build-uploader \
 	build-manager \
 	build-frontmatter \
@@ -170,6 +175,7 @@ minio-gateway-test: \
 		"basic"
 
 minio-gateway-migration-test: \
+	start-docker \
 	build-uploader \
 	build-manager \
 	build-frontmatter \
@@ -191,6 +197,8 @@ minio-gateway-migration-test: \
 		pull-licenses \
 		vet \
 		fmt \
+		start-docker \
+		unit-tests \
 		test \
 		manifests \
 		docker-build \
@@ -205,5 +213,4 @@ minio-gateway-migration-test: \
 		push-uploader-latest \
 		push-manager-latest \
 		push-frontmatter-latest \
-		push-asyncapi-latest \
-		unit-tests
+		push-asyncapi-latest
