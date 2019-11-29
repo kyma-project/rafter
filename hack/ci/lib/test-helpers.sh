@@ -8,28 +8,28 @@ testHelpers::load_test_infra_utilities() {
     exit 1
   }
   source "${lib_dir}/kind.sh" || {
-      echo 'Cannot load kind utilities.'
-      exit 1
+    echo 'Cannot load kind utilities.'
+    exit 1
   }
   source "${lib_dir}/log.sh" || {
-      echo 'Cannot load log utilities.'
-      exit 1
+    echo 'Cannot load log utilities.'
+    exit 1
   }
   source "${lib_dir}/host.sh" || {
-      echo 'Cannot load host utilities.'
-      exit 1
+    echo 'Cannot load host utilities.'
+    exit 1
   }
   source "${lib_dir}/kubernetes.sh" || {
-      echo 'Cannot load kubernetes utilities.'
-      exit 1
+    echo 'Cannot load kubernetes utilities.'
+    exit 1
   }
   source "${lib_dir}/docker.sh" || {
-      echo 'Cannot load docker utilities.'
-      exit 1
+    echo 'Cannot load docker utilities.'
+    exit 1
   }
   source "${lib_dir}/junit.sh" || {	
-      echo 'Cannot load JUnit utilities.'	
-      exit 1	
+    echo 'Cannot load JUnit utilities.'	
+    exit 1	
   }
 }
 testHelpers::load_test_infra_utilities
@@ -116,10 +116,9 @@ testHelpers::prepare_local_helm_charts() {
   local -r temp_rafter_charts_dir="${temp_rafter_dir}/charts"
   mkdir -p "${temp_rafter_charts_dir}"
 
-  cp -r "${charts_path}/${RAFTER_CONTROLLER_MANAGER_CHART}" "${temp_rafter_charts_dir}"
-  cp -r "${charts_path}/${RAFTER_UPLOAD_SERVICE_CHART}" "${temp_rafter_charts_dir}"
-  cp -r "${charts_path}/${RAFTER_FRONT_MATTER_SERVICE_CHART}" "${temp_rafter_charts_dir}"
-  cp -r "${charts_path}/${RAFTER_ASYNCAPI_SERVICE_CHART}" "${temp_rafter_charts_dir}"
+  for img in RAFTER_CONTROLLER_MANAGER_CHART RAFTER_UPLOAD_SERVICE_CHART RAFTER_FRONT_MATTER_SERVICE_CHART RAFTER_ASYNCAPI_SERVICE_CHART; do
+    cp -r "${charts_path}/${!img}" "${temp_rafter_charts_dir}"
+  done
 
   helm dependency update "${temp_rafter_charts_dir}/${RAFTER_CONTROLLER_MANAGER_CHART}" # to fetch minio
 
@@ -155,8 +154,8 @@ testHelpers::load_rafter_images() {
   log::info "- Loading Rafter images..."
 
   for img in RAFTER_CONTROLLER_MANAGER_CHART RAFTER_UPLOAD_SERVICE_CHART RAFTER_FRONT_MATTER_SERVICE_CHART RAFTER_ASYNCAPI_SERVICE_CHART; do
-    log::info "- Loading image ${img}..."
-    kind::load_image "${cluster_name}" "${img}"
+    log::info "- Loading image ${!img}..."
+    kind::load_image "${cluster_name}" "${!img}"
   done
 
   log::success "- Rafter images loaded."

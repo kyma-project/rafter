@@ -77,12 +77,6 @@ push-asyncapi-latest:
 clean:
 	rm -rf ${LICENSES_PATH}
 
-minio-gateway-test:
-	exit 0;
-
-minio-gateway-migration-test:
-	exit 0;
-
 pull-licenses:
 ifdef LICENSE_PULLER_PATH
 	bash $(LICENSE_PULLER_PATH)

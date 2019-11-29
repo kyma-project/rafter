@@ -45,59 +45,54 @@ export PATH="${TMP_BIN_DIR}:${PATH}"
 export ARTIFACTS_DIR="${ARTIFACTS:-"${TMP_DIR}/artifacts"}"
 mkdir -p "${ARTIFACTS_DIR}"
 
-local -r TMP_RAFTER_CHARTS_DIR="${TMP_DIR}/${RAFTER_CHART}"
-mkdir -p "${TMP_RAFTER_CHARTS_DIR}"
-
-# Arguments:
-#   $1 - Type of test - basic or migration
 init_environment() {
   if [[ -z ${MINIO_GATEWAY_MODE-} ]]; then
     echo '- $MINIO_GATEWAY_MODE variable is not set.'
-    exit 1
+    return 1
   fi
   local -r current_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
   source "${current_dir}/envs.sh" || {
     echo '- Cannot load environment variables.'
-    exit 1
+    return 1
   }
   source "${current_dir}/lib/test-helpers.sh" || {
     echo '- Cannot load test helpers.'
-    exit 1
+    return 1
   }
   source "${current_dir}/lib/minio/gateway-helpers.sh" || {
     echo '- Cannot load gateway helpers.'
-    exit 1
+    return 1
   }
 
   if [[ ${TEST_TYPE} = "${MINIO_GATEWAY_TEST_BASIC}" ]]; then
     source "${current_dir}/lib/minio/gateway-basic.sh" || {
       echo '- Cannot load gateway-basic test suite.'
-      exit 1
+      return 1
     }
   elif [[ ${TEST_TYPE} = "${MINIO_GATEWAY_TEST_MIGRATION}" ]] ; then
     source "${current_dir}/lib/minio/gateway-migration.sh" || {
       echo '- Cannot load gateway-migration test suite.'
-      exit 1
+      return 1
     }
   else
     log::error "- Not supported test type - ${TEST_TYPE}."
-    exit 1
+    return 1
   fi
 
   if [[ "${MINIO_GATEWAY_MODE}" = "${MINIO_GATEWAY_PROVIDER_GCS}" ]]; then
     command -v gsutil >/dev/null 2>&1 || { 
       log::error "- gsutil is reguired it's not installed. Aborting."
-      exit 1
+      return 1
     }
   elif [[ "${MINIO_GATEWAY_MODE}" = "${MINIO_GATEWAY_PROVIDER_AZURE}" ]]; then
     command -v az >/dev/null 2>&1 || { 
       log::error "- azure-cli is reguired but it's not installed. Aborting."
-      exit 1
+      return 1
     }
   else
     log::error "- Not supported MinIO Gateway mode - ${MINIO_GATEWAY_MODE}."
-    exit 1
+    return 1
   fi
 
   gatewayHelpers::check_gateway_mode "${MINIO_GATEWAY_MODE}"
@@ -153,6 +148,9 @@ main() {
   local -r release_name="rafter"
   local -r host_os="$(host::os)"
 
+  local -r tmp_rafter_charts_dir="${TMP_DIR}/${RAFTER_CHART}"
+  mkdir -p "${tmp_rafter_charts_dir}"
+
   junit::test_start "Install_Helm_Tiller"
   testHelpers::download_helm_tiller "${STABLE_HELM_VERSION}" "${host_os}" "${TMP_BIN_DIR}" 2>&1 | junit::test_output
   junit::test_pass
@@ -177,7 +175,7 @@ main() {
   junit::test_pass
   
   junit::test_start "Prepare_Local_Helm_Charts"
-  testHelpers::prepare_local_helm_charts "${ROOT_REPO_PATH}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
+  testHelpers::prepare_local_helm_charts "${ROOT_REPO_PATH}" "${tmp_rafter_charts_dir}" 2>&1 | junit::test_output
   junit::test_pass
   
   junit::test_start "Install_Ingress"
@@ -194,15 +192,15 @@ main() {
 
   if [[ ${TEST_TYPE} = "${MINIO_GATEWAY_TEST_BASIC}" ]]; then
     junit::test_start "MinIO_Gateway_Tests"
-    gatewayBasic::run "${release_name}" "${minio_secret_name}" "${INGRESS_ADDRESS}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
+    gatewayBasic::run "${release_name}" "${minio_secret_name}" "${INGRESS_ADDRESS}" "${tmp_rafter_charts_dir}" 2>&1 | junit::test_output
     junit::test_pass
   elif [[ ${TEST_TYPE} = "${MINIO_GATEWAY_TEST_MIGRATION}" ]] ; then
     junit::test_start "Install_Rafter"
-    testHelpers::install_rafter "${release_name}" "${minio_secret_name}" "${INGRESS_ADDRESS}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
+    testHelpers::install_rafter "${release_name}" "${minio_secret_name}" "${INGRESS_ADDRESS}" "${tmp_rafter_charts_dir}" 2>&1 | junit::test_output
     junit::test_pass
     
     junit::test_start "MinIO_Gateway_Migration_Tests"
-    gatewayMigration::run "${release_name}" "${MINIO_ADDRESS}" "${minio_secret_name}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
+    gatewayMigration::run "${release_name}" "${MINIO_ADDRESS}" "${minio_secret_name}" "${tmp_rafter_charts_dir}" 2>&1 | junit::test_output
     junit::test_pass
   else
     log::error "- Not supported test type - ${TEST_TYPE}."

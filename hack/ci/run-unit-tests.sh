@@ -21,7 +21,7 @@ init_environment() {
 
   source "${current_dir}/lib/test-helpers.sh" || {
     echo '- Cannot load test helpers.'
-    exit 1
+    return 1
   }
 
   # Default is 20s - available since controller-runtime 0.1.5
