@@ -38,7 +38,7 @@ readonly MINIO_GATEWAY_PROVIDER_AZURE="azure"
 readonly CLUSTER_NAME="ci-minio-gateway-test"
 
 readonly TMP_DIR="$(mktemp -d)"
-readonly TMP_BIN_DIR="${tmp_dir}/bin"
+readonly TMP_BIN_DIR="${TMP_DIR}/bin"
 mkdir -p "${TMP_BIN_DIR}"
 export PATH="${TMP_BIN_DIR}:${PATH}"
 
