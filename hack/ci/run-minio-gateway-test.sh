@@ -9,18 +9,18 @@
 # 
 # Required env vars for gcs gateway:
 #   - MINIO_GATEWAY_MODE - set to `gcs`
-#   - CLOUDSDK_CORE_PROJECT - Defines the name of Google Cloud Platform (GCP) project for all GCP resources used in the test
-#   - GOOGLE_APPLICATION_CREDENTIALS - Defines the absolute path to Google Cloud Platform (GCP) service account key file with `Storage Admin` permission
+#   - CLOUDSDK_CORE_PROJECT - Name of the Google Cloud Platform (GCP) project for all GCP resources used in the tests
+#   - GOOGLE_APPLICATION_CREDENTIALS - Absolute path to the Google Cloud Platform (GCP) Service Account Key file with the **Storage Admin** role
 #
 # Required env vars for azure gateway:
 #   - MINIO_GATEWAY_MODE - set to `azure`
-#   - BUILD_TYPE - One of pr/master/release. Value is used to create the name of Azure Storage Account
-#   - AZURE_RS_GROUP - Defines the name of Azure Resource Group
-#   - AZURE_REGION - Defines the Azure region
-#   - AZURE_SUBSCRIPTION_ID - Defines the ID of Azure Subscription
-#   - AZURE_SUBSCRIPTION_APP_ID - Defines the app ID of Azure Subscription
-#   - AZURE_SUBSCRIPTION_SECRET - Defines the credentials of Azure Subscription
-#   - AZURE_SUBSCRIPTION_TENANT - Defines the tenant ID of Azure Subscription
+#   - BUILD_TYPE - Defines one of `pr/master/release`. This value is used to create the name of the Azure Storage Account.
+#   - AZURE_RS_GROUP - Defines the name of the Azure Resource Group
+#   - AZURE_REGION - Azure region code
+#   - AZURE_SUBSCRIPTION_ID - ID of the the Azure Subscription
+#   - AZURE_SUBSCRIPTION_APP_ID - App ID of the Azure Subscription
+#   - AZURE_SUBSCRIPTION_SECRET - Credentials for the Azure Subscription
+#   - AZURE_SUBSCRIPTION_TENANT - Tenant ID of the Azure Subscription
 
 set -o errexit
 set -o nounset
