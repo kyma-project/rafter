@@ -153,45 +153,30 @@ ci-master: docker-build docker-push
 ci-release: docker-build docker-push ci-release-push-latest
 
 integration-test: \
-	start-docker \
 	build-uploader \
 	build-manager \
 	build-frontmatter \
 	build-asyncapi
 	${ROOT}/hack/ci/run-integration-test.sh \
-		${MANAGER_IMG_NAME} \
-		${UPLOADER_IMG_NAME} \
-		${FRONT_MATTER_IMG_NAME} \
-		${ASYNCAPI_IMG_NAME}
+		${ROOT}
 
 minio-gateway-test: \
-	start-docker \
 	build-uploader \
 	build-manager \
 	build-frontmatter \
 	build-asyncapi
 	${ROOT}/hack/ci/run-minio-gateway-test.sh \
-		"basic" \
-		${MANAGER_IMG_NAME} \
-		${UPLOADER_IMG_NAME} \
-		${FRONT_MATTER_IMG_NAME} \
-		${ASYNCAPI_IMG_NAME}
+		${ROOT} \
+		"basic"
 
 minio-gateway-migration-test: \
-	start-docker \
 	build-uploader \
 	build-manager \
 	build-frontmatter \
 	build-asyncapi
 	${ROOT}/hack/ci/run-minio-gateway-test.sh \
-		"migration" \
-		${MANAGER_IMG_NAME} \
-		${UPLOADER_IMG_NAME} \
-		${FRONT_MATTER_IMG_NAME} \
-		${ASYNCAPI_IMG_NAME}
-
-start-docker: 
-	${ROOT}/hack/ci/lib/start_docker.sh
+		${ROOT} \
+		"migration"
 
 .PHONY: all \
 		build-uploader \
@@ -221,5 +206,4 @@ start-docker:
 		push-manager-latest \
 		push-frontmatter-latest \
 		push-asyncapi-latest \
-		start-docker \
 		unit-tests

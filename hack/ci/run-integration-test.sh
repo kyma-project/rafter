@@ -1,10 +1,31 @@
 #!/usr/bin/env bash
 
+# Description: 
+#   This scripts implements the flow of Rafter Integration tests for CI.
+#
+# Required parameters:
+#   - $1 - Absolute path to local Rafter repository
+
 set -o errexit
 set -o nounset
 set -o pipefail
 
-__init_environment() {
+readonly ROOT_REPO_PATH="${1}"
+
+readonly CLUSTER_NAME="ci-integration-test"
+
+readonly TMP_DIR="$(mktemp -d)"
+readonly TMP_BIN_DIR="${tmp_dir}/bin"
+mkdir -p "${TMP_BIN_DIR}"
+export PATH="${TMP_BIN_DIR}:${PATH}"
+
+export ARTIFACTS_DIR="${ARTIFACTS:-"${TMP_DIR}/artifacts"}"
+mkdir -p "${ARTIFACTS_DIR}"
+
+local -r TMP_RAFTER_CHARTS_DIR="${TMP_DIR}/${RAFTER_CHART}"
+mkdir -p "${TMP_RAFTER_CHARTS_DIR}"
+
+init_environment() {
   local -r current_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
   source "${current_dir}/envs.sh" || {
@@ -15,16 +36,11 @@ __init_environment() {
     echo '- Cannot load test helpers.'
     exit 1
   }
+
+  docker::start
 }
 
-# Arguments:
-#   $1 - Name of the kind cluster
-#   $2 - Tmp directory with binaries used during test
-#   $3 - Artifacts dir used to store JUnit reports
-__finalize() {
-  local -r kind_cluster_name="${1}"
-  local -r bin_dir="${2}"
-  local -r artifacts_dir="${3}"
+finalize() {
   local -r exit_status=$?
   local finalization_failed="false"
 
@@ -34,11 +50,11 @@ __finalize() {
   log::info "- Printing all docker processes..." 2>&1 | junit::test_output
   docker::print_processes 2>&1 | junit::test_output || finalization_failed="true"
     
-  log::info "- Exporting cluster logs to ${artifacts_dir}..." 2>&1 | junit::test_output
-  kind::export_logs "${kind_cluster_name}" "${artifacts_dir}" 2>&1 | junit::test_output || finalization_failed="true"
+  log::info "- Exporting cluster logs to ${ARTIFACTS_DIR}..." 2>&1 | junit::test_output
+  kind::export_logs "${CLUSTER_NAME}" "${ARTIFACTS_DIR}" 2>&1 | junit::test_output || finalization_failed="true"
 
-  log::info "- Cleaning up cluster ${kind_cluster_name}..." | junit::test_output
-  kind::delete_cluster "${kind_cluster_name}" 2>&1 | junit::test_output || finalization_failed="true"
+  log::info "- Cleaning up cluster ${CLUSTER_NAME}..." | junit::test_output
+  kind::delete_cluster "${CLUSTER_NAME}" 2>&1 | junit::test_output || finalization_failed="true"
 
   if [[ ${finalization_failed} = "true" ]]; then
     junit::test_fail || true
@@ -48,7 +64,7 @@ __finalize() {
   junit::suite_save
 
   log::info "- Deleting directory with temporary binaries and charts used in tests..."
-  rm -rf "${bin_dir}" || true
+  rm -rf "${TMP_DIR}" || true
 
   if [[ ${exit_status} -eq 0 ]]; then
     log::success "- Job finished with success"
@@ -58,56 +74,38 @@ __finalize() {
 
   return "${exit_status}"
 }
+trap "finalize" EXIT
 
-# Arguments:
-#   $1 - $4 - Name of images to load in kind cluster
 main() {
-  __init_environment
+  init_environment
 
   junit::suite_init "Rafter_Integration"
   trap junit::test_fail ERR
 
-  local -r controller_manager_img="${1}"
-  local -r upload_service_img="${2}"
-  local -r front_matter_service_img="${3}"
-  local -r asyncapi_service_img="${4}"
-
-  local -r tmp_dir="$(mktemp -d)"
-  local -r tmp_bin_dir="${tmp_dir}/bin"
-  mkdir -p "${tmp_bin_dir}"
-  export PATH="${tmp_bin_dir}:${GOPATH}:${PATH}"
-
-  export ARTIFACTS_DIR="${ARTIFACTS:-"${tmp_dir}/artifacts"}"
-  mkdir -p "${ARTIFACTS_DIR}"
-
-  local -r temp_rafter_charts_dir="${tmp_dir}/${__RAFTER__}"
-  mkdir -p "${temp_rafter_charts_dir}"
-
-  local -r cluster_name="ci-integration-test"
   local -r host_os="$(host::os)"
-  local -r release_name="rafter"
   local -r minio_secret_name="rafter-minio"
-
-  trap "__finalize ${cluster_name} ${tmp_dir} ${ARTIFACTS_DIR}" EXIT
 
   junit::test_start "Install_go_junit_report"
   testHelpers::install_go_junit_report 2>&1 | junit::test_output
   junit::test_pass
 
   junit::test_start "Install_Helm_Tiller"
-  testHelpers::download_helm_tiller "${__STABLE_HELM_VERSION__}" "${host_os}" "${tmp_bin_dir}" 2>&1 | junit::test_output
+  testHelpers::download_helm_tiller "${STABLE_HELM_VERSION}" "${host_os}" "${TMP_BIN_DIR}" 2>&1 | junit::test_output
   junit::test_pass
 
   junit::test_start "Install_Kind"
-  testHelpers::download_kind "${__STABLE_KIND_VERSION__}" "${host_os}" "${tmp_bin_dir}" 2>&1 | junit::test_output
+  testHelpers::download_kind "${STABLE_KIND_VERSION}" "${host_os}" "${TMP_BIN_DIR}" 2>&1 | junit::test_output
   junit::test_pass
   
   junit::test_start "Install_Kubectl"
-  testHelpers::download_kubectl "${__STABLE_KUBERNETES_VERSION__}" "${host_os}" "${tmp_bin_dir}" 2>&1 | junit::test_output
+  kubernetes::ensure_kubectl "${STABLE_KUBERNETES_VERSION}" "${host_os}" "${TMP_BIN_DIR}" 2>&1 | junit::test_output
   junit::test_pass
 
   junit::test_start "Create_Kind_Cluster"
-  testHelpers::create_cluster "${cluster_name}" "${__STABLE_KUBERNETES_VERSION__}" "${__CLUSTER_CONFIG_FILE__}" 2>&1 | junit::test_output
+  kind::create_cluster \
+    "${CLUSTER_NAME}" \
+    "${STABLE_KUBERNETES_VERSION}" \
+    "${CLUSTER_CONFIG_FILE}" 2>&1 | junit::test_output
   junit::test_pass
 
   junit::test_start "Install_Tiller"
@@ -115,27 +113,27 @@ main() {
   junit::test_pass
 
   junit::test_start "Prepare_Local_Helm_Charts"
-  testHelpers::prepare_local_helm_charts "${temp_rafter_charts_dir}" 2>&1 | junit::test_output
+  testHelpers::prepare_local_helm_charts "${ROOT_REPO_PATH}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
   junit::test_pass
   
   junit::test_start "Install_Ingress"
-  testHelpers::install_ingress "${__INGRESS_YAML_FILE__}" 2>&1 | junit::test_output
+  testHelpers::install_ingress "${INGRESS_YAML_FILE}" 2>&1 | junit::test_output
   junit::test_pass
   
   junit::test_start "Load_Images"
-  testHelpers::load_images "${cluster_name}" "${controller_manager_img}" "${upload_service_img}" "${front_matter_service_img}" "${asyncapi_service_img}" 2>&1 | junit::test_output
+  testHelpers::load_rafter_images "${CLUSTER_NAME}" 2>&1 | junit::test_output
   junit::test_pass
   
-  junit::test_start "Create_MinIO_K8S_Secret"
-  testHelpers::create_minio_k8s_secret "${minio_secret_name}" "${__DEFAULT_MINIO_ACCESS_KEY__}" "${__DEFAULT_MINIO_SECRET_KEY__}" 2>&1 | junit::test_output
+  junit::test_start "Create_K8S_Secret_For_MinIO"
+  testHelpers::create_k8s_secret "${minio_secret_name}" "${DEFAULT_MINIO_ACCESS_KEY}" "${DEFAULT_MINIO_SECRET_KEY}" 2>&1 | junit::test_output
   junit::test_pass
 
   junit::test_start "Install_Rafter"
-  testHelpers::install_rafter "${release_name}" "${minio_secret_name}" "${__INGRESS_ADDRESS__}" "${temp_rafter_charts_dir}" 2>&1 | junit::test_output
+  testHelpers::install_rafter "rafter" "${minio_secret_name}" "${INGRESS_ADDRESS}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
   junit::test_pass 
 
   junit::test_start "Rafter_Integration_Test"
-  testHelpers::run_integration_tests "${cluster_name}" "${__MINIO_ADDRESS__}" "${__UPLOAD_SERVICE_ENDPOINT__}" "${minio_secret_name}" "${ARTIFACTS_DIR}" 2>&1 | junit::test_output
+  testHelpers::run_integration_tests "${ROOT_REPO_PATH}" "${CLUSTER_NAME}" "${MINIO_ADDRESS}" "${UPLOAD_SERVICE_ENDPOINT}" "${minio_secret_name}" "${ARTIFACTS_DIR}" 2>&1 | junit::test_output
   junit::test_pass
 }
-main "$@"
+main

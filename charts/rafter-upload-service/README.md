@@ -156,7 +156,7 @@ envs:
 
 ### Switch MinIO to Gateway mode
 
-By default, you install the Upload Service in MinIO stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must first override parameters for MinIO under the **minio** object and change these parameters to `false`: 
+By default, you install the Upload Service with MinIO in stand-alone mode. If you want to switch MinIO to Gateway mode and you don't want to lose your buckets uploaded by the Upload Service, you must first override parameters for MinIO under the **minio** object and change these parameters to `false`: 
 
 - **minio.persistence.enabled**
 - **minio.podAnnotations.persistence**

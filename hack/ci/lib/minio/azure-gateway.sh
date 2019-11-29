@@ -1,102 +1,102 @@
 #!/usr/bin/env bash
 
-readonly __MINIO_GATEWAY_SECRET_NAME__="az-minio-secret"
-__AZURE_STORAGE_ACCOUNT_NAME__=""
+readonly MINIO_GATEWAY_SECRET_NAME="az-minio-secret"
+AZURE_STORAGE_ACCOUNT_NAME=""
 
-__validate_Azure_gateway_environment() {
-    log::info "- Validating Azure Blob Gateway environment..."
+azureGateway::validate_azure_gateway_environment() {
+  log::info "- Validating Azure Blob Gateway environment..."
 
-    local discoverUnsetVar=false
-    for var in AZURE_RS_GROUP AZURE_REGION AZURE_SUBSCRIPTION_ID AZURE_SUBSCRIPTION_APP_ID AZURE_SUBSCRIPTION_SECRET AZURE_SUBSCRIPTION_TENANT BUILD_TYPE; do
-        if [ -n "${var-}" ] ; then
-            continue
-        else
-            log::error "- ERROR: $var is not set"
-            discoverUnsetVar=true
-        fi
-    done
-    if [ "${discoverUnsetVar}" = true ] ; then
-        exit 1
-    fi
-
-    log::success "- Azure Blob Gateway environment validated."
-}
-
-__authenticate_to_Azure() {
-    log::info "- Authenticating to Azure..."
-
-    az login --service-principal -u "${AZURE_SUBSCRIPTION_APP_ID}" -p "${AZURE_SUBSCRIPTION_SECRET}" --tenant "${AZURE_SUBSCRIPTION_TENANT}"
-    az account set --subscription "${AZURE_SUBSCRIPTION_ID}"
-
-    log::success "- Authenticated."
-}
-
-__create_resource_group() {
-    log::info "- Creating Azure Resource Group ${AZURE_RS_GROUP}..."
-
-    if [[ $(az group exists --name "${AZURE_RS_GROUP}" -o json) == true ]]; then
-        log::warn "- Azure Resource Group ${AZURE_RS_GROUP} exists"
-        return
-    fi
-
-    az group create \
-        --name "${AZURE_RS_GROUP}" \
-        --location "${AZURE_REGION}" \
-        --tags "created-by=prow"
-
-    # Wait until resource group will be visible in azure.
-    counter=0
-    until [[ $(az group exists --name "${AZURE_RS_GROUP}" -o json) == true ]]; do
-        sleep 15
-        counter=$(( counter + 1 ))
-        if (( counter == 5 )); then
-            log::error -e "---\nAzure resource group ${AZURE_RS_GROUP} still not present after one minute wait.\n---"
-            exit 1
-        fi
-    done
-
-    log::success "- Resource Group created."
-}
-
-__create_storage_account_name() {
-    log::info "- Creating Azure Storage Account Name..."
-
-    local -r random_name_suffix=$(LC_ALL=C tr -dc 'a-z0-9' < /dev/urandom | head -c10)
-
-    if [[ "$BUILD_TYPE" == "pr" ]]; then
-        # In case of PR, operate on PR number
-        __AZURE_STORAGE_ACCOUNT_NAME__=$(echo "mimpr${PULL_NUMBER}${random_name_suffix}" | tr "[:upper:]" "[:lower:]")
-    elif [[ "$BUILD_TYPE" == "release" ]]; then
-        # In case of release
-        __AZURE_STORAGE_ACCOUNT_NAME__=$(echo "mimrel${random_name_suffix}" | tr "[:upper:]" "[:lower:]")
+  local discoverUnsetVar=false
+  for var in AZURE_RS_GROUP AZURE_REGION AZURE_SUBSCRIPTION_ID AZURE_SUBSCRIPTION_APP_ID AZURE_SUBSCRIPTION_SECRET AZURE_SUBSCRIPTION_TENANT BUILD_TYPE; do
+    if [ -n "${var-}" ] ; then
+      continue
     else
-        # Otherwise (master), operate on triggering commit id
-        __AZURE_STORAGE_ACCOUNT_NAME__=$(echo "mim${COMMIT_ID}${random_name_suffix}" | tr "[:upper:]" "[:lower:]")
+      log::error "- ERROR: $var is not set"
+      discoverUnsetVar=true
     fi
+  done
+  if [ "${discoverUnsetVar}" = true ] ; then
+    return 1
+  fi
 
-    log::success "- ${__AZURE_STORAGE_ACCOUNT_NAME__} storage Account Name created."
+  log::success "- Azure Blob Gateway environment validated."
 }
 
-__create_storage_account() {
-    log::info "- Creating ${__AZURE_STORAGE_ACCOUNT_NAME__} Storage Account..."
+azureGateway::authenticate_to_azure() {
+  log::info "- Authenticating to Azure..."
 
-    az storage account create \
-        --name "${__AZURE_STORAGE_ACCOUNT_NAME__}" \
-        --resource-group "${AZURE_RS_GROUP}" \
-        --tags "created-at=$(date +%s)" "created-by=prow" "ttl=10800"
+  az login --service-principal -u "${AZURE_SUBSCRIPTION_APP_ID}" -p "${AZURE_SUBSCRIPTION_SECRET}" --tenant "${AZURE_SUBSCRIPTION_TENANT}"
+  az account set --subscription "${AZURE_SUBSCRIPTION_ID}"
 
-    log::success "- Storage Account created."
+  log::success "- Authenticated."
 }
 
-__delete_storage_account() {
-  if [ -z "${__AZURE_STORAGE_ACCOUNT_NAME__}" ]; then
+azureGateway::create_resource_group() {
+  log::info "- Creating Azure Resource Group ${AZURE_RS_GROUP}..."
+
+  if [[ $(az group exists --name "${AZURE_RS_GROUP}" -o json) == true ]]; then
+    log::warn "- Azure Resource Group ${AZURE_RS_GROUP} exists"
+    return
+  fi
+
+  az group create \
+    --name "${AZURE_RS_GROUP}" \
+    --location "${AZURE_REGION}" \
+    --tags "created-by=prow"
+
+  # Wait until resource group will be visible in azure.
+  counter=0
+  until [[ $(az group exists --name "${AZURE_RS_GROUP}" -o json) == true ]]; do
+    sleep 15
+    counter=$(( counter + 1 ))
+    if (( counter == 5 )); then
+      log::error -e "---\nAzure resource group ${AZURE_RS_GROUP} still not present after one minute wait.\n---"
+      exit 1
+    fi
+  done
+
+  log::success "- Resource Group created."
+}
+
+azureGateway::create_storage_account_name() {
+  log::info "- Creating Azure Storage Account Name..."
+
+  local -r random_name_suffix=$(LC_ALL=C tr -dc 'a-z0-9' < /dev/urandom | head -c10)
+
+  if [[ "$BUILD_TYPE" == "pr" ]]; then
+    # In case of PR, operate on PR number
+    AZURE_STORAGE_ACCOUNT_NAME=$(echo "mimpr${PULL_NUMBER}${random_name_suffix}" | tr "[:upper:]" "[:lower:]")
+  elif [[ "$BUILD_TYPE" == "release" ]]; then
+    # In case of release
+    AZURE_STORAGE_ACCOUNT_NAME=$(echo "mimrel${random_name_suffix}" | tr "[:upper:]" "[:lower:]")
+  else
+    # Otherwise (master), operate on triggering commit id
+    AZURE_STORAGE_ACCOUNT_NAME=$(echo "mim${COMMIT_ID}${random_name_suffix}" | tr "[:upper:]" "[:lower:]")
+  fi
+
+  log::success "- ${AZURE_STORAGE_ACCOUNT_NAME} storage Account Name created."
+}
+
+azureGateway::create_storage_account() {
+  log::info "- Creating ${AZURE_STORAGE_ACCOUNT_NAME} Storage Account..."
+
+  az storage account create \
+    --name "${AZURE_STORAGE_ACCOUNT_NAME}" \
+    --resource-group "${AZURE_RS_GROUP}" \
+    --tags "created-at=$(date +%s)" "created-by=prow" "ttl=10800"
+
+  log::success "- Storage Account created."
+}
+
+azureGateway::delete_storage_account() {
+  if [ -z "${AZURE_STORAGE_ACCOUNT_NAME}" ]; then
     return 0
   fi
 
-  log::info "- Deleting ${__AZURE_STORAGE_ACCOUNT_NAME__} Storage Account..."
+  log::info "- Deleting ${AZURE_STORAGE_ACCOUNT_NAME} Storage Account..."
 
   az storage account delete \
-    --name "${__AZURE_STORAGE_ACCOUNT_NAME__}" \
+    --name "${AZURE_STORAGE_ACCOUNT_NAME}" \
     --resource-group "${AZURE_RS_GROUP}" \
     --yes
 
@@ -104,28 +104,14 @@ __delete_storage_account() {
 }
 
 gateway::before_test() {
-  junit::test_start "MinIO_Gateway_Azure_Validate_Azure_Gateway_Environment"
-  __validate_Azure_gateway_environment 2>&1 | junit::test_output
-  junit::test_pass
+  azureGateway::validate_azure_gateway_environment
+  azureGateway::authenticate_to_azure
+  azureGateway::create_resource_group
+  azureGateway::create_storage_account_name
+  azureGateway::create_storage_account
 
-  junit::test_start "MinIO_Gateway_Azure_Authenticate_To_Azure"
-  __authenticate_to_Azure 2>&1 | junit::test_output
-  junit::test_pass
-
-  junit::test_start "MinIO_Gateway_Azure_Create_Resource_Group"  
-  __create_resource_group 2>&1 | junit::test_output
-  junit::test_pass
-
-  __create_storage_account_name
-
-  junit::test_start "MinIO_Gateway_Azure_Create_Storage_Account"
-  __create_storage_account 2>&1 | junit::test_output
-  junit::test_pass
-
-  local -r azure_account_key=$(az storage account keys list --account-name "${__AZURE_STORAGE_ACCOUNT_NAME__}" --resource-group "${AZURE_RS_GROUP}" --query "[0].value" --output tsv)
-  junit::test_start "MinIO_Gateway_Azure_Create_MinIO_K8S_Secret"
-  testHelpers::create_minio_k8s_secret "${__MINIO_GATEWAY_SECRET_NAME__}" "${__AZURE_STORAGE_ACCOUNT_NAME__}" "${azure_account_key}" 2>&1 | junit::test_output
-  junit::test_pass
+  local -r azure_account_key=$(az storage account keys list --account-name "${AZURE_STORAGE_ACCOUNT_NAME}" --resource-group "${AZURE_RS_GROUP}" --query "[0].value" --output tsv)
+  testHelpers::create_k8s_secret "${MINIO_GATEWAY_SECRET_NAME}" "${AZURE_STORAGE_ACCOUNT_NAME}" "${azure_account_key}"
 }
 
 # Arguments:
@@ -146,16 +132,16 @@ gateway::install() {
   helm install --name "${release_name}" "${charts_path}" \
     --set rafter-controller-manager.minio.persistence.enabled="false" \
     --set rafter-controller-manager.envs.store.externalEndpoint.value="${ingress_address}" \
-    --set rafter-controller-manager.minio.existingSecret="${__MINIO_GATEWAY_SECRET_NAME__}" \
+    --set rafter-controller-manager.minio.existingSecret="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-controller-manager.minio.azuregateway.enabled="true" \
     --set rafter-controller-manager.minio.DeploymentUpdate.type="RollingUpdate" \
     --set rafter-controller-manager.minio.DeploymentUpdate.maxSurge="0" \
     --set rafter-controller-manager.minio.DeploymentUpdate.maxUnavailable="\"50%\"" \
-    --set rafter-controller-manager.envs.store.accessKey.valueFrom.secretKeyRef.name="${__MINIO_GATEWAY_SECRET_NAME__}" \
-    --set rafter-controller-manager.envs.store.secretKey.valueFrom.secretKeyRef.name="${__MINIO_GATEWAY_SECRET_NAME__}" \
+    --set rafter-controller-manager.envs.store.accessKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
+    --set rafter-controller-manager.envs.store.secretKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-upload-service.minio.persistence.enabled="false" \
-    --set rafter-upload-service.envs.upload.accessKey.valueFrom.secretKeyRef.name="${__MINIO_GATEWAY_SECRET_NAME__}" \
-    --set rafter-upload-service.envs.upload.secretKey.valueFrom.secretKeyRef.name="${__MINIO_GATEWAY_SECRET_NAME__}" \
+    --set rafter-upload-service.envs.upload.accessKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
+    --set rafter-upload-service.envs.upload.secretKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-controller-manager.image.pullPolicy="${pull_policy}" \
     --set rafter-upload-service.image.pullPolicy="${pull_policy}" \
     --set rafter-front-matter-service.image.pullPolicy="${pull_policy}" \
@@ -164,10 +150,10 @@ gateway::install() {
     --set rafter-upload-service.image.tag="${tag}" \
     --set rafter-front-matter-service.image.tag="${tag}" \
     --set rafter-asyncapi-service.image.tag="${tag}" \
-    --set rafter-controller-manager.image.repository="${__RAFTER_CONTROLLER_MANAGER__}" \
-    --set rafter-upload-service.image.repository="${__RAFTER_UPLOAD_SERVICE__}" \
-    --set rafter-front-matter-service.image.repository="${__RAFTER_FRONT_MATTER_SERVICE__}" \
-    --set rafter-asyncapi-service.image.repository="${__RAFTER_ASYNCAPI_SERVICE__}" \
+    --set rafter-controller-manager.image.repository="${RAFTER_CONTROLLER_MANAGER_CHART}" \
+    --set rafter-upload-service.image.repository="${RAFTER_UPLOAD_SERVICE_CHART}" \
+    --set rafter-front-matter-service.image.repository="${RAFTER_FRONT_MATTER_SERVICE_CHART}" \
+    --set rafter-asyncapi-service.image.repository="${RAFTER_ASYNCAPI_SERVICE_CHART}" \
     --wait \
     --timeout ${timeout}
     
@@ -189,18 +175,18 @@ gateway::switch() {
     --reuse-values \
     --set rafter-controller-manager.minio.persistence.enabled="false" \
     --set rafter-controller-manager.minio.podAnnotations.persistence="\"false\"" \
-    --set rafter-controller-manager.minio.existingSecret="${__MINIO_GATEWAY_SECRET_NAME__}" \
+    --set rafter-controller-manager.minio.existingSecret="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-controller-manager.minio.azuregateway.enabled="true" \
     --set rafter-controller-manager.minio.DeploymentUpdate.type="RollingUpdate" \
     --set rafter-controller-manager.minio.DeploymentUpdate.maxSurge="0" \
     --set rafter-controller-manager.minio.DeploymentUpdate.maxUnavailable="\"50%\"" \
-    --set rafter-controller-manager.envs.store.accessKey.valueFrom.secretKeyRef.name="${__MINIO_GATEWAY_SECRET_NAME__}" \
-    --set rafter-controller-manager.envs.store.secretKey.valueFrom.secretKeyRef.name="${__MINIO_GATEWAY_SECRET_NAME__}" \
+    --set rafter-controller-manager.envs.store.accessKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
+    --set rafter-controller-manager.envs.store.secretKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-upload-service.minio.persistence.enabled="false" \
     --set rafter-upload-service.minio.podAnnotations.persistence="\"false\"" \
-    --set rafter-upload-service.envs.upload.accessKey.valueFrom.secretKeyRef.name="${__MINIO_GATEWAY_SECRET_NAME__}" \
-    --set rafter-upload-service.envs.upload.secretKey.valueFrom.secretKeyRef.name="${__MINIO_GATEWAY_SECRET_NAME__}" \
-    --set rafter-upload-service.migrator.post.minioSecretRefName="${__MINIO_GATEWAY_SECRET_NAME__}" \
+    --set rafter-upload-service.envs.upload.accessKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
+    --set rafter-upload-service.envs.upload.secretKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
+    --set rafter-upload-service.migrator.post.minioSecretRefName="${MINIO_GATEWAY_SECRET_NAME}" \
     --wait \
     --timeout ${timeout}
     
@@ -208,7 +194,5 @@ gateway::switch() {
 }
 
 gateway::after_test() {
-  junit::test_start "MinIO_Gateway_Azure_Delete_Storage_Account"
-  __delete_storage_account 2>&1 | junit::test_output
-  junit::test_pass
+  azureGateway::delete_storage_account
 }

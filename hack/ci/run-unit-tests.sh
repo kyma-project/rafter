@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 
+# Description: 
+#   This scripts implements the flow of Rafter Unit tests for CI.
+#
+# Required parameters:
+#   - $1 - Absolute path to local Rafter repository
+
 set -o errexit
 set -o nounset
 set -o pipefail
 
-__init_environment() {
+readonly ROOT_REPO_PATH="${1}"
+
+readonly TMP_DIR="$(mktemp -d)"
+export ARTIFACTS_DIR="${ARTIFACTS:-"${TMP_DIR}/artifacts"}"
+mkdir -p "${ARTIFACTS_DIR}"
+
+init_environment() {
   local -r current_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
   source "${current_dir}/lib/test-helpers.sh" || {
@@ -20,27 +32,15 @@ __init_environment() {
   testHelpers::install_go_junit_report
 }
 
-# Arguments:
-#   $1 - Tmp directory with binaries used during tests
-__cleanup() {
-  local -r bin_dir="${1}"
-
+cleanup() {
   log::info "- Deleting directory with temporary binaries used in tests..."
-  rm -rf "${bin_dir}" || true
+  rm -rf "${TMP_DIR}" || true
   log::success "- Directory with temporary binaries used in tests deleted."
 }
+trap "cleanup" EXIT
 
-# Arguments:
-#   $1 - Root path of repo
 main() {
-  local -r root_path="${1}"
-
-  local -r tmp_dir="$(mktemp -d)"
-  export ARTIFACTS_DIR="${ARTIFACTS:-"${tmp_dir}/artifacts"}"
-  mkdir -p "${ARTIFACTS_DIR}"
-
-  __init_environment
-  trap "__cleanup ${tmp_dir}" EXIT
+  init_environment
 
   local -r log_file=unit_test_data.log
   local -r coverage_file="cover.out"
@@ -49,7 +49,7 @@ main() {
 
   log::info "- Starting unit tests..."
 
-  go test "${root_path}"/... -count 1 -coverprofile="${ARTIFACTS_DIR}/${coverage_file}" -v 2>&1 | tee "${ARTIFACTS_DIR}/${log_file}" || test_failed="true"
+  go test "${ROOT_REPO_PATH}"/... -count 1 -coverprofile="${ARTIFACTS_DIR}/${coverage_file}" -v 2>&1 | tee "${ARTIFACTS_DIR}/${log_file}" || test_failed="true"
   < "${ARTIFACTS_DIR}/${log_file}" go-junit-report > "${ARTIFACTS_DIR}/junit_${suite_name}_suite.xml"
   go tool cover -func="${ARTIFACTS_DIR}/${coverage_file}" \
 		| grep total \
@@ -61,4 +61,4 @@ main() {
   fi
   log::success "- Unit tests passed."
 }
-main "$@"
+main

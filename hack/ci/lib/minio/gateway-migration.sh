@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-readonly __MINIO_GATEWAY_CONTENT_TYPE__="application/octet-stream"
-readonly __MINIO_GATEWAY_SAMPLE_CONTENT__="sample"
-readonly __MINIO_GATEWAY_SAMPLE_FILE__="sample"
-readonly __MINIO_GATEWAY_SAMPLE_FILE_WITH_DIR__="sampledir/sample"
+readonly MINIO_GATEWAY_MIGRATION_SAMPLE_CONTENT="sample"
+readonly MINIO_GATEWAY_MIGRATION_CONTENT_TYPE="application/octet-stream"
+readonly MINIO_GATEWAY_MIGRATION_SAMPLE_FILE="sample"
+readonly MINIO_GATEWAY_MIGRATION_SAMPLE_FILE_WITH_DIR="sampledir/sample"
 
 # Creates sample file and uploads it to minio.
 # Arguments:
@@ -12,7 +12,7 @@ readonly __MINIO_GATEWAY_SAMPLE_FILE_WITH_DIR__="sampledir/sample"
 #   $3 - MiniIO host
 #   $4 - MiniIO access key
 #   $5 - MiniIO secret key
-__upload_sample_file_to_minio() {
+gatewayMigration::upload_sample_file_to_minio() {
   local -r bucket_name="${1}"
   local -r file_name="${2}"
   local -r minio_host="${3}"
@@ -22,14 +22,14 @@ __upload_sample_file_to_minio() {
   local -r resource="${bucket_name}"/"${file_name}"
 
   local -r date=$(date -R)
-  local -r signature=PUT"\n\n${__MINIO_GATEWAY_CONTENT_TYPE__}\n${date}\n/${resource}"
+  local -r signature=PUT"\n\n${MINIO_GATEWAY_MIGRATION_CONTENT_TYPE}\n${date}\n/${resource}"
   local -r checksum=$(echo -en "${signature}" | openssl sha1 -hmac "${minio_secretKey}" -binary | base64)
 
   log::info "- Uploading ${resource} to minio ${minio_host}..."
 
-  echo "${__MINIO_GATEWAY_SAMPLE_CONTENT__}" | curl -X PUT -d @- \
+  echo "${MINIO_GATEWAY_MIGRATION_SAMPLE_CONTENT}" | curl -X PUT -d @- \
     -H "Date: ${date}" \
-    -H "Content-Type: ${__MINIO_GATEWAY_CONTENT_TYPE__}" \
+    -H "Content-Type: ${MINIO_GATEWAY_MIGRATION_CONTENT_TYPE}" \
     -H "Authorization: AWS ${minio_accessKey}:${checksum}" \
     --insecure \
     --silent \
@@ -46,7 +46,7 @@ __upload_sample_file_to_minio() {
 #   $3 - MiniIO host
 #   $4 - MiniIO access key
 #   $5 - MiniIO secret key
-__download_sample_file_from_minio() {
+gatewayMigration::download_sample_file_from_minio() {
   local -r bucket_name="${1}"
   local -r file_name="${2}"
   local -r minio_host="${3}"
@@ -56,13 +56,13 @@ __download_sample_file_from_minio() {
   local -r resource="${bucket_name}"/"${file_name}"
   
   local -r date=$(date -R)
-  local -r signature=GET"\n\n${__MINIO_GATEWAY_CONTENT_TYPE__}\n${date}\n/${resource}"
+  local -r signature=GET"\n\n${MINIO_GATEWAY_MIGRATION_CONTENT_TYPE}\n${date}\n/${resource}"
   local -r checksum=$(echo -en "${signature}" | openssl sha1 -hmac "${minio_secretKey}" -binary | base64)
   
   log::info "- Downloading ${resource} from minio ${minio_host}..."
 
   curl -H "Date: ${date}" \
-    -H "Content-Type: ${__MINIO_GATEWAY_CONTENT_TYPE__}" \
+    -H "Content-Type: ${MINIO_GATEWAY_MIGRATION_CONTENT_TYPE}" \
     -H "Authorization: AWS ${minio_accessKey}:${checksum}" \
 	  --silent \
 	  --insecure \
@@ -85,15 +85,15 @@ gatewayMigration::before_migration() {
 
   local minio_accessKey=""
   local minio_secretKey=""
-  read minio_accessKey minio_secretKey < <(testHelpers::get_minio_k8s_secret ${minio_secret_name})
+  read minio_accessKey minio_secretKey < <(testHelpers::get_k8s_secret_data ${minio_secret_name})
   
   log::info "- Uploading files to MinIO.."
 
-  __upload_sample_file_to_minio "${public_bucket}" "${__MINIO_GATEWAY_SAMPLE_FILE__}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
-  __upload_sample_file_to_minio "${public_bucket}" "${__MINIO_GATEWAY_SAMPLE_FILE_WITH_DIR__}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
+  gatewayMigration::upload_sample_file_to_minio "${public_bucket}" "${MINIO_GATEWAY_MIGRATION_SAMPLE_FILE}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
+  gatewayMigration::upload_sample_file_to_minio "${public_bucket}" "${MINIO_GATEWAY_MIGRATION_SAMPLE_FILE_WITH_DIR}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
 
-  __upload_sample_file_to_minio "${private_bucket}" "${__MINIO_GATEWAY_SAMPLE_FILE__}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
-  __upload_sample_file_to_minio "${private_bucket}" "${__MINIO_GATEWAY_SAMPLE_FILE_WITH_DIR__}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
+  gatewayMigration::upload_sample_file_to_minio "${private_bucket}" "${MINIO_GATEWAY_MIGRATION_SAMPLE_FILE}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
+  gatewayMigration::upload_sample_file_to_minio "${private_bucket}" "${MINIO_GATEWAY_MIGRATION_SAMPLE_FILE_WITH_DIR}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
 
   log::success "- Uploaded files to MinIO."
 }
@@ -111,15 +111,15 @@ gatewayMigration::after_migration() {
 
   local minio_accessKey=""
   local minio_secretKey=""
-  read minio_accessKey minio_secretKey < <(testHelpers::get_minio_k8s_secret ${minio_secret_name})
+  read minio_accessKey minio_secretKey < <(testHelpers::get_k8s_secret_data ${minio_secret_name})
 
   log::info "- Verifying MinIO bucket migration..."
 
-  __download_sample_file_from_minio "${public_bucket}" "${__MINIO_GATEWAY_SAMPLE_FILE__}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
-  __download_sample_file_from_minio "${public_bucket}" "${__MINIO_GATEWAY_SAMPLE_FILE_WITH_DIR__}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
+  gatewayMigration::download_sample_file_from_minio "${public_bucket}" "${MINIO_GATEWAY_MIGRATION_SAMPLE_FILE}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
+  gatewayMigration::download_sample_file_from_minio "${public_bucket}" "${MINIO_GATEWAY_MIGRATION_SAMPLE_FILE_WITH_DIR}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
 
-  __download_sample_file_from_minio "${private_bucket}" "${__MINIO_GATEWAY_SAMPLE_FILE__}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
-  __download_sample_file_from_minio "${private_bucket}" "${__MINIO_GATEWAY_SAMPLE_FILE_WITH_DIR__}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
+  gatewayMigration::download_sample_file_from_minio "${private_bucket}" "${MINIO_GATEWAY_MIGRATION_SAMPLE_FILE}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
+  gatewayMigration::download_sample_file_from_minio "${private_bucket}" "${MINIO_GATEWAY_MIGRATION_SAMPLE_FILE_WITH_DIR}" "${minio_host}" "${minio_accessKey}" "${minio_secretKey}"
 
   log::success "- Verified MinIO bucket migration."
 }
@@ -136,19 +136,12 @@ gatewayMigration::run() {
   local -r charts_path="${4}"
 
   # configure provider
-  junit::test_start "MinIO_Gateway_Migration_Before_Migration"
-  gatewayMigration::before_migration "${minio_host}" "${minio_secret_name}" 2>&1 | junit::test_output
-  junit::test_pass
-
+  gatewayMigration::before_migration "${minio_host}" "${minio_secret_name}"
   gateway::before_test "${minio_secret_name}"
 
   # switch to MinIO gateway mode
-  junit::test_start "MinIO_Gateway_Migration_Switch_To_Gateway"
-  gateway::switch "${release_name}" "${charts_path}" 2>&1 | junit::test_output
-  junit::test_pass
+  gateway::switch "${release_name}" "${charts_path}"
 
   # test migration
-  junit::test_start "MinIO_Gateway_Migration_After_Migration"
-  gatewayMigration::after_migration "${minio_host}" "${__MINIO_GATEWAY_SECRET_NAME__}" 2>&1 | junit::test_output
-  junit::test_pass
+  gatewayMigration::after_migration "${minio_host}" "${MINIO_GATEWAY_SECRET_NAME}"
 }

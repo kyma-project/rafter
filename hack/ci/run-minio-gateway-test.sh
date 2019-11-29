@@ -1,13 +1,60 @@
 #!/usr/bin/env bash
 
+# Description: 
+#   This scripts implements the flow of MinIO Gateway tests and MinIO Gateway Migration tests for CI.
+#
+# Required parameters:
+#   - $1 - Absolute path to local Rafter repository
+#   - $2 - Type of MinIO Gateway tests. Available values: basic, migration
+# 
+# Required env vars for gcs gateway:
+#   - MINIO_GATEWAY_MODE - set to `gcs`
+#   - CLOUDSDK_CORE_PROJECT - Defines the name of Google Cloud Platform (GCP) project for all GCP resources used in the test
+#   - GOOGLE_APPLICATION_CREDENTIALS - Defines the absolute path to Google Cloud Platform (GCP) service account key file with `Storage Admin` permission
+#
+# Required env vars for azure gateway:
+#   - MINIO_GATEWAY_MODE - set to `azure`
+#   - BUILD_TYPE - One of pr/master/release. Value is used to create the name of Azure Storage Account
+#   - AZURE_RS_GROUP - Defines the name of Azure Resource Group
+#   - AZURE_REGION - Defines the Azure region
+#   - AZURE_SUBSCRIPTION_ID - Defines the ID of Azure Subscription
+#   - AZURE_SUBSCRIPTION_APP_ID - Defines the app ID of Azure Subscription
+#   - AZURE_SUBSCRIPTION_SECRET - Defines the credentials of Azure Subscription
+#   - AZURE_SUBSCRIPTION_TENANT - Defines the tenant ID of Azure Subscription
+
 set -o errexit
 set -o nounset
 set -o pipefail
 
+readonly ROOT_REPO_PATH="${1}"
+readonly TEST_TYPE="${2}"
+
+readonly MINIO_GATEWAY_TEST_BASIC="basic"
+readonly MINIO_GATEWAY_TEST_MIGRATION="migration"
+
+readonly MINIO_GATEWAY_PROVIDER_GCS="gcs"
+readonly MINIO_GATEWAY_PROVIDER_AZURE="azure"
+
+readonly CLUSTER_NAME="ci-minio-gateway-test"
+
+readonly TMP_DIR="$(mktemp -d)"
+readonly TMP_BIN_DIR="${tmp_dir}/bin"
+mkdir -p "${TMP_BIN_DIR}"
+export PATH="${TMP_BIN_DIR}:${PATH}"
+
+export ARTIFACTS_DIR="${ARTIFACTS:-"${TMP_DIR}/artifacts"}"
+mkdir -p "${ARTIFACTS_DIR}"
+
+local -r TMP_RAFTER_CHARTS_DIR="${TMP_DIR}/${RAFTER_CHART}"
+mkdir -p "${TMP_RAFTER_CHARTS_DIR}"
+
 # Arguments:
 #   $1 - Type of test - basic or migration
-__init_environment() {
-  local -r test_type="${1}"
+init_environment() {
+  if [[ -z ${MINIO_GATEWAY_MODE-} ]]; then
+    echo '- $MINIO_GATEWAY_MODE variable is not set.'
+    exit 1
+  fi
   local -r current_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
   source "${current_dir}/envs.sh" || {
@@ -23,27 +70,27 @@ __init_environment() {
     exit 1
   }
 
-  if [[ ${test_type} = "${__MINIO_GATEWAY_TEST_BASIC__}" ]]; then
+  if [[ ${TEST_TYPE} = "${MINIO_GATEWAY_TEST_BASIC}" ]]; then
     source "${current_dir}/lib/minio/gateway-basic.sh" || {
       echo '- Cannot load gateway-basic test suite.'
       exit 1
     }
-  elif [[ ${test_type} = "${__MINIO_GATEWAY_TEST_MIGRATION__}" ]] ; then
+  elif [[ ${TEST_TYPE} = "${MINIO_GATEWAY_TEST_MIGRATION}" ]] ; then
     source "${current_dir}/lib/minio/gateway-migration.sh" || {
       echo '- Cannot load gateway-migration test suite.'
       exit 1
     }
   else
-    log::error "- Not supported test type - ${test_type}."
+    log::error "- Not supported test type - ${TEST_TYPE}."
     exit 1
   fi
 
-  if [[ "${MINIO_GATEWAY_MODE}" = "${__MINIO_GATEWAY_PROVIDER_GCS__}" ]]; then
+  if [[ "${MINIO_GATEWAY_MODE}" = "${MINIO_GATEWAY_PROVIDER_GCS}" ]]; then
     command -v gsutil >/dev/null 2>&1 || { 
       log::error "- gsutil is reguired it's not installed. Aborting."
       exit 1
     }
-  elif [[ "${MINIO_GATEWAY_MODE}" = "${__MINIO_GATEWAY_PROVIDER_AZURE__}" ]]; then
+  elif [[ "${MINIO_GATEWAY_MODE}" = "${MINIO_GATEWAY_PROVIDER_AZURE}" ]]; then
     command -v az >/dev/null 2>&1 || { 
       log::error "- azure-cli is reguired but it's not installed. Aborting."
       exit 1
@@ -53,37 +100,12 @@ __init_environment() {
     exit 1
   fi
 
-  gatewayHelpers::init_environment "${MINIO_GATEWAY_MODE}"
+  gatewayHelpers::check_gateway_mode "${MINIO_GATEWAY_MODE}"
+
+  docker::start
 }
 
-# Arguments:
-#   $1 - Type of test - basic or migration
-# Outputs:
-#   $1 - The cluster name
-__get_cluster_name() {
-  local -r test_type="${1}"
-  local cluster_name=""
-
-  if [[ ${test_type} = "${__MINIO_GATEWAY_TEST_BASIC__}" ]]; then
-    cluster_name="ci-minio-${MINIO_GATEWAY_MODE}-gateway-test"
-  elif [[ ${test_type} = "${__MINIO_GATEWAY_TEST_MIGRATION__}" ]] ; then
-    cluster_name="ci-minio-${MINIO_GATEWAY_MODE}-gateway-migration-test"
-  else
-    log::error "- Not supported test type - ${test_type}."
-    exit 1
-  fi
-
-  echo "${cluster_name}"
-}
-
-# Arguments:
-#   $1 - Name of the kind cluster
-#   $2 - Tmp directory with binaries used during test
-#   $3 - Artifacts dir used to store JUnit reports
-__finalize() {
-  local -r kind_cluster_name="${1}"
-  local -r bin_dir="${2}"
-  local -r artifacts_dir="${3}"
+finalize() {
   local -r exit_status=$?
   local finalization_failed="false"
 
@@ -95,11 +117,11 @@ __finalize() {
   log::info "- Printing all docker processes..." 2>&1 | junit::test_output
   docker::print_processes 2>&1 | junit::test_output || finalization_failed="true"
     
-  log::info "- Exporting cluster logs to ${artifacts_dir}..." 2>&1 | junit::test_output
-  kind::export_logs "${kind_cluster_name}" "${artifacts_dir}" 2>&1 | junit::test_output || finalization_failed="true"
+  log::info "- Exporting cluster logs to ${ARTIFACTS_DIR}..." 2>&1 | junit::test_output
+  kind::export_logs "${CLUSTER_NAME}" "${ARTIFACTS_DIR}" 2>&1 | junit::test_output || finalization_failed="true"
 
-  log::info "- Cleaning up cluster ${kind_cluster_name}..." | junit::test_output
-  kind::delete_cluster "${kind_cluster_name}" 2>&1 | junit::test_output || finalization_failed="true"
+  log::info "- Cleaning up cluster ${CLUSTER_NAME}..." | junit::test_output
+  kind::delete_cluster "${CLUSTER_NAME}" 2>&1 | junit::test_output || finalization_failed="true"
 
   if [[ ${finalization_failed} = "true" ]]; then
     junit::test_fail || true
@@ -109,7 +131,7 @@ __finalize() {
   junit::suite_save
 
   log::info "- Deleting directory with temporary binaries used in tests..."
-  rm -rf "${bin_dir}" || true
+  rm -rf "${TMP_DIR}" || true
 
   if [[ ${exit_status} -eq 0 ]]; then
     log::success "- Job finished with success"
@@ -119,60 +141,35 @@ __finalize() {
 
   return "${exit_status}"
 }
+trap "finalize" EXIT
 
-# Arguments:
-#   $1 - Type of test - basic or migration
-#   $2 - $5 - Name of images to load in kind cluster
 main() {
-  if [[ -z ${MINIO_GATEWAY_MODE-} ]]; then
-    echo '- $MINIO_GATEWAY_MODE variable is not set.'
-    exit 1
-  fi
-
-  local -r test_type="${1}"
-  __init_environment "${test_type}"
+  init_environment
 
   junit::suite_init "Rafter_Gateway"
   trap junit::test_fail ERR
-  
-  local -r controller_manager_img="${2}"
-  local -r upload_service_img="${3}"
-  local -r front_matter_service_img="${4}"
-  local -r asyncapi_service_img="${5}"
 
-  local -r tmp_dir="$(mktemp -d)"
-  local -r tmp_bin_dir="${tmp_dir}/bin"
-  mkdir -p "${tmp_bin_dir}"
-  export PATH="${tmp_bin_dir}:${GOPATH}:${PATH}"
-
-  export ARTIFACTS_DIR="${ARTIFACTS:-"${tmp_dir}/artifacts"}"
-  mkdir -p "${ARTIFACTS_DIR}"
-
-  local -r temp_rafter_charts_dir="${tmp_dir}/${__RAFTER__}"
-  mkdir -p "${temp_rafter_charts_dir}"
-
-  local -r release_name="rafter"
   local -r minio_secret_name="rafter-minio"
+  local -r release_name="rafter"
   local -r host_os="$(host::os)"
-  local cluster_name=""
-  read cluster_name < <(__get_cluster_name ${test_type})
-
-  trap "__finalize ${cluster_name} ${tmp_dir} ${ARTIFACTS_DIR}" EXIT
 
   junit::test_start "Install_Helm_Tiller"
-  testHelpers::download_helm_tiller "${__STABLE_HELM_VERSION__}" "${host_os}" "${tmp_bin_dir}" 2>&1 | junit::test_output
+  testHelpers::download_helm_tiller "${STABLE_HELM_VERSION}" "${host_os}" "${TMP_BIN_DIR}" 2>&1 | junit::test_output
   junit::test_pass
 
   junit::test_start "Install_Kind"
-  testHelpers::download_kind "${__STABLE_KIND_VERSION__}" "${host_os}" "${tmp_bin_dir}" 2>&1 | junit::test_output
+  testHelpers::download_kind "${STABLE_KIND_VERSION}" "${host_os}" "${TMP_BIN_DIR}" 2>&1 | junit::test_output
   junit::test_pass
-  
+
   junit::test_start "Install_Kubectl"
-  testHelpers::download_kubectl "${__STABLE_KUBERNETES_VERSION__}" "${host_os}" "${tmp_bin_dir}" 2>&1 | junit::test_output
+  kubernetes::ensure_kubectl "${STABLE_KUBERNETES_VERSION}" "${host_os}" "${TMP_BIN_DIR}" 2>&1 | junit::test_output
   junit::test_pass
 
   junit::test_start "Create_Kind_Cluster"
-  testHelpers::create_cluster "${cluster_name}" "${__STABLE_KUBERNETES_VERSION__}" "${__CLUSTER_CONFIG_FILE__}" 2>&1 | junit::test_output
+  kind::create_cluster \
+    "${CLUSTER_NAME}" \
+    "${STABLE_KUBERNETES_VERSION}" \
+    "${CLUSTER_CONFIG_FILE}" 2>&1 | junit::test_output
   junit::test_pass
 
   junit::test_start "Install_Tiller"
@@ -180,36 +177,40 @@ main() {
   junit::test_pass
   
   junit::test_start "Prepare_Local_Helm_Charts"
-  testHelpers::prepare_local_helm_charts "${temp_rafter_charts_dir}" 2>&1 | junit::test_output
+  testHelpers::prepare_local_helm_charts "${ROOT_REPO_PATH}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
   junit::test_pass
   
   junit::test_start "Install_Ingress"
-  testHelpers::install_ingress "${__INGRESS_YAML_FILE__}" 2>&1 | junit::test_output
+  testHelpers::install_ingress "${INGRESS_YAML_FILE}" 2>&1 | junit::test_output
   junit::test_pass
   
   junit::test_start "Load_Images"
-  testHelpers::load_images "${cluster_name}" "${controller_manager_img}" "${upload_service_img}" "${front_matter_service_img}" "${asyncapi_service_img}" 2>&1 | junit::test_output
+  testHelpers::load_rafter_images "${CLUSTER_NAME}" 2>&1 | junit::test_output
   junit::test_pass
   
-  junit::test_start "Create_MinIO_K8S_Secret"
-  testHelpers::create_minio_k8s_secret "${minio_secret_name}" "${__DEFAULT_MINIO_ACCESS_KEY__}" "${__DEFAULT_MINIO_SECRET_KEY__}" 2>&1 | junit::test_output
+  junit::test_start "Create_K8S_Secret_For_MinIO"
+  testHelpers::create_k8s_secret "${minio_secret_name}" "${DEFAULT_MINIO_ACCESS_KEY}" "${DEFAULT_MINIO_SECRET_KEY}" 2>&1 | junit::test_output
   junit::test_pass
 
-  if [[ ${test_type} = "${__MINIO_GATEWAY_TEST_BASIC__}" ]]; then
-    gatewayBasic::run "${release_name}" "${minio_secret_name}" "${__INGRESS_ADDRESS__}" "${temp_rafter_charts_dir}"
-  elif [[ ${test_type} = "${__MINIO_GATEWAY_TEST_MIGRATION__}" ]] ; then
+  if [[ ${TEST_TYPE} = "${MINIO_GATEWAY_TEST_BASIC}" ]]; then
+    junit::test_start "MinIO_Gateway_Tests"
+    gatewayBasic::run "${release_name}" "${minio_secret_name}" "${INGRESS_ADDRESS}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
+    junit::test_pass
+  elif [[ ${TEST_TYPE} = "${MINIO_GATEWAY_TEST_MIGRATION}" ]] ; then
     junit::test_start "Install_Rafter"
-    testHelpers::install_rafter "${release_name}" "${minio_secret_name}" "${__INGRESS_ADDRESS__}" "${temp_rafter_charts_dir}" 2>&1 | junit::test_output
+    testHelpers::install_rafter "${release_name}" "${minio_secret_name}" "${INGRESS_ADDRESS}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
     junit::test_pass
     
-    gatewayMigration::run "${release_name}" "${__MINIO_ADDRESS__}" "${minio_secret_name}" "${temp_rafter_charts_dir}"
+    junit::test_start "MinIO_Gateway_Migration_Tests"
+    gatewayMigration::run "${release_name}" "${MINIO_ADDRESS}" "${minio_secret_name}" "${TMP_RAFTER_CHARTS_DIR}" 2>&1 | junit::test_output
+    junit::test_pass
   else
-    log::error "- Not supported test type - ${test_type}."
+    log::error "- Not supported test type - ${TEST_TYPE}."
     exit 1
   fi
 
   junit::test_start "Rafter_Integration_Test"
-  testHelpers::run_integration_tests "${cluster_name}" "${__MINIO_ADDRESS__}" "${__UPLOAD_SERVICE_ENDPOINT__}" "${__MINIO_GATEWAY_SECRET_NAME__}" 2>&1 | junit::test_output
+  testHelpers::run_integration_tests "${ROOT_REPO_PATH}" "${CLUSTER_NAME}" "${MINIO_ADDRESS}" "${UPLOAD_SERVICE_ENDPOINT}" "${MINIO_GATEWAY_SECRET_NAME}" 2>&1 | junit::test_output
   junit::test_pass
 }
-main "$@"
+main

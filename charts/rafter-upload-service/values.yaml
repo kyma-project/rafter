@@ -125,4 +125,4 @@ migrator:
     minioDeploymentRefName:
     minioSecretRefName:
   post:
-    minioSecretRefName: dupa
+    minioSecretRefName:

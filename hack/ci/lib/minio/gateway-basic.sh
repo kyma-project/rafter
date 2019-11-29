@@ -15,7 +15,5 @@ gatewayBasic::run() {
   gateway::before_test "${minio_secret_name}"
 
   # install Rafter with MinIO gateway mode
-  junit::test_start "MinIO_Gateway_Install_Rafter"
-  gateway::install "${release_name}" "${ingress_address}" "${charts_path}" 2>&1 | junit::test_output
-  junit::test_pass
+  gateway::install "${release_name}" "${ingress_address}" "${charts_path}"
 }
