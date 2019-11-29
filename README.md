@@ -27,30 +27,14 @@ Rafter comes with the following set of services and extensions compatible with R
 - [AsyncAPI Service](./cmd/extension/asyncapi/README.md) (extension)
 - [Front Matter Service](./cmd/extension/frontmatter/README.md) (extension)
 
-To see the implementation of Rafter in [Kyma](https://kyma-project.io), follow these links:
-
-- [Asset Store](https://kyma-project.io/docs/components/asset-store/)
-- [Headless CMS](https://kyma-project.io/docs/components/headless-cms/)
+>**NOTE:** If you want to learn how Rafter is implemented in [Kyma](https://kyma-project.io), read the [Asset Store](https://kyma-project.io/docs/components/asset-store/) and [Headless CMS](https://kyma-project.io/docs/components/headless-cms/) documentation.
 
 ## Quick start
 
 Try out [this](https://katacoda.com/rafter/scenarios/rafter) set of interactive tutorials to see Rafter in action on Minikube. These tutorials show how to:
-- Quickly install Rafter with our Helm Chart
-- Host a simple static site
-- Use Rafter as headless CMS with support of Rafter metadata webhook and Front Matter service . This example is based on a use case of storing Markdown files
-- Use Rafter as headless CMS with support of Rafter validation and conversion webhooks. This example is based on a use case of storing [AsyncAPI](https://asyncapi.org/) specification
+- Quickly install Rafter with our Helm Chart.
+- Host a simple static site.
+- Use Rafter as headless CMS with support of Rafter metadata webhook and Front Matter service . This example is based on a use case of storing Markdown files.
+- Use Rafter as headless CMS with the support of Rafter validation and conversion webhooks. This example is based on a use case of storing [AsyncAPI](https://asyncapi.org/) specifications.
 
-## Project structure
-
-The repository has the following structure:
-
-```txt
-├── .github                     # Pull request and issue templates
-├── cmd                         # Rafter's applications
-├── config                      # Configuration file templates
-├── deploy                      # Dockerfiles for Rafter's applications
-├── hack                        # Information, scripts, and files useful for development
-├── internal                    # Private application and library code
-├── pkg                         # Library code to be used by external applications
-└── tests                       # Integration tests
-```
+>**NOTE:** Read [this](./docs/development-guide.md) development guide to start developing the project.
