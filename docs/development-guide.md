@@ -51,3 +51,55 @@ You can run the integration tests for Rafter with the same command both locally 
 ```bash
 make integration-test
 ```
+
+## MinIO Gateway tests
+
+> **NOTE:** Install [Go](https://golang.org), [Docker](https://www.docker.com/), [gsutil](https://cloud.google.com/storage/docs/gsutil), [azure-cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) before you run MinIO Gateway tests.
+
+There are two types of tests you can run for Rafter to check if the Gateway mode works as expected:
+
+- `minio-gateway-test` tests Rafter that already has MinIO in the Gateway mode.
+- `minio-gateway-migration-test` tests if Rafter runs as expected by switching it from MinIO to MinIO Gateway.
+
+MinIO Gateway tests can run on [`GCS`](https://cloud.google.com/storage/) and [`Azure`](https://azure.microsoft.com/en-us/) platforms. See the [**MinIO Gateway environments**](#minio-gateway-environments) section to know which environment variables you must define for a given platform before you run MinIO Gateway tests.
+
+You can run MinIO Gateway tests for Rafter with the same command both locally and on a cluster. Before you start, copy the [`test-infra`](https://github.com/kyma-project/test-infra) repository under your `$GOPATH` workspace as `${GOPATH}/src/github.com/kyma-project/test-infra/`. Run one of these commands from the root of the `rafter` repository:
+
+- for MinIO already in the Gateway mode
+
+```bash
+make minio-gateway-test
+```
+
+- to switch from MinIO to MinIO Gateway
+
+```bash
+make minio-gateway-migration-test
+```
+
+### MinIO Gateway environments
+
+See the GCP variables:
+
+| Variable | Description |
+| --- | --- |
+| **MINIO_GATEWAY_MODE** | Platform for MinIO Gateway tests |
+| **CLOUDSDK_CORE_PROJECT** | Name of the [Google Cloud Platform (GCP)](https://cloud.google.com/) project for all GCP resources used in the tests |
+| **GOOGLE_APPLICATION_CREDENTIALS** | Absolute path to the [Google Cloud Platform (GCP)](https://cloud.google.com/) Service Account Key File with the **Storage Admin** role |
+
+>**NOTE:** **MINIO_GATEWAY_MODE** must be set to `gcs`.
+
+See the Azure variables:
+
+| Variable | Description |
+| --- | --- |
+| **MINIO_GATEWAY_MODE** | Platform for MinIO Gateway tests |
+| **BUILD_TYPE** | Defines one of `pr/master/release`. This value is used to create the name of the Azure Storage Account. |
+| **AZURE_RS_GROUP** | Defines the name of the Azure Resource Group |
+| **AZURE_REGION** | Azure region code |
+| **AZURE_SUBSCRIPTION_ID** | ID of the the Azure Subscription |
+| **AZURE_SUBSCRIPTION_APP_ID** | App ID of the Azure Subscription |
+| **AZURE_SUBSCRIPTION_SECRET** | Credentials for the Azure Subscription |
+| **AZURE_SUBSCRIPTION_TENANT** | Tenant ID of the Azure Subscription |
+
+>**NOTE:** **MINIO_GATEWAY_MODE** must be set to `azure`.
