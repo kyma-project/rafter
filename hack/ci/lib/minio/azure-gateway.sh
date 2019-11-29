@@ -157,7 +157,7 @@ gateway::install() {
     --wait \
     --timeout ${timeout}
     
-  log::success "- Rafter in ${release_name} release installed."
+  log::success "- Rafter installed."
 }
 
 # Arguments:
