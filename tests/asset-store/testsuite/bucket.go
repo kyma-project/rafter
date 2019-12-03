@@ -51,6 +51,7 @@ func (b *bucket) Create(callbacks ...func(...interface{})) (string, error) {
 			},
 		},
 	}
+
 	resourceVersion, err := b.resCli.Create(bucket, callbacks...)
 	if err != nil {
 		return resourceVersion, errors.Wrapf(err, "while creating Bucket %s in namespace %s", b.name, b.namespace)
