@@ -51,7 +51,8 @@ azureGateway::create_storage_account_name() {
     AZURE_STORAGE_ACCOUNT_NAME=$(echo "mimrel${random_name_suffix}" | tr "[:upper:]" "[:lower:]")
   else
     # Otherwise (master), operate on triggering commit id
-    AZURE_STORAGE_ACCOUNT_NAME=$(echo "mim${COMMIT_ID}${random_name_suffix}" | tr "[:upper:]" "[:lower:]")
+    local -r commit_id=$(git rev-parse --short HEAD)
+    AZURE_STORAGE_ACCOUNT_NAME=$(echo "mim${commit_id}${random_name_suffix}" | tr "[:upper:]" "[:lower:]")
   fi
 
   log::success "- ${AZURE_STORAGE_ACCOUNT_NAME} storage Account Name created."

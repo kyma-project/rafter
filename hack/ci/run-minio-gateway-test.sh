@@ -16,7 +16,6 @@
 #   - MINIO_GATEWAY_MODE - set to `azure`
 #   - BUILD_TYPE - Defines one of `pr/master/release`. This value is used to create the name of the Azure Storage Account.
 #   - PULL_NUMBER - Defines pull request number. Required if BUILD_TYPE is set to `pr`.
-#   - COMMIT_ID - Defines short commit id. Required if BUILD_TYPE is set to `master`.
 #   - AZURE_RS_GROUP - Defines the name of the Azure Resource Group
 #   - AZURE_REGION - Azure region code
 #   - AZURE_SUBSCRIPTION_ID - ID of the the Azure Subscription
