@@ -116,7 +116,7 @@ func (in *AssetGroupBucketRef) DeepCopy() *AssetGroupBucketRef {
 func (in *AssetGroupList) DeepCopyInto(out *AssetGroupList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]AssetGroup, len(*in))
@@ -180,7 +180,7 @@ func (in *AssetGroupStatus) DeepCopy() *AssetGroupStatus {
 func (in *AssetList) DeepCopyInto(out *AssetList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]Asset, len(*in))
@@ -348,7 +348,7 @@ func (in *Bucket) DeepCopyObject() runtime.Object {
 func (in *BucketList) DeepCopyInto(out *BucketList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]Bucket, len(*in))
@@ -466,7 +466,7 @@ func (in *ClusterAssetGroup) DeepCopyObject() runtime.Object {
 func (in *ClusterAssetGroupList) DeepCopyInto(out *ClusterAssetGroupList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]ClusterAssetGroup, len(*in))
@@ -530,7 +530,7 @@ func (in *ClusterAssetGroupStatus) DeepCopy() *ClusterAssetGroupStatus {
 func (in *ClusterAssetList) DeepCopyInto(out *ClusterAssetList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]ClusterAsset, len(*in))
@@ -621,7 +621,7 @@ func (in *ClusterBucket) DeepCopyObject() runtime.Object {
 func (in *ClusterBucketList) DeepCopyInto(out *ClusterBucketList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]ClusterBucket, len(*in))
