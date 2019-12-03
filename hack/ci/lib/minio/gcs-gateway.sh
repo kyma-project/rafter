@@ -2,25 +2,6 @@
 
 readonly MINIO_GATEWAY_SECRET_NAME="gcs-minio-secret"
 
-gcsGateway::validate_gcp_gateway_environment() {
-  log::info "- Validating Google Cloud Storage Gateway environment..."
-
-  local discoverUnsetVar=false
-  for var in GOOGLE_APPLICATION_CREDENTIALS CLOUDSDK_CORE_PROJECT; do
-    if [ -n "${var-}" ] ; then
-      continue
-    else
-      log::error "- ERROR: $var is not set"
-      discoverUnsetVar=true
-    fi
-  done
-  if [ "${discoverUnsetVar}" = true ] ; then
-    return 1
-  fi
-
-  log::success "- Google Cloud Storage Gateway environment validated."
-}
-
 gcsGateway::authenticate_to_gcp() {
   log::info "- Authenticating to GCP..."
 
@@ -72,6 +53,25 @@ gcsGateway::delete_gcp_buckets() {
   log::success "- Buckets deleted."
 }
 
+gateway::validate_environment() {
+  log::info "- Validating Google Cloud Storage Gateway environment..."
+
+  local discoverUnsetVar=false
+  for var in GOOGLE_APPLICATION_CREDENTIALS CLOUDSDK_CORE_PROJECT; do
+    if [ -n "${var-}" ] ; then
+      continue
+    else
+      log::error "- ERROR: $var is not set"
+      discoverUnsetVar=true
+    fi
+  done
+  if [ "${discoverUnsetVar}" = true ] ; then
+    return 1
+  fi
+
+  log::success "- Google Cloud Storage Gateway environment validated."
+}
+
 # Arguments:
 #   $1 - Minio access key
 #   $2 - Minio secret key
@@ -81,7 +81,6 @@ gateway::before_test() {
   local minio_secretKey=""
   read minio_accessKey minio_secretKey < <(testHelpers::get_k8s_secret_data ${minio_secret_name})
 
-  gcsGateway::validate_gcp_gateway_environment
   gcsGateway::authenticate_to_gcp
   testHelpers::create_k8s_secret "${MINIO_GATEWAY_SECRET_NAME}" "${minio_accessKey}" "${minio_secretKey}" "${GOOGLE_APPLICATION_CREDENTIALS}"
 }

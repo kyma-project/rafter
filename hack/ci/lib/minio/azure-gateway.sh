@@ -1,26 +1,6 @@
 #!/usr/bin/env bash
 
 readonly MINIO_GATEWAY_SECRET_NAME="az-minio-secret"
-AZURE_STORAGE_ACCOUNT_NAME=""
-
-azureGateway::validate_azure_gateway_environment() {
-  log::info "- Validating Azure Blob Gateway environment..."
-
-  local discoverUnsetVar=false
-  for var in AZURE_RS_GROUP AZURE_REGION AZURE_SUBSCRIPTION_ID AZURE_SUBSCRIPTION_APP_ID AZURE_SUBSCRIPTION_SECRET AZURE_SUBSCRIPTION_TENANT BUILD_TYPE; do
-    if [ -n "${var-}" ] ; then
-      continue
-    else
-      log::error "- ERROR: $var is not set"
-      discoverUnsetVar=true
-    fi
-  done
-  if [ "${discoverUnsetVar}" = true ] ; then
-    return 1
-  fi
-
-  log::success "- Azure Blob Gateway environment validated."
-}
 
 azureGateway::authenticate_to_azure() {
   log::info "- Authenticating to Azure..."
@@ -103,8 +83,26 @@ azureGateway::delete_storage_account() {
   log::success "- Storage Account deleted."
 }
 
+gateway::validate_environment() {
+  log::info "- Validating Azure Blob Gateway environment..."
+
+  local discoverUnsetVar=false
+  for var in AZURE_RS_GROUP AZURE_REGION AZURE_SUBSCRIPTION_ID AZURE_SUBSCRIPTION_APP_ID AZURE_SUBSCRIPTION_SECRET AZURE_SUBSCRIPTION_TENANT BUILD_TYPE; do
+    if [ -n "${var-}" ] ; then
+      continue
+    else
+      log::error "- ERROR: $var is not set"
+      discoverUnsetVar=true
+    fi
+  done
+  if [ "${discoverUnsetVar}" = true ] ; then
+    return 1
+  fi
+
+  log::success "- Azure Blob Gateway environment validated."
+}
+
 gateway::before_test() {
-  azureGateway::validate_azure_gateway_environment
   azureGateway::authenticate_to_azure
   azureGateway::create_resource_group
   azureGateway::create_storage_account_name

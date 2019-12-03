@@ -98,6 +98,10 @@ init_environment() {
   fi
 
   gatewayHelpers::check_gateway_mode "${MINIO_GATEWAY_MODE}"
+  gateway::validate_environment
+  if [[ "${MINIO_GATEWAY_MODE}" = "${MINIO_GATEWAY_PROVIDER_AZURE}" ]]; then
+    azureGateway::create_storage_account_name
+  fi
 
   docker::start
 }

@@ -19,3 +19,6 @@ readonly RAFTER_CONTROLLER_MANAGER_CHART="rafter-controller-manager"
 readonly RAFTER_UPLOAD_SERVICE_CHART="rafter-upload-service"
 readonly RAFTER_FRONT_MATTER_SERVICE_CHART="rafter-front-matter-service"
 readonly RAFTER_ASYNCAPI_SERVICE_CHART="rafter-asyncapi-service"
+
+# needed globally by run-minio-gateway-test.sh in `azure`` mode
+export AZURE_STORAGE_ACCOUNT_NAME=""
