@@ -228,11 +228,11 @@ rafter-upload-service:
 
   migrator:
     images:
-      alpine_kubectl:
+      alpineKubectl:
         repository: eu.gcr.io/kyma-project/test-infra/alpine-kubectl
         tag: 'v20190325-ff66a3a'
         pullPolicy: IfNotPresent
-      minio_client:
+      minioClient:
         repository: 'minio/mc'
         tag: 'RELEASE.2019-04-03T17-59-57Z'
         pullPolicy: IfNotPresent

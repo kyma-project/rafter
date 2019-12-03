@@ -115,8 +115,8 @@ spec:
             claimName: {{ include "rafterUploadService.fullname" . }}-migrator
       initContainers:
       - name: mode-checker
-        image: "{{ .Values.migrator.images.alpine_kubectl.repository }}:{{ .Values.migrator.images.alpine_kubectl.tag }}"
-        imagePullPolicy: {{ .Values.migrator.images.alpine_kubectl.pullPolicy }}
+        image: "{{ .Values.migrator.images.alpineKubectl.repository }}:{{ .Values.migrator.images.alpineKubectl.tag }}"
+        imagePullPolicy: {{ .Values.migrator.images.alpineKubectl.pullPolicy }}
         command:
         - bash
         - -c
@@ -126,8 +126,8 @@ spec:
           mountPath: /export
       containers:
       - name: migrator
-        image: "{{ .Values.migrator.images.minio_client.repository }}:{{ .Values.migrator.images.minio_client.tag }}"
-        imagePullPolicy: {{ .Values.migrator.images.minio_client.pullPolicy }}
+        image: "{{ .Values.migrator.images.minioClient.repository }}:{{ .Values.migrator.images.minioClient.tag }}"
+        imagePullPolicy: {{ .Values.migrator.images.minioClient.pullPolicy }}
         command:
         - /bin/sh
         - /config/initialize
@@ -192,8 +192,8 @@ spec:
             claimName: {{ include "rafterUploadService.fullname" . }}-migrator
       containers:
       - name: migrator
-        image: "{{ .Values.migrator.images.minio_client.repository }}:{{ .Values.migrator.images.minio_client.tag }}"
-        imagePullPolicy: {{ .Values.migrator.images.minio_client.pullPolicy }}
+        image: "{{ .Values.migrator.images.minioClient.repository }}:{{ .Values.migrator.images.minioClient.tag }}"
+        imagePullPolicy: {{ .Values.migrator.images.minioClient.pullPolicy }}
         command: ["/bin/sh", "/config/initialize"]
         env:
           {{ include "rafterUploadService.createEnv" ( dict "name" "MINIO_ENDPOINT" "value" .Values.envs.upload.endpoint "context" . ) | nindent 10 }}
@@ -284,8 +284,8 @@ spec:
       serviceAccountName: {{ include "rafterUploadService.fullname" . }}-migrator-delete-pvc
       containers:
       - name: pvc-remover
-        image: "{{ .Values.migrator.images.alpine_kubectl.repository }}:{{ .Values.migrator.images.alpine_kubectl.tag }}"
-        imagePullPolicy: {{ .Values.migrator.images.alpine_kubectl.pullPolicy }}
+        image: "{{ .Values.migrator.images.alpineKubectl.repository }}:{{ .Values.migrator.images.alpineKubectl.tag }}"
+        imagePullPolicy: {{ .Values.migrator.images.alpineKubectl.pullPolicy }}
         command:
         - bash
         - -c
