@@ -50,11 +50,11 @@ type Uploader struct {
 
 var (
 	uploadFilesDurationHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name: "assetstore_upload_service_upload_files_duration_seconds",
+		Name: "rafter_upload_service_upload_files_duration_seconds",
 		Help: "All files upload duration distribution",
 	})
 	uploadSingleFileDurationHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name: "assetstore_upload_service_upload_single_file_duration_seconds",
+		Name: "rafter_upload_service_upload_single_file_duration_seconds",
 		Help: "Single file upload duration distribution",
 	})
 )

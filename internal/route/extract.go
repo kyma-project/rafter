@@ -21,11 +21,11 @@ import (
 
 var (
 	httpServeHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name: "assetstore_metadata_service_http_request_duration_seconds",
+		Name: "rafter_metadata_service_http_request_duration_seconds",
 		Help: "Request's duration distribution",
 	})
 	statusCodesCounter = promauto.NewCounterVec(prometheus.CounterOpts{
-		Name: "assetstore_metadata_service_http_request_returned_status_code",
+		Name: "rafter_metadata_service_http_request_returned_status_code",
 		Help: "Service's HTTP response status code",
 	}, []string{"status_code"})
 )

@@ -23,7 +23,7 @@ type extractor struct {
 
 var (
 	readingMetadataHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name:    "assetstore_metadata_service_read_file_metadata_duration_seconds",
+		Name:    "rafter_metadata_service_read_file_metadata_duration_seconds",
 		Help:    "Reading Metadata from file duration distribution",
 		Buckets: prometheus.ExponentialBuckets(0.00001, 2, 16),
 	})

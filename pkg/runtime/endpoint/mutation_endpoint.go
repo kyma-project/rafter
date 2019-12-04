@@ -28,11 +28,11 @@ var _ service.HTTPEndpoint = &mutationEndpoint{}
 
 var (
 	httpServeAndMutationHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name: "cms_services_http_request_and_mutation_duration_seconds",
+		Name: "rafter_services_http_request_and_mutation_duration_seconds",
 		Help: "Request handling and mutation duration distribution",
 	})
 	mutationStatusCodeCounter = promauto.NewCounterVec(prometheus.CounterOpts{
-		Name: "cms_services_handle_mutation_status_code",
+		Name: "rafter_services_handle_mutation_status_code",
 		Help: "Status code returned by mutation handler",
 	}, []string{"status_code"})
 )

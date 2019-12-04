@@ -28,11 +28,11 @@ var _ service.HTTPEndpoint = &validationEndpoint{}
 
 var (
 	httpServeAnValidationHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name: "cms_services_http_request_and_validation_duration_seconds",
+		Name: "rafter_services_http_request_and_validation_duration_seconds",
 		Help: "Request handling and validation duration distribution",
 	})
 	validatorStatusCodeCounter = promauto.NewCounterVec(prometheus.CounterOpts{
-		Name: "cms_services_handle_validation_status_code",
+		Name: "rafter_services_handle_validation_status_code",
 		Help: "Status code returned by validation handler",
 	}, []string{"status_code"})
 )

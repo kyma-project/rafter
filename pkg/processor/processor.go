@@ -40,12 +40,12 @@ type Processor struct {
 
 var (
 	processSingleFileHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name:    "assetstore_metadata_service_process_single_file_duration_seconds",
+		Name:    "rafter_metadata_service_process_single_file_duration_seconds",
 		Help:    "Duration distribution of processing single file",
 		Buckets: prometheus.ExponentialBuckets(0.00001, 2, 16), // discuss about loading those values from envs, not only here but generally
 	})
 	processFilesHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name: "assetstore_metadata_service_process_all_files_duration_seconds",
+		Name: "rafter_metadata_service_process_all_files_duration_seconds",
 		Help: "Duration distribution of processing all files and extracting metadata",
 	})
 )
