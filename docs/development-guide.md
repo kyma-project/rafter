@@ -59,7 +59,7 @@ make integration-test
 There are two types of tests you can run for Rafter to check if the Gateway mode works as expected:
 
 - `minio-gateway-test` tests Rafter that already has MinIO in the Gateway mode.
-- `minio-gateway-migration-test` tests if Rafter runs as expected by switching it from MinIO to MinIO Gateway.
+- `minio-gateway-migration-test` tests if Rafter runs as expected by switching it from MinIO in stand-alone mode to MinIO Gateway.
 
 MinIO Gateway tests can run on [`GCS`](https://cloud.google.com/storage/) and [`Azure`](https://azure.microsoft.com/en-us/) platforms. See the [**MinIO Gateway environments**](#minio-gateway-environments) section to know which environment variables you must define for a given platform before you run MinIO Gateway tests.
 
@@ -71,7 +71,7 @@ You can run MinIO Gateway tests for Rafter with the same command both locally an
 make minio-gateway-test
 ```
 
-- to switch from MinIO to MinIO Gateway
+- to switch from MinIO in stand-alone mode to MinIO Gateway
 
 ```bash
 make minio-gateway-migration-test
@@ -95,6 +95,7 @@ See the Azure variables:
 | --- | --- |
 | **MINIO_GATEWAY_MODE** | Platform for MinIO Gateway tests |
 | **BUILD_TYPE** | Defines one of `pr/master/release`. This value is used to create the name of the Azure Storage Account. |
+| **PULL_NUMBER** | Defines the pull request number. Required if **BUILD_TYPE** is set to `pr`. |
 | **AZURE_RS_GROUP** | Defines the name of the Azure Resource Group |
 | **AZURE_REGION** | Azure region code |
 | **AZURE_SUBSCRIPTION_ID** | ID of the the Azure Subscription |
