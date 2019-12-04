@@ -47,9 +47,9 @@ Use these environment variables to configure the service:
 
 | Name | Required | Default | Description |
 |------|----------|---------|-------------|
-| **APP_SERVICE_PORT** | No | `3000` | The port on which the HTTP server listens |
-| **APP_SERVICE_HOST** | No | `127.0.0.1` | The host on which the HTTP server listens |
-| **APP_VERBOSE** | No | `false` | The toggle used to enable detailed logs in the service |
+| **APP_SERVICE_PORT** | No | `3000` | Port on which the HTTP server listens |
+| **APP_SERVICE_HOST** | No | `127.0.0.1` | Host on which the HTTP server listens |
+| **APP_VERBOSE** | No | `false` | Toggle used to enable detailed logs in the service |
 
 ## Development
 
