@@ -24,7 +24,7 @@ type Config struct {
 	ClusterBucketName string        `envconfig:"default=test-cluster-bucket"`
 	CommonAssetPrefix string        `envconfig:"default=test"`
 	UploadServiceUrl  string        `envconfig:"default=http://localhost:3000/v1/upload"`
-	WaitTimeout       time.Duration `envconfig:"default=15s"`
+	WaitTimeout       time.Duration `envconfig:"default=2m"`
 	Minio             MinioConfig
 }
 
@@ -118,6 +118,14 @@ func (t *TestSuite) Run() {
 	err = t.waitForBucketsReady()
 	failOnError(t.g, err)
 
+	t.t.Log("Creating ClusterBuckets...")
+	err = t.createClusterBuckets()
+	failOnError(t.g, err)
+
+	t.t.Log("Waiting for ready ClusterBuckets...")
+	err = t.waitForClusterBucketsReady()
+	failOnError(t.g, err)
+
 	t.t.Log("Creating AssetGroup...")
 	err = t.createAssetGroup()
 	failOnError(t.g, err)
@@ -184,33 +192,19 @@ func (t *TestSuite) Cleanup() {
 }
 
 func (t *TestSuite) createBuckets() error {
-	err := t.bucket.Create()
-	if err != nil {
-		return err
-	}
+	return t.bucket.Create()
+}
 
-	err = t.clusterBucket.Create()
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (t *TestSuite) createClusterBuckets() error {
+	return t.clusterBucket.Create()
 }
 
 func (t *TestSuite) createAssetGroup() error {
-	err := t.assetGroup.Create(t.assetDetails)
-	if err != nil {
-		return err
-	}
-	return nil
+	return t.assetGroup.Create(t.assetDetails)
 }
 
 func (t *TestSuite) createClusterAssetGroup() error {
-	err := t.clusterAssetGroup.Create(t.assetDetails)
-	if err != nil {
-		return err
-	}
-	return nil
+	return t.clusterAssetGroup.Create(t.assetDetails)
 }
 
 func (t *TestSuite) systemBucketNameFromUploadResult(result *upload.Response) string {
@@ -316,83 +310,49 @@ func (t *TestSuite) verifyDeletedFiles(files []uploadedFile) error {
 }
 
 func (t *TestSuite) waitForBucketsReady() error {
-	err := t.bucket.WaitForStatusReady()
-	if err != nil {
-		return err
-	}
+	return t.bucket.WaitForStatusReady()
+}
 
-	err = t.clusterBucket.WaitForStatusReady()
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (t *TestSuite) waitForClusterBucketsReady() error {
+	return t.clusterBucket.WaitForStatusReady()
 }
 
 func (t *TestSuite) waitForAssetGroupReady() error {
-	err := t.assetGroup.WaitForStatusReady()
-	if err != nil {
-		return err
-	}
-	return nil
+	return t.assetGroup.WaitForStatusReady()
 }
 
 func (t *TestSuite) waitForClusterAssetGroupReady() error {
-	err := t.clusterAssetGroup.WaitForStatusReady()
-	if err != nil {
-		return err
-	}
-	return nil
+	return t.clusterAssetGroup.WaitForStatusReady()
 }
 
-func (t *TestSuite) deleteAssets() error {
-	err := t.asset.DeleteMany(t.assetDetails)
-	if err != nil {
-		return err
-	}
-
-	err = t.clusterAsset.DeleteMany(t.assetDetails)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
+// func (t *TestSuite) deleteAssets() error {
+// 	err := t.asset.DeleteMany(t.assetDetails)
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	err = t.clusterAsset.DeleteMany(t.assetDetails)
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	return nil
+// }
 
 func (t *TestSuite) deleteBuckets() error {
-	err := t.bucket.Delete()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return t.bucket.Delete()
 }
 
 func (t *TestSuite) deleteClusterBuckets() error {
-	err := t.clusterBucket.Delete()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return t.clusterBucket.Delete()
 }
 
 func (t *TestSuite) deleteAssetGroups() error {
-	err := t.assetGroup.Delete()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return t.assetGroup.Delete()
 }
 
 func (t *TestSuite) deleteClusterAssetGroups() error {
-	err := t.clusterAssetGroup.Delete()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return t.clusterAssetGroup.Delete()
 }
 
 func failOnError(g *gomega.GomegaWithT, err error) {
