@@ -135,7 +135,7 @@ func (ag *assetGroup) Get() (*v1beta1.AssetGroup, error) {
 	return &res, nil
 }
 
-func (ag *assetGroup) Delete(name string) error {
+func (ag *assetGroup) Delete() error {
 	err := ag.resCli.Delete(ag.Name)
 	if err != nil {
 		return errors.Wrapf(err, "while deleting AssetGroup %s in namespace %s", ag.Name, ag.Namespace)

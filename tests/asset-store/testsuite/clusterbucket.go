@@ -60,7 +60,7 @@ func (b *clusterBucket) Create() error {
 func (b *clusterBucket) WaitForStatusReady() error {
 	err := waiter.WaitAtMost(func() (bool, error) {
 
-		res, err := b.Get(b.name)
+		res, err := b.Get()
 		if err != nil {
 			return false, err
 		}
@@ -78,8 +78,8 @@ func (b *clusterBucket) WaitForStatusReady() error {
 	return err
 }
 
-func (b *clusterBucket) Get(name string) (*v1beta1.ClusterBucket, error) {
-	u, err := b.resCli.Get(name)
+func (b *clusterBucket) Get() (*v1beta1.ClusterBucket, error) {
+	u, err := b.resCli.Get(b.name)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (b *clusterBucket) Get(name string) (*v1beta1.ClusterBucket, error) {
 	var res v1beta1.ClusterBucket
 	err = runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &res)
 	if err != nil {
-		return nil, errors.Wrapf(err, "while converting ClusterBucket %s", name)
+		return nil, errors.Wrapf(err, "while converting ClusterBucket %s", b.name)
 	}
 
 	return &res, nil

@@ -60,7 +60,7 @@ func (b *bucket) Create() error {
 
 func (b *bucket) WaitForStatusReady() error {
 	err := waiter.WaitAtMost(func() (bool, error) {
-		res, err := b.Get(b.name)
+		res, err := b.Get()
 		if err != nil {
 			return false, err
 		}
@@ -78,8 +78,8 @@ func (b *bucket) WaitForStatusReady() error {
 	return nil
 }
 
-func (b *bucket) Get(name string) (*v1beta1.Bucket, error) {
-	u, err := b.resCli.Get(name)
+func (b *bucket) Get() (*v1beta1.Bucket, error) {
+	u, err := b.resCli.Get(b.name)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (b *bucket) Get(name string) (*v1beta1.Bucket, error) {
 	var res v1beta1.Bucket
 	err = runtime.DefaultUnstructuredConverter.FromUnstructured(u.Object, &res)
 	if err != nil {
-		return nil, errors.Wrapf(err, "while converting Bucket %s", name)
+		return nil, errors.Wrapf(err, "while converting Bucket %s", b.name)
 	}
 
 	return &res, nil

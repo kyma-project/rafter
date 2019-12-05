@@ -15,10 +15,10 @@ import (
 )
 
 type clusterAssetGroup struct {
-	resCli      *resource.Resource
-	ClusterBucketName  string
-	Name        string
-	waitTimeout time.Duration
+	resCli            *resource.Resource
+	ClusterBucketName string
+	Name              string
+	waitTimeout       time.Duration
 }
 
 func newClusterAssetGroup(dynamicCli dynamic.Interface, name, bucketName string, waitTimeout time.Duration, logFn func(format string, args ...interface{})) *clusterAssetGroup {
@@ -28,9 +28,9 @@ func newClusterAssetGroup(dynamicCli dynamic.Interface, name, bucketName string,
 			Group:    v1beta1.GroupVersion.Group,
 			Resource: "clusterassetgroups",
 		}, "", logFn),
-		waitTimeout: waitTimeout,
-		ClusterBucketName:  bucketName,
-		Name:        name,
+		waitTimeout:       waitTimeout,
+		ClusterBucketName: bucketName,
+		Name:              name,
 	}
 }
 
@@ -45,13 +45,13 @@ func (cag *clusterAssetGroup) Create(assets []assetData) error {
 		})
 	}
 
-	assetGr := &v1beta1.ClusterAssetGroup{
+	clusterAssetGr := &v1beta1.ClusterAssetGroup{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ClusterAssetGroup",
 			APIVersion: v1beta1.GroupVersion.String(),
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      cag.Name,
+			Name: cag.Name,
 		},
 		Spec: v1beta1.ClusterAssetGroupSpec{
 			CommonAssetGroupSpec: v1beta1.CommonAssetGroupSpec{
@@ -60,7 +60,7 @@ func (cag *clusterAssetGroup) Create(assets []assetData) error {
 		},
 	}
 
-	err := cag.resCli.Create(assetGr)
+	err := cag.resCli.Create(clusterAssetGr)
 	if err != nil {
 		return errors.Wrapf(err, "while creating AssetGroup %s", cag.Name)
 	}
@@ -68,10 +68,10 @@ func (cag *clusterAssetGroup) Create(assets []assetData) error {
 	return nil
 }
 
-func (ag *clusterAssetGroup) WaitForStatusReady() error {
+func (cag *clusterAssetGroup) WaitForStatusReady() error {
 	err := waiter.WaitAtMost(func() (bool, error) {
 
-		res, err := ag.Get()
+		res, err := cag.Get()
 		if err != nil {
 			return false, err
 		}
@@ -81,7 +81,7 @@ func (ag *clusterAssetGroup) WaitForStatusReady() error {
 		}
 
 		return true, nil
-	}, ag.waitTimeout)
+	}, cag.waitTimeout)
 	if err != nil {
 		return errors.Wrapf(err, "while waiting for ready AssetGroup resource")
 	}
@@ -89,9 +89,9 @@ func (ag *clusterAssetGroup) WaitForStatusReady() error {
 	return nil
 }
 
-func (ag *clusterAssetGroup) WaitForDeletedResource(assets []assetData) error {
+func (cag *clusterAssetGroup) WaitForDeletedResource(assets []assetData) error {
 	err := waiter.WaitAtMost(func() (bool, error) {
-		_, err := ag.Get()
+		_, err := cag.Get()
 
 		if err == nil {
 			return false, nil
@@ -102,7 +102,7 @@ func (ag *clusterAssetGroup) WaitForDeletedResource(assets []assetData) error {
 		}
 
 		return true, nil
-	}, ag.waitTimeout)
+	}, cag.waitTimeout)
 	if err != nil {
 		return errors.Wrap(err, "while deleting Asset resources")
 	}
@@ -110,8 +110,8 @@ func (ag *clusterAssetGroup) WaitForDeletedResource(assets []assetData) error {
 	return nil
 }
 
-func (ag *clusterAssetGroup) Get() (*v1beta1.ClusterAssetGroup, error) {
-	u, err := ag.resCli.Get(ag.Name)
+func (cag *clusterAssetGroup) Get() (*v1beta1.ClusterAssetGroup, error) {
+	u, err := cag.resCli.Get(cag.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -123,16 +123,16 @@ func (ag *clusterAssetGroup) Get() (*v1beta1.ClusterAssetGroup, error) {
 			return nil, err
 		}
 
-		return nil, errors.Wrapf(err, "while converting AssetGroup %s", ag.Name)
+		return nil, errors.Wrapf(err, "while converting AssetGroup %s", cag.Name)
 	}
 
 	return &res, nil
 }
 
-func (ag *clusterAssetGroup) Delete(name string) error {
-	err := ag.resCli.Delete(ag.Name)
+func (cag *clusterAssetGroup) Delete() error {
+	err := cag.resCli.Delete(cag.Name)
 	if err != nil {
-		return errors.Wrapf(err, "while deleting AssetGroup %s", ag.Name)
+		return errors.Wrapf(err, "while deleting AssetGroup %s", cag.Name)
 	}
 
 	return nil

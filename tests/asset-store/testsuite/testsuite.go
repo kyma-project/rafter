@@ -151,30 +151,35 @@ func (t *TestSuite) Run() {
 	// t.t.Log("Verifying uploaded files...")
 	// err = t.verifyUploadedFiles(files)
 	// failOnError(t.g, err)
-
-	// t.t.Log("Deleting assets...")
-	// err = t.deleteAssets()
-	// failOnError(t.g, err)
-	//
-	// t.t.Log("Waiting for deleted assets...")
-	// err = t.waitForAssetsDeleted()
-	// failOnError(t.g, err)
-
-	// t.t.Log("Verifying if files have been deleted...")
-	// err = t.verifyDeletedFiles(files)
-	// failOnError(t.g, err)
 }
 
 func (t *TestSuite) Cleanup() {
 	t.t.Log("Cleaning up...")
 
-	err := t.deleteBuckets()
+	// err := t.deleteAssets()
+	// failOnError(t.g, err)
+
+	// err = t.waitForAssetsDeleted()
+	// failOnError(t.g, err)
+
+	// err = t.deleteClusterAssets()
+	// t.t.Log("Verifying if files have been deleted...")
+	// err = t.verifyDeletedFiles(files)
+	// failOnError(t.g, err)
+
+	err := t.deleteClusterAssetGroups()
+	failOnError(t.g, err)
+
+	err = t.deleteAssetGroups()
+	failOnError(t.g, err)
+
+	err = t.deleteBuckets()
+	failOnError(t.g, err)
+
+	err = t.deleteClusterBuckets()
 	failOnError(t.g, err)
 
 	err = t.namespace.Delete()
-	failOnError(t.g, err)
-
-	err = deleteFiles(t.minioCli, t.uploadResult, t.t.Logf)
 	failOnError(t.g, err)
 }
 
@@ -360,7 +365,29 @@ func (t *TestSuite) deleteBuckets() error {
 		return err
 	}
 
-	err = t.clusterBucket.Delete()
+	return nil
+}
+
+func (t *TestSuite) deleteClusterBuckets() error {
+	err := t.clusterBucket.Delete()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (t *TestSuite) deleteAssetGroups() error {
+	err := t.assetGroup.Delete()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (t *TestSuite) deleteClusterAssetGroups() error {
+	err := t.clusterAssetGroup.Delete()
 	if err != nil {
 		return err
 	}
