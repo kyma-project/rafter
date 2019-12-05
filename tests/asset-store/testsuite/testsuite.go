@@ -19,25 +19,26 @@ import (
 )
 
 type Config struct {
-	Namespace         string        `envconfig:"default=test-asset-store"`
+	Namespace         string        `envconfig:"default=test-rafter"`
 	BucketName        string        `envconfig:"default=test-bucket"`
 	ClusterBucketName string        `envconfig:"default=test-cluster-bucket"`
 	CommonAssetPrefix string        `envconfig:"default=test"`
 	UploadServiceUrl  string        `envconfig:"default=http://localhost:3000/v1/upload"`
-	WaitTimeout       time.Duration `envconfig:"default=2m"`
+	WaitTimeout       time.Duration `envconfig:"default=15s"`
 	Minio             MinioConfig
 }
 
 type TestSuite struct {
-	namespace     *namespace.Namespace
-	bucket        *bucket
-	clusterBucket *clusterBucket
-	fileUpload    *testData
-	asset         *asset
-	clusterAsset  *clusterAsset
-
-	t *testing.T
-	g *gomega.GomegaWithT
+	namespace         *namespace.Namespace
+	bucket            *bucket
+	clusterBucket     *clusterBucket
+	fileUpload        *testData
+	asset             *asset
+	clusterAsset      *clusterAsset
+	assetGroup        *assetGroup
+	clusterAssetGroup *clusterAssetGroup
+	t                 *testing.T
+	g                 *gomega.GomegaWithT
 
 	assetDetails []assetData
 	uploadResult *upload.Response
@@ -69,24 +70,39 @@ func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWith
 	minioCli.SetCustomTransport(transCfg)
 
 	ns := namespace.New(coreCli, cfg.Namespace)
-
+	ag := newAssetGroup(dynamicCli, "example-asset-group", cfg.Namespace, cfg.BucketName, cfg.WaitTimeout, t.Logf)
+	cag := newClusterAssetGroup(dynamicCli, "cluster-asset-group", cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 	b := newBucket(dynamicCli, cfg.BucketName, cfg.Namespace, cfg.WaitTimeout, t.Logf)
 	cb := newClusterBucket(dynamicCli, cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 	a := newAsset(dynamicCli, cfg.Namespace, cfg.BucketName, cfg.WaitTimeout, t.Logf)
 	ca := newClusterAsset(dynamicCli, cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 
-	return &TestSuite{
-		namespace:     ns,
-		bucket:        b,
-		clusterBucket: cb,
-		fileUpload:    newTestData(cfg.UploadServiceUrl),
-		asset:         a,
-		clusterAsset:  ca,
-		t:             t,
-		g:             g,
-		minioCli:      minioCli,
+	as := []assetData{{
+		Name: "yaml",
+		URL:  "https://raw.githubusercontent.com/asyncapi/asyncapi/master/examples/1.2.0/slack-rtm.yml",
+		Mode: "single",
+		Type: "asyncapi",
+	}, {
+		Name: "swagger",
+		URL:  "https://petstore.swagger.io/v2/swagger.json",
+		Mode: "single",
+		Type: "openapi",
+	}}
 
-		cfg: cfg,
+	return &TestSuite{
+		assetGroup:        ag,
+		namespace:         ns,
+		bucket:            b,
+		clusterBucket:     cb,
+		fileUpload:        newTestData(cfg.UploadServiceUrl),
+		asset:             a,
+		clusterAsset:      ca,
+		clusterAssetGroup: cag,
+		t:                 t,
+		g:                 g,
+		minioCli:          minioCli,
+		assetDetails:      as,
+		cfg:               cfg,
 	}, nil
 }
 
@@ -94,48 +110,59 @@ func (t *TestSuite) Run() {
 	err := t.namespace.Create()
 	failOnError(t.g, err)
 
-	t.t.Log("Creating buckets...")
+	t.t.Log("Creating Buckets...")
 	err = t.createBuckets()
 	failOnError(t.g, err)
 
-	t.t.Log("Waiting for ready buckets...")
+	t.t.Log("Waiting for ready Buckets...")
 	err = t.waitForBucketsReady()
 	failOnError(t.g, err)
 
-	t.t.Log("Uploading test files...")
-	uploadResult, err := t.uploadTestFiles()
+	t.t.Log("Creating AssetGroup...")
+	err = t.createAssetGroup()
 	failOnError(t.g, err)
+	t.t.Log("Waiting for ready AssetGroup...")
+	err = t.waitForAssetGroupReady()
 
-	t.uploadResult = uploadResult
-
-	t.systemBucketName = t.systemBucketNameFromUploadResult(uploadResult)
-
-	t.t.Log("Creating assets...")
-	err = t.createAssets(uploadResult)
+	t.t.Log("Creating ClusterAssetGroup")
+	err = t.createClusterAssetGroup()
 	failOnError(t.g, err)
+	t.t.Log("Waiting for ready ClusterAssetGroup...")
+	err = t.waitForClusterAssetGroupReady()
+	// t.t.Log("Uploading test files...")
+	// uploadResult, err := t.uploadTestFiles()
+	// failOnError(t.g, err)
+	//
+	// t.uploadResult = uploadResult
+	//
+	// t.systemBucketName = t.systemBucketNameFromUploadResult(uploadResult)
+	//
+	// t.t.Log("Creating assets...")
+	// err = t.createAssets(uploadResult)
+	// failOnError(t.g, err)
+	//
+	// t.t.Log("Waiting for ready assets...")
+	// err = t.waitForAssetsReady()
+	// failOnError(t.g, err)
+	//
+	// files, err := t.populateUploadedFiles()
+	// failOnError(t.g, err)
+	//
+	// t.t.Log("Verifying uploaded files...")
+	// err = t.verifyUploadedFiles(files)
+	// failOnError(t.g, err)
 
-	t.t.Log("Waiting for ready assets...")
-	err = t.waitForAssetsReady()
-	failOnError(t.g, err)
+	// t.t.Log("Deleting assets...")
+	// err = t.deleteAssets()
+	// failOnError(t.g, err)
+	//
+	// t.t.Log("Waiting for deleted assets...")
+	// err = t.waitForAssetsDeleted()
+	// failOnError(t.g, err)
 
-	files, err := t.populateUploadedFiles()
-	failOnError(t.g, err)
-
-	t.t.Log("Verifying uploaded files...")
-	err = t.verifyUploadedFiles(files)
-	failOnError(t.g, err)
-
-	t.t.Log("Deleting assets...")
-	err = t.deleteAssets()
-	failOnError(t.g, err)
-
-	t.t.Log("Waiting for deleted assets...")
-	err = t.waitForAssetsDeleted()
-	failOnError(t.g, err)
-
-	t.t.Log("Verifying if files have been deleted...")
-	err = t.verifyDeletedFiles(files)
-	failOnError(t.g, err)
+	// t.t.Log("Verifying if files have been deleted...")
+	// err = t.verifyDeletedFiles(files)
+	// failOnError(t.g, err)
 }
 
 func (t *TestSuite) Cleanup() {
@@ -162,6 +189,22 @@ func (t *TestSuite) createBuckets() error {
 		return err
 	}
 
+	return nil
+}
+
+func (t *TestSuite) createAssetGroup() error {
+	err := t.assetGroup.Create(t.assetDetails)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *TestSuite) createClusterAssetGroup() error {
+	err := t.clusterAssetGroup.Create(t.assetDetails)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -278,6 +321,22 @@ func (t *TestSuite) waitForBucketsReady() error {
 		return err
 	}
 
+	return nil
+}
+
+func (t *TestSuite) waitForAssetGroupReady() error {
+	err := t.assetGroup.WaitForStatusReady()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *TestSuite) waitForClusterAssetGroupReady() error {
+	err := t.clusterAssetGroup.WaitForStatusReady()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

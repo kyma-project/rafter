@@ -40,7 +40,7 @@ func (r *Resource) Create(res interface{}) error {
 			r.log("Cannot create. Resource %s with name '%s' already exist.", unstructuredObj.GetKind(), unstructuredObj.GetName())
 			return nil
 		}
-		return errors.Wrapf(err, "while creating resource %s ", unstructuredObj.GetKind())
+		return errors.Wrapf(err, "while creating resource %s", unstructuredObj.GetKind())
 	}
 
 	return nil
