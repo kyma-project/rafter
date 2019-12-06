@@ -79,4 +79,4 @@ go run ./cmd/uploader/main.go --stderrthreshold=INFO -logtostderr=false
 
 ## Development
 
-There is a unified way of testing all changes in Rafter components. For details on how to run unit and integration tests, read [this](../../docs/development-guide.md) development guide.
+There is a unified way of testing all changes in Rafter components. For details on how to run unit, integration, and MinIO Gateway tests, read [this](../../docs/development-guide.md) development guide.

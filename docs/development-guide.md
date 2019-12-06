@@ -46,7 +46,7 @@ make test
 
 >**NOTE:** Install [Go](https://golang.org) and [Docker](https://www.docker.com/) before you run integration tests.
 
-You can run the integration tests for Rafter with the same command both locally and on a cluster. To perform integration tests, copy the [`test-infra`](https://github.com/kyma-project/test-infra) repository under your `$GOPATH` workspace as `${GOPATH}/src/github.com/kyma-project/test-infra/` and run this command from the root of the `rafter` repository:
+You can run the integration tests for Rafter with the same command both locally and against a cluster. To perform integration tests, copy the [`test-infra`](https://github.com/kyma-project/test-infra) repository under your `$GOPATH` workspace as `${GOPATH}/src/github.com/kyma-project/test-infra/` and run this command from the root of the `rafter` repository:
 
 ```bash
 make integration-test
@@ -63,7 +63,7 @@ There are two types of tests you can run for Rafter to check if the Gateway mode
 
 MinIO Gateway tests can run on [`GCS`](https://cloud.google.com/storage/) and [`Azure`](https://azure.microsoft.com/en-us/) platforms. See the [**MinIO Gateway environments**](#minio-gateway-environments) section to know which environment variables you must define for a given platform before you run MinIO Gateway tests.
 
-You can run MinIO Gateway tests for Rafter with the same command both locally and on a cluster. Before you start, copy the [`test-infra`](https://github.com/kyma-project/test-infra) repository under your `$GOPATH` workspace as `${GOPATH}/src/github.com/kyma-project/test-infra/`. Run one of these commands from the root of the `rafter` repository:
+You can run MinIO Gateway tests for Rafter with the same command both locally and against a cluster. Before you start, copy the [`test-infra`](https://github.com/kyma-project/test-infra) repository under your `$GOPATH` workspace as `${GOPATH}/src/github.com/kyma-project/test-infra/`. Run one of these commands from the root of the `rafter` repository:
 
 - for MinIO already in the Gateway mode
 
@@ -79,7 +79,7 @@ make minio-gateway-migration-test
 
 ### MinIO Gateway environments
 
-See the GCP variables:
+See the required GCP variables:
 
 | Variable | Description |
 | --- | --- |
@@ -89,7 +89,7 @@ See the GCP variables:
 
 >**NOTE:** **MINIO_GATEWAY_MODE** must be set to `gcs`.
 
-See the Azure variables:
+See the required Azure variables:
 
 | Variable | Description |
 | --- | --- |
