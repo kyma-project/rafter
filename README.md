@@ -15,7 +15,7 @@ Rafter is a solution for storing and managing different types of files called as
 - Bucket CR which manages buckets
 - AssetGroup CR which manages a group of Asset CRs of a specific type to make it easier to use and extract webhook information
 
-Rafter enables you to manage assets using supported webhooks. For example, if you use Rafter to store a file such as a specification, you can additionally define a webhook service that Rafer should call before the file is sent to storage. The webhook service can:
+Rafter enables you to manage assets using supported webhooks. For example, if you use Rafter to store a file such as a specification, you can additionally define a webhook service that Rafter should call before the file is sent to storage. The webhook service can:
 
 - validate the file
 - mutate the file
@@ -27,14 +27,14 @@ Rafter comes with the following set of services and extensions compatible with R
 - [AsyncAPI Service](./cmd/extension/asyncapi/README.md) (extension)
 - [Front Matter Service](./cmd/extension/frontmatter/README.md) (extension)
 
->**NOTE:** If you want to learn how Rafter is implemented in [Kyma](https://kyma-project.io), read the [Asset Store](https://kyma-project.io/docs/components/asset-store/) and [Headless CMS](https://kyma-project.io/docs/components/headless-cms/) documentation.
+>**NOTE:** To learn how Rafter is implemented in [Kyma](https://kyma-project.io), read [Asset Store](https://kyma-project.io/docs/components/asset-store/) and [Headless CMS](https://kyma-project.io/docs/components/headless-cms/) documentation.
 
 ## Quick start
 
 Try out [this](https://katacoda.com/rafter/scenarios/rafter) set of interactive tutorials to see Rafter in action on Minikube. These tutorials show how to:
 - Quickly install Rafter with our Helm Chart.
 - Host a simple static site.
-- Use Rafter as headless CMS with support of Rafter metadata webhook and Front Matter service . This example is based on a use case of storing Markdown files.
+- Use Rafter as headless CMS with the support of Rafter metadata webhook and Front Matter service . This example is based on a use case of storing Markdown files.
 - Use Rafter as headless CMS with the support of Rafter validation and conversion webhooks. This example is based on a use case of storing [AsyncAPI](https://asyncapi.org/) specifications.
 
 >**NOTE:** Read [this](./docs/development-guide.md) development guide to start developing the project.
