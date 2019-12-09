@@ -2,25 +2,24 @@ package testsuite
 
 import (
 	"context"
+	"time"
+
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/kyma-project/rafter/tests/asset-store/pkg/resource"
 	watchtools "k8s.io/client-go/tools/watch"
-	"time"
 
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/dynamic/dynamicinformer"
 )
 
 type bucket struct {
-	resCli          *resource.Resource
-	name            string
-	namespace       string
-	waitTimeout     time.Duration
-	informerFactory dynamicinformer.DynamicSharedInformerFactory
+	resCli      *resource.Resource
+	name        string
+	namespace   string
+	waitTimeout time.Duration
 }
 
 func newBucket(dynamicCli dynamic.Interface, name, namespace string, waitTimeout time.Duration, logFn func(format string, args ...interface{})) *bucket {
@@ -30,10 +29,9 @@ func newBucket(dynamicCli dynamic.Interface, name, namespace string, waitTimeout
 			Group:    v1beta1.GroupVersion.Group,
 			Resource: "buckets",
 		}, namespace, logFn),
-		name:            name,
-		namespace:       namespace,
-		waitTimeout:     waitTimeout,
-		informerFactory: dynamicinformer.NewFilteredDynamicSharedInformerFactory(dynamicCli, waitTimeout, namespace, nil),
+		name:        name,
+		namespace:   namespace,
+		waitTimeout: waitTimeout,
 	}
 }
 
