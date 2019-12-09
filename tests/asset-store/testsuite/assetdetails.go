@@ -12,6 +12,7 @@ type assetData struct {
 	Name string
 	URL  string
 	Mode v1beta1.AssetMode
+	Type v1beta1.AssetGroupSourceType
 }
 
 func convertToAssetResourceDetails(response *upload.Response, prefix string) []assetData {

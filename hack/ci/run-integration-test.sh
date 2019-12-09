@@ -71,7 +71,7 @@ finalize() {
 
   return "${exit_status}"
 }
-trap "finalize" EXIT
+#trap "finalize" EXIT
 
 main() {
   init_environment

@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/kyma-project/rafter/tests/asset-store/pkg/upload"
 	"github.com/minio/minio-go"
 
@@ -19,22 +20,24 @@ import (
 )
 
 type Config struct {
-	Namespace         string        `envconfig:"default=test-asset-store"`
+	Namespace         string        `envconfig:"default=default"`
 	BucketName        string        `envconfig:"default=test-bucket"`
 	ClusterBucketName string        `envconfig:"default=test-cluster-bucket"`
 	CommonAssetPrefix string        `envconfig:"default=test"`
 	UploadServiceUrl  string        `envconfig:"default=http://localhost:3000/v1/upload"`
-	WaitTimeout       time.Duration `envconfig:"default=30s"`
+	WaitTimeout       time.Duration `envconfig:"default=2m"`
 	Minio             MinioConfig
 }
 
 type TestSuite struct {
-	namespace     *namespace.Namespace
-	bucket        *bucket
-	clusterBucket *clusterBucket
-	fileUpload    *testData
-	asset         *asset
-	clusterAsset  *clusterAsset
+	namespace         *namespace.Namespace
+	bucket            *bucket
+	clusterBucket     *clusterBucket
+	fileUpload        *testData
+	asset             *asset
+	clusterAsset      *clusterAsset
+	assetGroup        *assetGroup
+	clusterAssetGroup *clusterAssetGroup
 
 	t *testing.T
 	g *gomega.GomegaWithT
@@ -46,7 +49,8 @@ type TestSuite struct {
 	minioCli         *minio.Client
 	cfg              Config
 
-	testId string
+	testId      string
+	stopMockice func()
 }
 
 func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWithT) (*TestSuite, error) {
@@ -72,23 +76,70 @@ func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWith
 
 	ns := namespace.New(coreCli, cfg.Namespace)
 
+	// parametrize this shit
+	ag := newAssetGroup(dynamicCli, "example-asset-group", cfg.Namespace, cfg.BucketName, cfg.WaitTimeout, t.Logf)
+	cag := newClusterAssetGroup(dynamicCli, "cluster-asset-group", cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 	b := newBucket(dynamicCli, cfg.BucketName, cfg.Namespace, cfg.WaitTimeout, t.Logf)
 	cb := newClusterBucket(dynamicCli, cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 	a := newAsset(dynamicCli, cfg.Namespace, cfg.BucketName, cfg.WaitTimeout, t.Logf)
 	ca := newClusterAsset(dynamicCli, cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 
+	// stopMockice := func() {
+	// 	mockice.Stop(dynamicCli, cfg.Namespace, mockice.SvcName)
+	// }
+	// // stopMockice()
+	//
+	// // time.Sleep(5 * time.Second)
+	//
+	// host, err := mockice.Start(dynamicCli, cfg.Namespace, mockice.SvcName)
+	// if err != nil {
+	// 	return nil, errors.Wrap(err, "while creating Mockice client")
+	// }
+
+	// stopMockice := func() {
+	// 	mockice.Stop(dynamicCli, "default", "mockice-test-svc")
+	// }
+
+	as := []assetData{{
+		Name: "swagger",
+		URL:  "https://petstore.swagger.io/v2/swagger.json",
+		Mode: v1beta1.AssetSingle,
+		Type: "openapi",
+	}}
+
+	// as := []assetData{{
+	// 	Name: "markdownOne",
+	// 	URL:  mockice.ResourceURL(host),
+	// 	Mode: v1beta1.AssetSingle,
+	// 	Type: "markdown",
+	// }, {
+	// 	Name: "markdownTwo",
+	// 	URL:  mockice.ResourceURL(host),
+	// 	Mode: v1beta1.AssetSingle,
+	// 	Type: "markdown",
+	// }}
+
+	// 	- type: openapi
+	// name: swagger
+	// mode: single
+	// url: https://petstore.swagger.io/v2/swagger.json
+
 	return &TestSuite{
-		namespace:     ns,
-		bucket:        b,
-		clusterBucket: cb,
-		fileUpload:    newTestData(cfg.UploadServiceUrl),
-		asset:         a,
-		clusterAsset:  ca,
-		t:             t,
-		g:             g,
-		minioCli:      minioCli,
-		testId:        "singularity",
-		cfg:           cfg,
+		namespace:         ns,
+		bucket:            b,
+		clusterBucket:     cb,
+		fileUpload:        newTestData(cfg.UploadServiceUrl),
+		asset:             a,
+		clusterAsset:      ca,
+		assetGroup:        ag,
+		clusterAssetGroup: cag,
+		assetDetails:      as,
+		t:                 t,
+		g:                 g,
+		minioCli:          minioCli,
+		testId:            "singularity",
+		cfg:               cfg,
+		// stopMockice:   stopMockice,
 	}, nil
 }
 
@@ -112,9 +163,9 @@ func (t *TestSuite) Run() {
 	failOnError(t.g, err)
 
 	// setup environment
-	t.t.Log("Creating namespace...")
-	err = t.namespace.Create(t.t.Log)
-	failOnError(t.g, err)
+	// t.t.Log("Creating namespace...")
+	// err = t.namespace.Create(t.t.Log)
+	// failOnError(t.g, err)
 
 	t.t.Log("Creating cluster bucket...")
 	var resourceVersion string
@@ -133,50 +184,58 @@ func (t *TestSuite) Run() {
 	err = t.bucket.WaitForStatusReady(resourceVersion, t.t.Log)
 	failOnError(t.g, err)
 
-	t.t.Log("Uploading test files...")
-	uploadResult, err := t.uploadTestFiles()
+	t.t.Log("Creating assetgroup...")
+	resourceVersion, err = t.assetGroup.Create(t.assetDetails, t.testId, t.t.Log)
 	failOnError(t.g, err)
 
-	t.t.Log("Uploaded files:\n", uploadResult.UploadedFiles)
-
-	t.uploadResult = uploadResult
-	t.systemBucketName = uploadResult.UploadedFiles[0].Bucket
-
-	t.t.Log("Preparing metadata...")
-	t.assetDetails = convertToAssetResourceDetails(uploadResult, t.cfg.CommonAssetPrefix)
-
-	t.t.Log("Creating assets...")
-	resourceVersion, err = t.asset.CreateMany(t.assetDetails, t.testId, t.t.Log)
-	failOnError(t.g, err)
-	t.t.Log("Waiting for assets to have ready phase...")
-	err = t.asset.WaitForStatusesReady(t.assetDetails, resourceVersion, t.t.Log)
+	t.t.Log("Waiting for assetgroup to have ready phase...")
+	err = t.assetGroup.WaitForStatusReady(resourceVersion, t.t.Log)
 	failOnError(t.g, err)
 
-	t.t.Log("Creating cluster assets...")
-	resourceVersion, err = t.clusterAsset.CreateMany(t.assetDetails, t.testId, t.t.Log)
-	failOnError(t.g, err)
-	t.t.Log("Waiting for cluster assets to have ready phase...")
-	err = t.clusterAsset.WaitForStatusesReady(t.assetDetails, resourceVersion, t.t.Log)
-	failOnError(t.g, err)
-
-	t.t.Log(fmt.Sprintf("asset details:\n%v", t.assetDetails))
-	files, err := t.populateUploadedFiles(t.t.Log)
-	failOnError(t.g, err)
-
-	t.t.Log("Verifying uploaded files...")
-	err = t.verifyUploadedFiles(files)
-	failOnError(t.g, err)
-
-	t.t.Log("Removing assets...")
-	err = t.asset.DeleteLeftovers(t.testId, t.t.Log)
-	failOnError(t.g, err)
-
-	t.t.Log("Removing cluster assets...")
-	err = t.clusterAsset.DeleteLeftovers(t.testId, t.t.Log)
-	failOnError(t.g, err)
-
-	err = t.verifyDeletedFiles(files)
-	failOnError(t.g, err)
+	// t.t.Log("Uploading test files...")
+	// uploadResult, err := t.uploadTestFiles()
+	// failOnError(t.g, err)
+	//
+	// t.t.Log("Uploaded files:\n", uploadResult.UploadedFiles)
+	//
+	// t.uploadResult = uploadResult
+	// t.systemBucketName = uploadResult.UploadedFiles[0].Bucket
+	//
+	// t.t.Log("Preparing metadata...")
+	// t.assetDetails = convertToAssetResourceDetails(uploadResult, t.cfg.CommonAssetPrefix)
+	//
+	// t.t.Log("Creating assets...")
+	// resourceVersion, err = t.asset.CreateMany(t.assetDetails, t.testId, t.t.Log)
+	// failOnError(t.g, err)
+	// t.t.Log("Waiting for assets to have ready phase...")
+	// err = t.asset.WaitForStatusesReady(t.assetDetails, resourceVersion, t.t.Log)
+	// failOnError(t.g, err)
+	//
+	// t.t.Log("Creating cluster assets...")
+	// resourceVersion, err = t.clusterAsset.CreateMany(t.assetDetails, t.testId, t.t.Log)
+	// failOnError(t.g, err)
+	// t.t.Log("Waiting for cluster assets to have ready phase...")
+	// err = t.clusterAsset.WaitForStatusesReady(t.assetDetails, resourceVersion, t.t.Log)
+	// failOnError(t.g, err)
+	//
+	// t.t.Log(fmt.Sprintf("asset details:\n%v", t.assetDetails))
+	// files, err := t.populateUploadedFiles(t.t.Log)
+	// failOnError(t.g, err)
+	//
+	// t.t.Log("Verifying uploaded files...")
+	// err = t.verifyUploadedFiles(files)
+	// failOnError(t.g, err)
+	//
+	// t.t.Log("Removing assets...")
+	// err = t.asset.DeleteLeftovers(t.testId, t.t.Log)
+	// failOnError(t.g, err)
+	//
+	// t.t.Log("Removing cluster assets...")
+	// err = t.clusterAsset.DeleteLeftovers(t.testId, t.t.Log)
+	// failOnError(t.g, err)
+	//
+	// err = t.verifyDeletedFiles(files)
+	// failOnError(t.g, err)
 }
 
 func (t *TestSuite) Cleanup() {
@@ -188,11 +247,13 @@ func (t *TestSuite) Cleanup() {
 	err = t.bucket.Delete(t.t.Log)
 	failOnError(t.g, err)
 
-	err = t.namespace.Delete(t.t.Log)
-	failOnError(t.g, err)
-
-	err = deleteFiles(t.minioCli, t.uploadResult, t.t.Logf)
-	failOnError(t.g, err)
+	// err= t.assetGroup.Delete(t.t.Log)
+	// failOnError(t.g, err)
+	// err = t.namespace.Delete(t.t.Log)
+	// failOnError(t.g, err)
+	//
+	// err = deleteFiles(t.minioCli, t.uploadResult, t.t.Logf)
+	// failOnError(t.g, err)
 }
 
 func (t *TestSuite) uploadTestFiles() (*upload.Response, error) {
