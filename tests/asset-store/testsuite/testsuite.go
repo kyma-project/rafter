@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
+	"github.com/kyma-project/rafter/tests/asset-store/mockice"
 	"github.com/kyma-project/rafter/tests/asset-store/pkg/upload"
 	"github.com/minio/minio-go"
 
@@ -19,7 +21,7 @@ import (
 )
 
 type Config struct {
-	Namespace         string        `envconfig:"default=test-rafter"`
+	Namespace         string        `envconfig:"default=rafter-test"`
 	BucketName        string        `envconfig:"default=test-bucket"`
 	ClusterBucketName string        `envconfig:"default=test-cluster-bucket"`
 	CommonAssetPrefix string        `envconfig:"default=test"`
@@ -46,6 +48,7 @@ type TestSuite struct {
 	systemBucketName string
 	minioCli         *minio.Client
 	cfg              Config
+	stopMockice      func()
 }
 
 func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWithT) (*TestSuite, error) {
@@ -77,16 +80,32 @@ func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWith
 	a := newAsset(dynamicCli, cfg.Namespace, cfg.BucketName, cfg.WaitTimeout, t.Logf)
 	ca := newClusterAsset(dynamicCli, cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 
+	stopMockice := func() {
+		mockice.Stop(dynamicCli, cfg.Namespace, mockice.SvcName)
+	}
+	// stopMockice()
+
+	// time.Sleep(5 * time.Second)
+
+	host, err := mockice.Start(dynamicCli, cfg.Namespace, mockice.SvcName)
+	if err != nil {
+		return nil, errors.Wrap(err, "while creating Mockice client")
+	}
+
+	// stopMockice := func() {
+	// 	mockice.Stop(dynamicCli, "default", "mockice-test-svc")
+	// }
+
 	as := []assetData{{
-		Name: "yaml",
-		URL:  "https://raw.githubusercontent.com/asyncapi/asyncapi/master/examples/1.2.0/slack-rtm.yml",
-		Mode: "single",
-		Type: "asyncapi",
+		Name: "markdownOne",
+		URL:  mockice.ResourceURL(host),
+		Mode: v1beta1.AssetSingle,
+		Type: "markdown",
 	}, {
-		Name: "swagger",
-		URL:  "https://petstore.swagger.io/v2/swagger.json",
-		Mode: "single",
-		Type: "openapi",
+		Name: "markdownTwo",
+		URL:  mockice.ResourceURL(host),
+		Mode: v1beta1.AssetSingle,
+		Type: "markdown",
 	}}
 
 	return &TestSuite{
@@ -103,6 +122,7 @@ func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWith
 		minioCli:          minioCli,
 		assetDetails:      as,
 		cfg:               cfg,
+		stopMockice:       stopMockice,
 	}, nil
 }
 
@@ -129,14 +149,19 @@ func (t *TestSuite) Run() {
 	t.t.Log("Creating AssetGroup...")
 	err = t.createAssetGroup()
 	failOnError(t.g, err)
+
 	t.t.Log("Waiting for ready AssetGroup...")
 	err = t.waitForAssetGroupReady()
+	failOnError(t.g, err)
 
 	t.t.Log("Creating ClusterAssetGroup")
 	err = t.createClusterAssetGroup()
 	failOnError(t.g, err)
+
 	t.t.Log("Waiting for ready ClusterAssetGroup...")
 	err = t.waitForClusterAssetGroupReady()
+	failOnError(t.g, err)
+
 	// t.t.Log("Uploading test files...")
 	// uploadResult, err := t.uploadTestFiles()
 	// failOnError(t.g, err)
@@ -189,6 +214,8 @@ func (t *TestSuite) Cleanup() {
 
 	err = t.namespace.Delete()
 	failOnError(t.g, err)
+
+	t.stopMockice()
 }
 
 func (t *TestSuite) createBuckets() error {
@@ -241,73 +268,67 @@ func (t *TestSuite) createAssets(uploadResult *upload.Response) error {
 }
 
 func (t *TestSuite) waitForAssetsReady() error {
-	err := t.asset.WaitForStatusesReady(t.assetDetails)
-	if err != nil {
-		return err
-	}
-
-	err = t.clusterAsset.WaitForStatusesReady(t.assetDetails)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return t.asset.WaitForStatusesReady(t.assetDetails)
 }
 
-func (t *TestSuite) waitForAssetsDeleted() error {
-	err := t.asset.WaitForDeletedResources(t.assetDetails)
-	if err != nil {
-		return err
-	}
-
-	err = t.clusterAsset.WaitForDeletedResources(t.assetDetails)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (t *TestSuite) waitForClusterAssetsReady() error {
+	return t.clusterAsset.WaitForStatusesReady(t.assetDetails)
 }
 
-func (t *TestSuite) populateUploadedFiles() ([]uploadedFile, error) {
-	var allFiles []uploadedFile
-	assetFiles, err := t.asset.PopulateUploadFiles(t.assetDetails)
-	if err != nil {
-		return nil, err
-	}
+// func (t *TestSuite) waitForAssetsDeleted() error {
+// 	err := t.asset.WaitForDeletedResources(t.assetDetails)
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	err = t.clusterAsset.WaitForDeletedResources(t.assetDetails)
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	return nil
+// }
 
-	t.g.Expect(assetFiles).NotTo(gomega.HaveLen(0))
+// func (t *TestSuite) populateUploadedFiles() ([]uploadedFile, error) {
+// 	var allFiles []uploadedFile
+// 	assetFiles, err := t.asset.PopulateUploadFiles(t.assetDetails)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	t.g.Expect(assetFiles).NotTo(gomega.HaveLen(0))
+//
+// 	allFiles = append(allFiles, assetFiles...)
+//
+// 	clusterAssetFiles, err := t.clusterAsset.PopulateUploadFiles(t.assetDetails)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	t.g.Expect(clusterAssetFiles).NotTo(gomega.HaveLen(0))
+//
+// 	allFiles = append(allFiles, clusterAssetFiles...)
+//
+// 	return allFiles, nil
+// }
 
-	allFiles = append(allFiles, assetFiles...)
-
-	clusterAssetFiles, err := t.clusterAsset.PopulateUploadFiles(t.assetDetails)
-	if err != nil {
-		return nil, err
-	}
-
-	t.g.Expect(clusterAssetFiles).NotTo(gomega.HaveLen(0))
-
-	allFiles = append(allFiles, clusterAssetFiles...)
-
-	return allFiles, nil
-}
-
-func (t *TestSuite) verifyUploadedFiles(files []uploadedFile) error {
-	err := verifyUploadedAssets(files, t.t.Logf)
-	if err != nil {
-		return errors.Wrap(err, "while verifying uploaded files")
-	}
-
-	return nil
-}
-
-func (t *TestSuite) verifyDeletedFiles(files []uploadedFile) error {
-	err := verifyDeletedAssets(files, t.t.Logf)
-	if err != nil {
-		return errors.Wrap(err, "while verifying deleted files")
-	}
-
-	return nil
-}
+// func (t *TestSuite) verifyUploadedFiles(files []uploadedFile) error {
+// 	err := verifyUploadedAssets(files, t.t.Logf)
+// 	if err != nil {
+// 		return errors.Wrap(err, "while verifying uploaded files")
+// 	}
+//
+// 	return nil
+// }
+//
+// func (t *TestSuite) verifyDeletedFiles(files []uploadedFile) error {
+// 	err := verifyDeletedAssets(files, t.t.Logf)
+// 	if err != nil {
+// 		return errors.Wrap(err, "while verifying deleted files")
+// 	}
+//
+// 	return nil
+// }
 
 func (t *TestSuite) waitForBucketsReady() error {
 	return t.bucket.WaitForStatusReady()
