@@ -64,8 +64,8 @@ func (ag *assetGroup) Create(assets []assetData, testID string, callbacks ...fun
 					Name: ag.BucketName,
 				},
 				DisplayName: "Test Asset Group",
-				Description: "Waitin' to be ready for you!!",
-				Sources: assetSources,
+				Description: "Gettin' ready for you!!",
+				Sources:     assetSources,
 			},
 		},
 	}
@@ -78,60 +78,17 @@ func (ag *assetGroup) Create(assets []assetData, testID string, callbacks ...fun
 	return resourceVersion, nil
 }
 
-// func (ag *assetGroup) WaitForStatusReady() error {
-// 	err := waiter.WaitAtMost(func() (bool, error) {
-//
-// 		res, err := ag.Get()
-// 		if err != nil {
-// 			return false, err
-// 		}
-//
-// 		if res.Status.Phase != v1beta1.AssetGroupReady {
-// 			return false, nil
-// 		}
-//
-// 		return true, nil
-// 	}, ag.waitTimeout)
-// 	if err != nil {
-// 		return errors.Wrapf(err, "while waiting for ready AssetGroup resource")
-// 	}
-//
-// 	return nil
-// }
-
 func (ag *assetGroup) WaitForStatusReady(initialResourceVersion string, callbacks ...func(...interface{})) error {
 	waitForStatusReady := buildWaitForStatusesReady(ag.resCli.ResCli, ag.waitTimeout, ag.Name)
 	err := waitForStatusReady(initialResourceVersion, callbacks...)
 	return err
 }
 
-// func (ag *assetGroup) WaitForDeletedResource(assets []assetData) error {
-// 	err := waiter.WaitAtMost(func() (bool, error) {
-// 		_, err := ag.Get()
-//
-// 		if err == nil {
-// 			return false, nil
-// 		}
-//
-// 		if !apierrors.IsNotFound(err) {
-// 			return false, nil
-// 		}
-//
-// 		return true, nil
-// 	}, ag.waitTimeout)
-// 	if err != nil {
-// 		return errors.Wrap(err, "while deleting Asset resources")
-// 	}
-//
-// 	return nil
-// }
-
 func (ag *assetGroup) DeleteLeftovers(testId string, callbacks ...func(...interface{})) error {
 	deleteLeftovers := buildDeleteLeftovers(ag.resCli.ResCli, ag.waitTimeout)
 	err := deleteLeftovers(testId, callbacks...)
 	return err
 }
-
 
 func (ag *assetGroup) Get() (*v1beta1.AssetGroup, error) {
 	u, err := ag.resCli.Get(ag.Name)

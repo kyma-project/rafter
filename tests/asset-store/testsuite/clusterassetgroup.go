@@ -57,8 +57,8 @@ func (cag *clusterAssetGroup) Create(assets []assetData, testID string, callback
 		},
 		Spec: v1beta1.ClusterAssetGroupSpec{
 			CommonAssetGroupSpec: v1beta1.CommonAssetGroupSpec{
-				Sources: assetSources,
-				Description: "Waitin' to be ready for you!!",
+				Sources:     assetSources,
+				Description: "Gettin' ready for you!!",
 				DisplayName: "Test Cluster Asset Group",
 			},
 		},
@@ -72,53 +72,11 @@ func (cag *clusterAssetGroup) Create(assets []assetData, testID string, callback
 	return resourceVersion, nil
 }
 
-// func (cag *clusterAssetGroup) WaitForStatusReady() error {
-// 	err := waiter.WaitAtMost(func() (bool, error) {
-//
-// 		res, err := cag.Get()
-// 		if err != nil {
-// 			return false, err
-// 		}
-//
-// 		if res.Status.Phase != v1beta1.AssetGroupReady {
-// 			return false, nil
-// 		}
-//
-// 		return true, nil
-// 	}, cag.waitTimeout)
-// 	if err != nil {
-// 		return errors.Wrapf(err, "while waiting for ready AssetGroup resource")
-// 	}
-//
-// 	return nil
-// }
-
 func (cag *clusterAssetGroup) WaitForStatusReady(initialResourceVersion string, callbacks ...func(...interface{})) error {
 	waitForStatusReady := buildWaitForStatusesReady(cag.resCli.ResCli, cag.waitTimeout, cag.Name)
 	err := waitForStatusReady(initialResourceVersion, callbacks...)
 	return err
 }
-
-// func (cag *clusterAssetGroup) WaitForDeletedResource(assets []assetData) error {
-// 	err := waiter.WaitAtMost(func() (bool, error) {
-// 		_, err := cag.Get()
-//
-// 		if err == nil {
-// 			return false, nil
-// 		}
-//
-// 		if !apierrors.IsNotFound(err) {
-// 			return false, nil
-// 		}
-//
-// 		return true, nil
-// 	}, cag.waitTimeout)
-// 	if err != nil {
-// 		return errors.Wrap(err, "while deleting Asset resources")
-// 	}
-//
-// 	return nil
-// }
 
 func (cag *clusterAssetGroup) DeleteLeftovers(testId string, callbacks ...func(...interface{})) error {
 	deleteLeftovers := buildDeleteLeftovers(cag.resCli.ResCli, cag.waitTimeout)
