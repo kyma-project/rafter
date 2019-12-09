@@ -21,7 +21,7 @@ import (
 )
 
 type Config struct {
-	Namespace         string        `envconfig:"default=rafter-test"`
+	Namespace         string        `envconfig:"default=default"`
 	BucketName        string        `envconfig:"default=test-bucket"`
 	ClusterBucketName string        `envconfig:"default=test-cluster-bucket"`
 	CommonAssetPrefix string        `envconfig:"default=test"`
@@ -212,8 +212,8 @@ func (t *TestSuite) Cleanup() {
 	err = t.deleteClusterBuckets()
 	failOnError(t.g, err)
 
-	err = t.namespace.Delete()
-	failOnError(t.g, err)
+	// err = t.namespace.Delete()
+	// failOnError(t.g, err)
 
 	t.stopMockice()
 }
