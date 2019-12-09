@@ -20,7 +20,6 @@ var (
 	podPort      int32  = 8080
 	svcPort      int32  = 80
 	defaultImage string = "hudymi/mockice:0.1.3"
-	SvcName      string = "mockice-test-svc"
 )
 
 func Start(client dynamic.Interface, namespace, name string) (string, error) {

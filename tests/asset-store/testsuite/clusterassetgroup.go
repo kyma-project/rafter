@@ -58,6 +58,8 @@ func (cag *clusterAssetGroup) Create(assets []assetData, testID string, callback
 		Spec: v1beta1.ClusterAssetGroupSpec{
 			CommonAssetGroupSpec: v1beta1.CommonAssetGroupSpec{
 				Sources: assetSources,
+				Description: "Waitin' to be ready for you!!",
+				DisplayName: "Test Cluster Asset Group",
 			},
 		},
 	}

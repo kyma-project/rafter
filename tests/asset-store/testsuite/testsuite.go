@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
+	"github.com/kyma-project/rafter/tests/asset-store/pkg/mockice"
 	"github.com/kyma-project/rafter/tests/asset-store/pkg/upload"
 	"github.com/minio/minio-go"
 
@@ -20,13 +21,16 @@ import (
 )
 
 type Config struct {
-	Namespace         string        `envconfig:"default=default"`
-	BucketName        string        `envconfig:"default=test-bucket"`
-	ClusterBucketName string        `envconfig:"default=test-cluster-bucket"`
-	CommonAssetPrefix string        `envconfig:"default=test"`
-	UploadServiceUrl  string        `envconfig:"default=http://localhost:3000/v1/upload"`
-	WaitTimeout       time.Duration `envconfig:"default=2m"`
-	Minio             MinioConfig
+	Namespace             string        `envconfig:"default=default"`
+	BucketName            string        `envconfig:"default=test-bucket"`
+	ClusterBucketName     string        `envconfig:"default=test-cluster-bucket"`
+	AssetGroupName        string        `envconfig:"default=test-asset-group"`
+	ClusterAssetGroupName string        `envconfig:"default=test-cluster-asset-group"`
+	CommonAssetPrefix     string        `envconfig:"default=test"`
+	UploadServiceUrl      string        `envconfig:"default=http://localhost:3000/v1/upload"`
+	MockiceName           string        `envconfig:"default=rafter-test-svc"`
+	WaitTimeout           time.Duration `envconfig:"default=2m"`
+	Minio                 MinioConfig
 }
 
 type TestSuite struct {
@@ -77,47 +81,33 @@ func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWith
 	ns := namespace.New(coreCli, cfg.Namespace)
 
 	// parametrize this shit
-	ag := newAssetGroup(dynamicCli, "example-asset-group", cfg.Namespace, cfg.BucketName, cfg.WaitTimeout, t.Logf)
-	cag := newClusterAssetGroup(dynamicCli, "cluster-asset-group", cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
+	ag := newAssetGroup(dynamicCli, cfg.AssetGroupName, cfg.Namespace, cfg.BucketName, cfg.WaitTimeout, t.Logf)
+	cag := newClusterAssetGroup(dynamicCli, cfg.ClusterAssetGroupName, cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 	b := newBucket(dynamicCli, cfg.BucketName, cfg.Namespace, cfg.WaitTimeout, t.Logf)
 	cb := newClusterBucket(dynamicCli, cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 	a := newAsset(dynamicCli, cfg.Namespace, cfg.BucketName, cfg.WaitTimeout, t.Logf)
 	ca := newClusterAsset(dynamicCli, cfg.ClusterBucketName, cfg.WaitTimeout, t.Logf)
 
-	// stopMockice := func() {
-	// 	mockice.Stop(dynamicCli, cfg.Namespace, mockice.SvcName)
-	// }
-	// // stopMockice()
-	//
-	// // time.Sleep(5 * time.Second)
-	//
-	// host, err := mockice.Start(dynamicCli, cfg.Namespace, mockice.SvcName)
-	// if err != nil {
-	// 	return nil, errors.Wrap(err, "while creating Mockice client")
-	// }
+	stopMockice := func() {
+		mockice.Stop(dynamicCli, cfg.Namespace, cfg.MockiceName)
+	}
 
-	// stopMockice := func() {
-	// 	mockice.Stop(dynamicCli, "default", "mockice-test-svc")
-	// }
+	host, err := mockice.Start(dynamicCli, cfg.Namespace, cfg.MockiceName)
+	if err != nil {
+		return nil, errors.Wrap(err, "while creating Mockice client")
+	}
 
 	as := []assetData{{
-		Name: "swagger",
-		URL:  "https://petstore.swagger.io/v2/swagger.json",
+		Name: "first-test-asset",
+		URL:  mockice.ResourceURL(host),
 		Mode: v1beta1.AssetSingle,
-		Type: "openapi",
+		Type: "markdown",
+	}, {
+		Name: "second-test-asset",
+		URL:  fmt.Sprintf("http://rafter-rafter-controller-manager.%s.svc.cluster.local:8080/metrics", cfg.Namespace),
+		Mode: v1beta1.AssetSingle,
+		Type: "metrics",
 	}}
-
-	// as := []assetData{{
-	// 	Name: "markdownOne",
-	// 	URL:  mockice.ResourceURL(host),
-	// 	Mode: v1beta1.AssetSingle,
-	// 	Type: "markdown",
-	// }, {
-	// 	Name: "markdownTwo",
-	// 	URL:  mockice.ResourceURL(host),
-	// 	Mode: v1beta1.AssetSingle,
-	// 	Type: "markdown",
-	// }}
 
 	// 	- type: openapi
 	// name: swagger
@@ -139,19 +129,19 @@ func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWith
 		minioCli:          minioCli,
 		testId:            "singularity",
 		cfg:               cfg,
-		// stopMockice:   stopMockice,
+		stopMockice:       stopMockice,
 	}, nil
 }
 
 func (t *TestSuite) Run() {
 
 	// clean up leftovers from previous tests
-	t.t.Log("Deleting old assets...")
-	err := t.asset.DeleteLeftovers(t.testId)
+	t.t.Log("Deleting old asset groups...")
+	err := t.assetGroup.DeleteLeftovers(t.testId)
 	failOnError(t.g, err)
 
-	t.t.Log("Deleting old cluster assets...")
-	err = t.clusterAsset.DeleteLeftovers(t.testId)
+	t.t.Log("Deleting old cluster asset groups...")
+	err = t.clusterAssetGroup.DeleteLeftovers(t.testId)
 	failOnError(t.g, err)
 
 	t.t.Log("Deleting old cluster bucket...")
@@ -190,6 +180,14 @@ func (t *TestSuite) Run() {
 
 	t.t.Log("Waiting for assetgroup to have ready phase...")
 	err = t.assetGroup.WaitForStatusReady(resourceVersion, t.t.Log)
+	failOnError(t.g, err)
+
+	t.t.Log("Creating cluster asset group...")
+	resourceVersion, err = t.clusterAssetGroup.Create(t.assetDetails, t.testId, t.t.Log)
+	failOnError(t.g, err)
+
+	t.t.Log("Waiting for cluster asset group to have ready phase...")
+	err = t.clusterAssetGroup.WaitForStatusReady(resourceVersion, t.t.Log)
 	failOnError(t.g, err)
 
 	// t.t.Log("Uploading test files...")
@@ -247,8 +245,13 @@ func (t *TestSuite) Cleanup() {
 	err = t.bucket.Delete(t.t.Log)
 	failOnError(t.g, err)
 
-	// err= t.assetGroup.Delete(t.t.Log)
-	// failOnError(t.g, err)
+	err = t.clusterAssetGroup.Delete(t.t.Log)
+	failOnError(t.g, err)
+
+	err = t.assetGroup.Delete(t.t.Log)
+	failOnError(t.g, err)
+
+	t.stopMockice()
 	// err = t.namespace.Delete(t.t.Log)
 	// failOnError(t.g, err)
 	//

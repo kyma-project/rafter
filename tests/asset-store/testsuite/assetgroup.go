@@ -63,6 +63,8 @@ func (ag *assetGroup) Create(assets []assetData, testID string, callbacks ...fun
 				BucketRef: v1beta1.AssetGroupBucketRef{
 					Name: ag.BucketName,
 				},
+				DisplayName: "Test Asset Group",
+				Description: "Waitin' to be ready for you!!",
 				Sources: assetSources,
 			},
 		},
