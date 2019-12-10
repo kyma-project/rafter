@@ -1,0 +1,40 @@
+{
+  "title": "Rafter simple flow",
+  "description": "Simple Rafter setup with basic asset flow",
+  "difficulty": "Beginner",
+  "time": "10 minutes",
+  "details": {
+    "steps": [
+      {
+        "title": "Rafter installation",
+        "text": "step1.md",
+        "code": "setup.sh"
+      },
+      {
+        "title": "Use Case 1 - Rafter as static sites host",
+        "text": "step2.md"
+      },
+      {
+        "title": "Use Case 2 - Rafter as content storage using basic webhook services",
+        "text": "step3.md"
+      },
+      {
+        "title": "Use Case 3 - Rafter as content storage using advanced webhook services",
+        "text": "step4.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "minikube-running",
+    "port": "9000"
+  }
+}
