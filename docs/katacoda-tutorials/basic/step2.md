@@ -39,11 +39,11 @@ In this scenario, you will learn how to use Rafter to store static webpages. You
    EOF
    ```{{execute}}
 
-4. Make sure that the Asset status is `Ready` which means that fetching, unpacking, and filtering is completed. Run:
+4. Make sure that the Asset status is `Ready` which means that fetching, unpacking, and filtering was completed. Run:
 
    `kubectl get assets webpage -o jsonpath='{.status.phase}'`{{execute}}
 
-5. Export the name of the remote Bucket in storage as an environment variable. This name is available in the Bucket status and is not exactly the same as the name of a specific Bucket CR:
+5. Export the name of the remote Bucket in storage as an environment variable. This name is available in the Bucket CR status and is not exactly the same as the name of a specific Bucket CR:
 
    `export BUCKET_NAME=$(kubectl get bucket pages -o jsonpath='{.status.remoteName}')`{{execute}}
 

@@ -1,4 +1,4 @@
-In this scenario, you will reuse the `content` bucket created in the previous use case, push an Asset to it, and communicate with a webhook service responsible for the validation and conversion of [AsyncAPI](https://asyncapi.org/) specifications. The service will first validate the version of the specification provided in the Asset and then convert it to version 2.0. Follow these steps:
+In this scenario, you will reuse the `content` Bucket created in the previous use case, push an Asset to it, and communicate with a webhook service responsible for the validation and conversion of [AsyncAPI](https://asyncapi.org/) specifications. The service will first validate the version of the specification provided in the Asset CR and then convert it to version 2.0. Follow these steps:
 
 1. Export a URL to a single AsyncAPI specification file as an environment variable:
 
@@ -30,7 +30,7 @@ In this scenario, you will reuse the `content` bucket created in the previous us
    EOF
    ```{{execute}}
 
-3. Check if the Asset status is `Ready` which means that fetching and communication with the AsyncAPI Service was completed. Run:
+3. Check if the status of the Asset CR is `Ready` which means that fetching and communication with the AsyncAPI Service was completed. Run:
 
    `kubectl get assets asyncapi-file -o jsonpath='{.status.phase}'`{{execute}}
 

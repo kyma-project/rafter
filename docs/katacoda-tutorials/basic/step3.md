@@ -1,10 +1,10 @@
-In this scenario, you will create a Bucket, push an Asset to it, and communicate with a webhook service responsible for extracting metadata from Markdown files. The service will first extract selected metadata from the file specified in the Asset and then add it to the Asset status. Follow these steps:
+In this scenario, you will create a Bucket, push an Asset to it, and communicate with a webhook service responsible for extracting metadata from Markdown files. The service will first extract selected metadata from the file specified in the Asset CR and then add it to the Asset CR status. Follow these steps:
 
 1. Export a URL to a single Markdown file as an environment variable:
 
    `export MARKDOWN_FILE_URL=https://gist.githubusercontent.com/derberg/01666184bac1ddb4b388c31739924dca/raw/b1d0aff9dcc5f5ee309c33d330b9ba23de470da0/sample-markdown.md`{{execute}}
 
-2. Create a Bucket for the Markdown file by applying a Bucket custom resource (CR). Run:
+2. Create a Bucket for the Markdown file by applying a Bucket CR. Run:
 
    ```yaml
    cat <<EOF | kubectl apply -f -
@@ -41,7 +41,7 @@ In this scenario, you will create a Bucket, push an Asset to it, and communicate
    EOF
    ```{{execute}}
 
-4. Make sure that the Asset status is `Ready` which means that fetching and communication with the Front Matter Service was completed. Run:
+4. Make sure that the status of the Asset CR is `Ready` which means that fetching and communication with the Front Matter Service was completed. Run:
 
    `kubectl get assets markdown-file -o jsonpath='{.status.phase}'`{{execute}}
 
@@ -51,7 +51,7 @@ In this scenario, you will create a Bucket, push an Asset to it, and communicate
 
 To make sure that the file is in storage and you can extract it, follow these steps:
 
-6. Export the file name and the name of the Bucket available in the Bucket status as environment variables. The name of the Bucket in storage is not exactly the same as the name of a specific Bucket CR:
+6. Export the file name and the name of the Bucket available in the Bucket CR status as environment variables. The name of the Bucket in storage is not exactly the same as the name of a specific Bucket CR:
 
    `export FILE_NAME=$(kubectl get asset markdown-file -o jsonpath='{.status.assetRef.files[0].name}')`{{execute}}
 
