@@ -1,10 +1,11 @@
-In this scenario, you will create a Bucket and then push an Asset to it. The Asset is a package containing all static files needed to build a website, such as HTML, JS and CSS files. Follow these steps:
+In this scenario, you will learn how to use Rafter to store static webpages. You will create a Bucket, push an Asset to it, and open the website from sources stored in the Bucket. For the purpose of this scenario, the Asset is a package containing all static files needed to build a website, such as HTML, JS, and CSS files. Follow these steps:
+
 
 1. Export a URL to ready-to-use sources of a simple website as an environment variable:
 
    `export GH_WEBPAGE_URL=https://github.com/kyma-project/examples/archive/master.zip`{{execute}}
 
-2. Create a Bucket by applying a Bucket custom resource (CR). The Bucket will contain the website files. Run:
+2. Create a Bucket by applying a Bucket custom resource (CR). Run:
 
    ```yaml
    cat <<EOF | kubectl apply -f -
@@ -42,7 +43,7 @@ In this scenario, you will create a Bucket and then push an Asset to it. The Ass
 
    `kubectl get assets webpage -o jsonpath='{.status.phase}'`{{execute}}
 
-5. Export the name of the Bucket available in the Bucket status as an environment variable. The name of the Bucket in storage is not exactly the same as the name of a specific Bucket CR:
+5. Export the name of the remote Bucket in storage as an environment variable. This name is available in the Bucket status and is not exactly the same as the name of a specific Bucket CR:
 
    `export BUCKET_NAME=$(kubectl get bucket pages -o jsonpath='{.status.remoteName}')`{{execute}}
 

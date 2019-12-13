@@ -1,4 +1,4 @@
-Before you proceed with the steps, wait for the environment to finish setting up. Once ready, start playing with Rafter:
+Before you follow the steps, wait for the environment setup to finish. Once ready, start playing with Rafter:
 
 1. Add a new chart's repository to Helm. Run:
 

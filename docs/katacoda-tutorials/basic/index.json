@@ -1,6 +1,6 @@
 {
   "title": "Rafter simple flow",
-  "description": "Simple Rafter setup with basic asset flow",
+  "description": "Simple Rafter setup with the basic asset flow",
   "difficulty": "Beginner",
   "time": "10 minutes",
   "details": {
@@ -11,7 +11,7 @@
         "code": "setup.sh"
       },
       {
-        "title": "Use Case 1 - Rafter as static sites host",
+        "title": "Use Case 1 - Rafter as a static site host",
         "text": "step2.md"
       },
       {
