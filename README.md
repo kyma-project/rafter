@@ -42,7 +42,7 @@ Try out [this](https://katacoda.com/rafter/) set of interactive tutorials to see
 ## Installation
 
 Prerequisites:
-- Kubernetes 1.14 or higher
+- Kubernetes 1.14 or higher / Minikube 1.3 or higher
 - Helm 2.16.0 or higher
 
 1. Add a new chart's repository to Helm. Run:
