@@ -31,10 +31,30 @@ Rafter comes with the following set of services and extensions compatible with R
 
 ## Quick start
 
-Try out [this](https://katacoda.com/rafter/scenarios/rafter) set of interactive tutorials to see Rafter in action on Minikube. These tutorials show how to:
+Try out [this](https://katacoda.com/rafter/) set of interactive tutorials to see Rafter in action on Minikube. These tutorials show how to:
 - Quickly install Rafter with our Helm Chart.
 - Host a simple static site.
 - Use Rafter as headless CMS with the support of Rafter metadata webhook and Front Matter service . This example is based on a use case of storing Markdown files.
 - Use Rafter as headless CMS with the support of Rafter validation and conversion webhooks. This example is based on a use case of storing [AsyncAPI](https://asyncapi.org/) specifications.
 
 >**NOTE:** Read [this](./docs/development-guide.md) development guide to start developing the project.
+
+## Installation
+
+Prerequisites:
+- Kubernetes 1.14 or higher
+- Helm 2.16.0 or higher
+
+1. Add a new chart's repository to Helm. Run:
+
+`helm repo add rafter-charts https://rafter-charts.storage.googleapis.com`
+
+2. Install Rafter:
+
+`helm install --name rafter --set rafter-controller-manager.minio.service.type=NodePort rafter-charts/rafter`
+
+### What Rafter is not
+
+
+
+
