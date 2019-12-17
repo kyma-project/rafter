@@ -9,7 +9,7 @@
 
 ## Overview
 
-Rafter is a solution for storing and managing different types of files called assets. It uses [MinIO](https://min.io/) as object storage. The whole concept of Rafter relies on Kubernetes custom resources (CRs) managed by the [Rafter Controller Manager](./cmd/manager/README.md). These CRs include:
+Rafter is a solution for storing and managing different types of files called assets. It uses [MinIO](https://min.io/) as object storage. The whole concept of Rafter relies on [Kubernetes custom resources (CRs)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) managed by the [Rafter Controller Manager](./cmd/manager/README.md). These CRs include:
 
 - Asset CR which manages a single asset or a package of assets
 - Bucket CR which manages buckets
@@ -29,13 +29,26 @@ Rafter comes with the following set of services and extensions compatible with R
 
 >**NOTE:** To learn how Rafter is implemented in [Kyma](https://kyma-project.io), read [Asset Store](https://kyma-project.io/docs/components/asset-store/) and [Headless CMS](https://kyma-project.io/docs/components/headless-cms/) documentation.
 
+### What Rafter is not
+
+* Rafter is not a [Content Management System](https://en.wikipedia.org/wiki/Content_management_system) (Wordpress-like),
+* Rafter is not a solution for [Enterprise Content Management](https://en.wikipedia.org/wiki/Enterprise_content_management),
+* Rafter doesn't come with any out-of-the box UI that allows to modify or consume files managend by Rafter.
+
+### What Rafter can be used for
+
+* Rafter is based on [CRD's](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) and therefore is an extension to Kubernetes API and should be used mainly by Developers building on top of Kubernetes,
+* Rafter is a file store with functionality that allows users to programatically modify/validate/extract those files before they are persisted. Content of those files can be fetched using the API. This is a basic functionality known to [Headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) concept. If you want to deploy an application to Kubernetes, and enrich it with additional documentation or specifications, you can do it using Rafter,
+* Rafter is S3-like file store, and one of those can be HTML, CSS and JS, which means that Rafter can also by used as a hosting solution for client-side applications.
+
+
 ## Quick start
 
 Try out [this](https://katacoda.com/rafter/) set of interactive tutorials to see Rafter in action on Minikube. These tutorials show how to:
 - Quickly install Rafter with our Helm Chart.
 - Host a simple static site.
-- Use Rafter as headless CMS with the support of Rafter metadata webhook and Front Matter service . This example is based on a use case of storing Markdown files.
-- Use Rafter as headless CMS with the support of Rafter validation and conversion webhooks. This example is based on a use case of storing [AsyncAPI](https://asyncapi.org/) specifications.
+- Use Rafter as [Headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) with the support of Rafter metadata webhook and Front Matter service . This example is based on a use case of storing Markdown files.
+- Use Rafter as [Headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) with the support of Rafter validation and conversion webhooks. This example is based on a use case of storing [AsyncAPI](https://asyncapi.org/) specifications.
 
 >**NOTE:** Read [this](./docs/development-guide.md) development guide to start developing the project.
 
@@ -52,9 +65,6 @@ Prerequisites:
 2. Install Rafter:
 
 `helm install --name rafter --set rafter-controller-manager.minio.service.type=NodePort rafter-charts/rafter`
-
-### What Rafter is not
-
 
 
 
