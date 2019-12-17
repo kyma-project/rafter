@@ -33,13 +33,13 @@ Rafter comes with the following set of services and extensions compatible with R
 
 * Rafter is not a [Content Management System](https://en.wikipedia.org/wiki/Content_management_system) (Wordpress-like),
 * Rafter is not a solution for [Enterprise Content Management](https://en.wikipedia.org/wiki/Enterprise_content_management),
-* Rafter doesn't come with any out-of-the box UI that allows to modify or consume files managend by Rafter.
+* Rafter doesn't come with any out-of-the-box UI that allows you to modify or consume files managed by Rafter.
 
 ### What Rafter can be used for
 
 * Rafter is based on [CRD's](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) and therefore is an extension to Kubernetes API and should be used mainly by Developers building on top of Kubernetes,
 * Rafter is a file store with functionality that allows users to programatically modify/validate/extract those files before they are persisted. Content of those files can be fetched using the API. This is a basic functionality known to [Headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) concept. If you want to deploy an application to Kubernetes, and enrich it with additional documentation or specifications, you can do it using Rafter,
-* Rafter is S3-like file store, and one of those can be HTML, CSS and JS, which means that Rafter can also by used as a hosting solution for client-side applications.
+* Rafter is an S3-like file store also for files written in HTML, CSS, and JS. It means that Rafter can be used as a hosting solution for client-side applications.
 
 
 ## Quick start
@@ -54,9 +54,11 @@ Try out [this](https://katacoda.com/rafter/) set of interactive tutorials to see
 
 ## Installation
 
-Prerequisites:
+### Prerequisites
 - Kubernetes 1.14 or higher / Minikube 1.3 or higher
 - Helm 2.16.0 or higher
+
+### Steps
 
 1. Add a new chart's repository to Helm. Run:
 
@@ -65,6 +67,5 @@ Prerequisites:
 2. Install Rafter:
 
 `helm install --name rafter --set rafter-controller-manager.minio.service.type=NodePort rafter-charts/rafter`
-
 
 
