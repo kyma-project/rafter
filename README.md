@@ -62,8 +62,8 @@ Try out [this](https://katacoda.com/rafter/) set of interactive tutorials to see
 
 1. Add a new chart's repository to Helm. Run:
 
-`helm repo add rafter-charts https://rafter-charts.storage.googleapis.com`
+   `helm repo add rafter-charts https://rafter-charts.storage.googleapis.com`
 
 2. Install Rafter:
 
-`helm install --name rafter --set rafter-controller-manager.minio.service.type=NodePort rafter-charts/rafter`
+   `helm install --name rafter --set rafter-controller-manager.minio.service.type=NodePort rafter-charts/rafter`
