@@ -37,7 +37,7 @@ Rafter comes with the following set of services and extensions compatible with R
 
 ### What Rafter can be used for
 
-* Rafter is based on [CRD's](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) and therefore is an extension to Kubernetes API and should be used mainly by Developers building on top of Kubernetes,
+* Rafter is based on [CRs](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/). Therefore, it is an extension of Kubernetes API and should be used mainly by developers building their solutions on top of Kubernetes,
 * Rafter is a file store that allows you to programmatically modify, validate the files and/or extract their metadata before they go to storage. Content of those files can be fetched using an API. This is a basic functionality of the [headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) concept. If you want to deploy an application to Kubernetes and enrich it with additional documentation or specifications, you can do it using Rafter,
 * Rafter is an S3-like file store also for files written in HTML, CSS, and JS. It means that Rafter can be used as a hosting solution for client-side applications.
 
