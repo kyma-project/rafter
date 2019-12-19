@@ -8,8 +8,8 @@ import (
 	"github.com/minio/minio-go"
 
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
-	"github.com/kyma-project/rafter/tests/asset-store/pkg/file"
-	"github.com/kyma-project/rafter/tests/asset-store/pkg/upload"
+	"github.com/kyma-project/rafter/tests/pkg/file"
+	"github.com/kyma-project/rafter/tests/pkg/upload"
 	"github.com/pkg/errors"
 )
 

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
-	"github.com/kyma-project/rafter/tests/asset-store/pkg/resource"
+	"github.com/kyma-project/rafter/tests/pkg/resource"
 
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

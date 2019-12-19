@@ -5,7 +5,7 @@ package main
 import (
 	"testing"
 
-	"github.com/kyma-project/rafter/tests/asset-store/testsuite"
+	"github.com/kyma-project/rafter/tests/testsuite"
 	"github.com/onsi/gomega"
 	"github.com/vrischmann/envconfig"
 	restclient "k8s.io/client-go/rest"

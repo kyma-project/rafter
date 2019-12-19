@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
-	"github.com/kyma-project/rafter/tests/asset-store/pkg/resource"
+	"github.com/kyma-project/rafter/tests/pkg/resource"
 	watchtools "k8s.io/client-go/tools/watch"
 
 	"github.com/pkg/errors"

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
-	"github.com/kyma-project/rafter/tests/asset-store/pkg/upload"
+	"github.com/kyma-project/rafter/tests/pkg/upload"
 )
 
 type assetData struct {

@@ -283,11 +283,11 @@ testHelpers::run_integration_tests() {
     local -r log_file=unit_test_data.log
     local -r suite_name="Rafter_Integration_Go_Test"
 
-    go test ${root_repo_path}/tests/asset-store/main_test.go -count 1 -v 2>&1 | tee "${log_file}" || test_failed="true"
+    go test ${root_repo_path}/tests/main_test.go -count 1 -v 2>&1 | tee "${log_file}" || test_failed="true"
     < "${log_file}" go-junit-report > "${artifacts_dir}/junit_${suite_name}_suite.xml"
     rm -rf "${log_file}"
   else
-    go test ${root_repo_path}/tests/asset-store/main_test.go -count 1
+    go test ${root_repo_path}/tests/main_test.go -count 1
   fi
     
   if [[ ${test_failed} = "true" ]]; then

@@ -3,7 +3,7 @@ package namespace
 import (
 	"fmt"
 
-	"github.com/kyma-project/rafter/tests/asset-store/pkg/retry"
+	"github.com/kyma-project/rafter/tests/pkg/retry"
 	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

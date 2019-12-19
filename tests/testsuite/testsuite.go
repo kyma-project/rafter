@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kyma-project/rafter/tests/asset-store/pkg/upload"
+	"github.com/kyma-project/rafter/tests/pkg/upload"
 	"github.com/minio/minio-go"
 
-	"github.com/kyma-project/rafter/tests/asset-store/pkg/namespace"
+	"github.com/kyma-project/rafter/tests/pkg/namespace"
 	"github.com/onsi/gomega"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/dynamic"
@@ -19,7 +19,7 @@ import (
 )
 
 type Config struct {
-	Namespace         string        `envconfig:"default=test-asset-store"`
+	Namespace         string        `envconfig:"default=test-rafter"`
 	BucketName        string        `envconfig:"default=test-bucket"`
 	ClusterBucketName string        `envconfig:"default=test-cluster-bucket"`
 	CommonAssetPrefix string        `envconfig:"default=test"`
