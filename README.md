@@ -27,7 +27,7 @@ Rafter comes with the following set of services and extensions compatible with R
 - [AsyncAPI Service](./cmd/extension/asyncapi/README.md) (extension)
 - [Front Matter Service](./cmd/extension/frontmatter/README.md) (extension)
 
->**NOTE:** To learn how Rafter is implemented in [Kyma](https://kyma-project.io), read [Asset Store](https://kyma-project.io/docs/components/asset-store/) and [Headless CMS](https://kyma-project.io/docs/components/headless-cms/) documentation.
+>**NOTE:** To learn how Rafter is implemented in [Kyma](https://kyma-project.io), read [Rafter](https://kyma-project.io/docs/master/components/rafter) documentation.
 
 ### What Rafter is not
 

@@ -35,7 +35,7 @@ make build-frontmatter
 
 ### Extract metadata from files
 
-For the full API documentation, including OpenAPI specification, see the [Asset Store docs](https://kyma-project.io/docs/master/components/asset-store#details-asset-metadata-service).
+For the full API documentation, including OpenAPI specification, see the [Asset Store docs](https://kyma-project.io/docs/master/components/rafter#details-front-matter-service).
 
 ### Environment variables
 
