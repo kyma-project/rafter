@@ -33,7 +33,7 @@ In this scenario, you will learn how to use Rafter to store static webpages. You
      source:
        url: ${GH_WEBPAGE_URL}
        mode: package
-       filter: /asset-store/webpage/
+       filter: /rafter/webpage/
      bucketRef:
        name: pages
    EOF
@@ -49,4 +49,4 @@ In this scenario, you will learn how to use Rafter to store static webpages. You
 
 6. Echo the link and open it in a browser to access the website:
 
-   `echo https://[[HOST_SUBDOMAIN]]-31311-[[KATACODA_HOST]].environments.katacoda.com/$BUCKET_NAME/webpage/examples-master/asset-store/webpage/index.html`{{execute}}
+   `echo https://[[HOST_SUBDOMAIN]]-31311-[[KATACODA_HOST]].environments.katacoda.com/$BUCKET_NAME/webpage/examples-master/rafter/webpage/index.html`{{execute}}
