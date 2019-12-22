@@ -56,13 +56,14 @@ type AssetWebhookService struct {
 	Parameters     *runtime.RawExtension `json:"parameters,omitempty"`
 }
 
-// +kubebuilder:validation:Enum=single;package;index
+// +kubebuilder:validation:Enum=single;package;index;configMap
 type AssetMode string
 
 const (
-	AssetSingle  AssetMode = "single"
-	AssetPackage AssetMode = "package"
-	AssetIndex   AssetMode = "index"
+	AssetSingle    AssetMode = "single"
+	AssetPackage   AssetMode = "package"
+	AssetIndex     AssetMode = "index"
+	AssetConfigMap AssetMode = "configMap"
 )
 
 type AssetBucketRef struct {

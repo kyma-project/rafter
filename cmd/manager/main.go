@@ -6,19 +6,16 @@ import (
 	"os"
 
 	"github.com/kyma-project/rafter/internal/assethook"
+	"github.com/kyma-project/rafter/internal/controllers"
 	"github.com/kyma-project/rafter/internal/loader"
 	"github.com/kyma-project/rafter/internal/store"
 	"github.com/kyma-project/rafter/internal/webhookconfig"
+	assetstorev1beta1 "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/minio/minio-go"
-	"github.com/pkg/errors"
 	"github.com/vrischmann/envconfig"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/rest"
-
-	"github.com/kyma-project/rafter/internal/controllers"
-	assetstorev1beta1 "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
-	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -88,16 +85,22 @@ func main() {
 		os.Exit(1)
 	}
 
+	dynamicClient, err := dynamic.NewForConfig(restConfig)
+	if err != nil {
+		setupLog.Error(err, "unable to initialize dynamic client")
+		os.Exit(1)
+	}
+
 	container := &controllers.Container{
 		Manager:   mgr,
 		Store:     store.New(minioClient, cfg.Store.UploadWorkersCount),
-		Loader:    loader.New(cfg.Loader.TemporaryDirectory, cfg.Loader.VerifySSL),
+		Loader:    loader.New(dynamicClient, cfg.Loader.TemporaryDirectory, cfg.Loader.VerifySSL),
 		Validator: assethook.NewValidator(httpClient, cfg.Webhook.ValidationTimeout, cfg.Webhook.ValidationWorkersCount),
 		Mutator:   assethook.NewMutator(httpClient, cfg.Webhook.MutationTimeout, cfg.Webhook.MutationWorkersCount),
 		Extractor: assethook.NewMetadataExtractor(httpClient, cfg.Webhook.MetadataExtractionTimeout),
 	}
 
-	webhookSvc, err := initWebhookConfigService(cfg.WebhookConfigMap, restConfig)
+	webhookSvc, err := initWebhookConfigService(cfg.WebhookConfigMap, dynamicClient)
 	if err != nil {
 		setupLog.Error(err, "unable to initialize webhook service")
 		os.Exit(1)
@@ -149,12 +152,7 @@ func loadConfig(prefix string) (Config, error) {
 	return cfg, nil
 }
 
-func initWebhookConfigService(webhookCfg webhookconfig.Config, config *rest.Config) (webhookconfig.AssetWebhookConfigService, error) {
-	dc, err := dynamic.NewForConfig(config)
-	if err != nil {
-		return nil, errors.Wrap(err, "while initializing dynamic client")
-	}
-
+func initWebhookConfigService(webhookCfg webhookconfig.Config, dc dynamic.Interface) (webhookconfig.AssetWebhookConfigService, error) {
 	configmapsResource := schema.GroupVersionResource{Group: "", Version: "v1", Resource: "configmaps"}
 	resourceGetter := dc.Resource(configmapsResource).Namespace(webhookCfg.CfgMapNamespace)
 

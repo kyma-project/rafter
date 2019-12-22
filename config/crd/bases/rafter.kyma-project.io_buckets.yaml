@@ -3,8 +3,6 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: v0.2.4
   creationTimestamp: null
   name: buckets.rafter.kyma-project.io
 spec:
@@ -21,10 +19,8 @@ spec:
   group: rafter.kyma-project.io
   names:
     kind: Bucket
-    listKind: BucketList
     plural: buckets
-    singular: bucket
-  scope: Namespaced
+  scope: ""
   subresources:
     status: {}
   validation:

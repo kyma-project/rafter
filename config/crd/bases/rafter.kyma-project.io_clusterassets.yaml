@@ -3,8 +3,6 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: v0.2.4
   creationTimestamp: null
   name: clusterassets.rafter.kyma-project.io
 spec:
@@ -21,9 +19,7 @@ spec:
   group: rafter.kyma-project.io
   names:
     kind: ClusterAsset
-    listKind: ClusterAssetList
     plural: clusterassets
-    singular: clusterasset
   scope: Cluster
   subresources:
     status: {}
@@ -80,6 +76,7 @@ spec:
                   - single
                   - package
                   - index
+                  - configMap
                   type: string
                 mutationWebhookService:
                   items:

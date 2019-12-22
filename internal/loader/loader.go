@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"k8s.io/client-go/dynamic"
 	"net/http"
 	"os"
 	"path"
@@ -14,7 +15,8 @@ import (
 )
 
 type loader struct {
-	temporaryDir string
+	temporaryDir  string
+	dynamicClient dynamic.Interface
 
 	// for testing
 	osRemoveAllFunc func(string) error
@@ -29,7 +31,7 @@ type Loader interface {
 	Clean(path string) error
 }
 
-func New(temporaryDir string, verifySSL bool) Loader {
+func New(dynamicClient dynamic.Interface, temporaryDir string, verifySSL bool) Loader {
 	if len(temporaryDir) == 0 {
 		temporaryDir = os.TempDir()
 	}
@@ -45,6 +47,7 @@ func New(temporaryDir string, verifySSL bool) Loader {
 
 	return &loader{
 		temporaryDir:    temporaryDir,
+		dynamicClient:   dynamicClient,
 		osRemoveAllFunc: os.RemoveAll,
 		osCreateFunc:    os.Create,
 		httpGetFunc:     http.Get,
@@ -58,6 +61,8 @@ func (l *loader) Load(src, assetName string, mode v1beta1.AssetMode, filter stri
 		return l.loadSingle(src, assetName)
 	case v1beta1.AssetPackage:
 		return l.loadPackage(src, assetName, filter)
+	case v1beta1.AssetConfigMap:
+		return l.loadConfigMap(src, assetName, filter)
 	}
 
 	return "", nil, fmt.Errorf("not supported source mode %+v", mode)
