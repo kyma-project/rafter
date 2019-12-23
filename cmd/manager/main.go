@@ -100,11 +100,7 @@ func main() {
 		Extractor: assethook.NewMetadataExtractor(httpClient, cfg.Webhook.MetadataExtractionTimeout),
 	}
 
-	webhookSvc, err := initWebhookConfigService(cfg.WebhookConfigMap, dynamicClient)
-	if err != nil {
-		setupLog.Error(err, "unable to initialize webhook service")
-		os.Exit(1)
-	}
+	webhookSvc := initWebhookConfigService(cfg.WebhookConfigMap, dynamicClient)
 
 	if err = controllers.NewClusterAsset(cfg.ClusterAsset, ctrl.Log.WithName("controllers").WithName("ClusterAsset"), container).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ClusterAsset")
@@ -152,10 +148,10 @@ func loadConfig(prefix string) (Config, error) {
 	return cfg, nil
 }
 
-func initWebhookConfigService(webhookCfg webhookconfig.Config, dc dynamic.Interface) (webhookconfig.AssetWebhookConfigService, error) {
+func initWebhookConfigService(webhookCfg webhookconfig.Config, dc dynamic.Interface) webhookconfig.AssetWebhookConfigService {
 	configmapsResource := schema.GroupVersionResource{Group: "", Version: "v1", Resource: "configmaps"}
 	resourceGetter := dc.Resource(configmapsResource).Namespace(webhookCfg.CfgMapNamespace)
 
 	webhookCfgService := webhookconfig.New(resourceGetter, webhookCfg.CfgMapName, webhookCfg.CfgMapNamespace)
-	return webhookCfgService, nil
+	return webhookCfgService
 }
