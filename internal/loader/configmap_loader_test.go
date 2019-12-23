@@ -1,18 +1,24 @@
 package loader
 
 import (
-	"github.com/onsi/gomega/types"
 	"io/ioutil"
+	"os"
+	"testing"
+
+	"github.com/onsi/gomega"
+	"github.com/onsi/gomega/types"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	dynamicFake "k8s.io/client-go/dynamic/fake"
-	"os"
-	"testing"
 
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
-	"github.com/onsi/gomega"
+)
+
+var (
+	exampleDataBody = `{"type": "service_account","project_id": "wookiee","private_key_id": "12312312312312323123123123123123"}`
+	examplePNGBody  = `iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAABg2lDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TpVIqgmYQcchQnSyIijhqFYpQIdQKrTqYXPoFTRqSFBdHwbXg4Mdi1cHFWVcHV0EQ/ABxcXVSdJES/9cUWsR4cNyPd/ced+8AoV5mut01DuiGY6UScSmTXZVCr4hARBhAv8Jsc06Wk/AdX/cI8PUuxrP8z/05erWczYCARDzLTMsh3iCe3nRMzvvEIisqGvE58ZhFFyR+5Lrq8RvnQpMFnila6dQ8sUgsFTpY7WBWtHTiKeKophuUL2Q81jhvcdbLVda6J39hJGesLHOd5jASWMQSZEhQUUUJZTiI0WqQYiNF+3Ef/1DTL5NLJVcJjBwLqECH0vSD/8Hvbu385ISXFIkD3S+u+zEChHaBRs11v49dt3ECBJ+BK6Ptr9SBmU/Sa20tegT0bQMX121N3QMud4DBJ1OxlKYUpCnk88D7GX1TFhi4BcJrXm+tfZw+AGnqKnkDHBwCowXKXvd5d09nb/+eafX3A/3VcngnrbzqAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH4wwUCgEsYNs2MQAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAPSURBVAjXY/jPAAP/GRgAD/4B/yIectQAAAAASUVORK5CYII=`
 )
 
 func TestLoader_Load_ConfigMap(t *testing.T) {
@@ -114,11 +120,6 @@ func TestLoader_Load_ConfigMap(t *testing.T) {
 		})
 	}
 }
-
-var (
-	exampleDataBody = `{"type": "service_account","project_id": "wookiee","private_key_id": "12312312312312323123123123123123"}`
-	examplePNGBody  = `iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAABg2lDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TpVIqgmYQcchQnSyIijhqFYpQIdQKrTqYXPoFTRqSFBdHwbXg4Mdi1cHFWVcHV0EQ/ABxcXVSdJES/9cUWsR4cNyPd/ced+8AoV5mut01DuiGY6UScSmTXZVCr4hARBhAv8Jsc06Wk/AdX/cI8PUuxrP8z/05erWczYCARDzLTMsh3iCe3nRMzvvEIisqGvE58ZhFFyR+5Lrq8RvnQpMFnila6dQ8sUgsFTpY7WBWtHTiKeKophuUL2Q81jhvcdbLVda6J39hJGesLHOd5jASWMQSZEhQUUUJZTiI0WqQYiNF+3Ef/1DTL5NLJVcJjBwLqECH0vSD/8Hvbu385ISXFIkD3S+u+zEChHaBRs11v49dt3ECBJ+BK6Ptr9SBmU/Sa20tegT0bQMX121N3QMud4DBJ1OxlKYUpCnk88D7GX1TFhi4BcJrXm+tfZw+AGnqKnkDHBwCowXKXvd5d09nb/+eafX3A/3VcngnrbzqAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH4wwUCgEsYNs2MQAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAPSURBVAjXY/jPAAP/GRgAD/4B/yIectQAAAAASUVORK5CYII=`
-)
 
 func configMap(name string, namespace string, data map[string]string, binaryData map[string][]byte) *corev1.ConfigMap {
 	return &corev1.ConfigMap{

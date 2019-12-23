@@ -5,12 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/kyma-project/rafter/internal/assethook"
-	"github.com/kyma-project/rafter/internal/controllers"
-	"github.com/kyma-project/rafter/internal/loader"
-	"github.com/kyma-project/rafter/internal/store"
-	"github.com/kyma-project/rafter/internal/webhookconfig"
-	assetstorev1beta1 "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/minio/minio-go"
 	"github.com/vrischmann/envconfig"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -21,6 +15,13 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	// +kubebuilder:scaffold:imports
+
+	"github.com/kyma-project/rafter/internal/assethook"
+	"github.com/kyma-project/rafter/internal/controllers"
+	"github.com/kyma-project/rafter/internal/loader"
+	"github.com/kyma-project/rafter/internal/store"
+	"github.com/kyma-project/rafter/internal/webhookconfig"
+	assetstorev1beta1 "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 )
 
 var (

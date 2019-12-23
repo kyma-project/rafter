@@ -76,7 +76,7 @@ spec:
                   - single
                   - package
                   - index
-                  - configMap
+                  - configmap
                   type: string
                 mutationWebhookService:
                   items:

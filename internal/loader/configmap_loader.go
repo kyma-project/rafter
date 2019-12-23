@@ -3,16 +3,17 @@ package loader
 import (
 	"bytes"
 	"fmt"
-	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
+	"path/filepath"
+	"regexp"
+	"strings"
+
+	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"path/filepath"
-	"regexp"
-	"strings"
 )
 
 func (l *loader) loadConfigMap(src string, name string, filter string) (string, []string, error) {
@@ -28,12 +29,12 @@ func (l *loader) loadConfigMap(src string, name string, filter string) (string, 
 
 	srcs := strings.Split(src, "/")
 	if len(srcs) != 2 {
-		return "", nil, fmt.Errorf("%s: illegal source", src)
+		return "", nil, fmt.Errorf("%s: invalid source format", src)
 	}
 
 	configMap, err := l.getConfigMap(srcs[1], srcs[0])
 	if err != nil {
-		return "", nil, errors.Wrapf(err, "while getting configmap")
+		return "", nil, errors.Wrapf(err, "while getting ConfigMap")
 	}
 
 	var fileList []string
@@ -57,13 +58,13 @@ func (l *loader) getConfigMap(name string, namespace string) (*corev1.ConfigMap,
 
 	item, err := l.dynamicClient.Resource(configmapsResource).Namespace(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "while getting ConfigMap")
 	}
 
 	var configMap corev1.ConfigMap
 	err = runtime.DefaultUnstructuredConverter.FromUnstructured(item.UnstructuredContent(), &configMap)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "while converting Unstructured to ConfigMap")
 	}
 
 	return &configMap, nil
