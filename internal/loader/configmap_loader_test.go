@@ -44,7 +44,7 @@ func TestLoader_Load_ConfigMap(t *testing.T) {
 		files      int
 		errMatcher types.GomegaMatcher
 	}{
-		"Config-Map with text files": {
+		"ConfigMap with text files": {
 			src:        "default/text",
 			name:       "asset-text",
 			mode:       v1beta1.AssetConfigMap,
