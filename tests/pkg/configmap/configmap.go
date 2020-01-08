@@ -43,7 +43,7 @@ func (s *Configmap) Create(name string, files []*os.File, callbacks ...func(...i
 		}
 
 		filename := filepath.Base(file.Name())
-		s.log(fmt.Sprintf("[CREATE]: %s", unstructured), callbacks...)
+
 		s.log(string(fileData), callbacks...)
 
 		if filepath.Ext(filename) == ".json" {
@@ -53,7 +53,7 @@ func (s *Configmap) Create(name string, files []*os.File, callbacks ...func(...i
 			binaryData[filename] = fileData
 		}
 	}
-
+	s.log(fmt.Sprintf("[CREATE] configmap: %s", name), callbacks...)
 	configmap := &v1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ConfigMap",
