@@ -2,20 +2,24 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.4
   creationTimestamp: null
   name: clusterassetgroups.rafter.kyma-project.io
 spec:
   additionalPrinterColumns:
-  - JSONPath: .status.phase
-    name: Phase
-    type: string
-  - JSONPath: .metadata.creationTimestamp
-    name: Age
-    type: date
+    - JSONPath: .status.phase
+      name: Phase
+      type: string
+    - JSONPath: .metadata.creationTimestamp
+      name: Age
+      type: date
   group: rafter.kyma-project.io
   names:
     kind: ClusterAssetGroup
+    listKind: ClusterAssetGroupList
     plural: clusterassetgroups
+    singular: clusterassetgroup
   scope: Cluster
   subresources:
     status: {}
@@ -26,12 +30,12 @@ spec:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
           description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
@@ -43,7 +47,7 @@ spec:
                 name:
                   type: string
               required:
-              - name
+                - name
               type: object
             description:
               type: string
@@ -56,9 +60,9 @@ spec:
                     type: string
                   mode:
                     enum:
-                    - single
-                    - package
-                    - index
+                      - single
+                      - package
+                      - index
                     type: string
                   name:
                     pattern: ^[a-z][a-zA-Z0-9-]*[a-zA-Z0-9]$
@@ -71,15 +75,15 @@ spec:
                   url:
                     type: string
                 required:
-                - mode
-                - name
-                - type
-                - url
+                  - mode
+                  - name
+                  - type
+                  - url
                 type: object
               minItems: 1
               type: array
           required:
-          - sources
+            - sources
           type: object
         status:
           description: ClusterAssetGroupStatus defines the observed state of ClusterAssetGroup
@@ -91,22 +95,22 @@ spec:
               type: string
             phase:
               enum:
-              - Pending
-              - Ready
-              - Failed
+                - Pending
+                - Ready
+                - Failed
               type: string
             reason:
               type: string
           required:
-          - lastHeartbeatTime
-          - phase
+            - lastHeartbeatTime
+            - phase
           type: object
       type: object
   version: v1beta1
   versions:
-  - name: v1beta1
-    served: true
-    storage: true
+    - name: v1beta1
+      served: true
+      storage: true
 status:
   acceptedNames:
     kind: ""

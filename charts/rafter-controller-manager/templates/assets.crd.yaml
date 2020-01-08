@@ -2,24 +2,28 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.4
   creationTimestamp: null
   name: assets.rafter.kyma-project.io
 spec:
   additionalPrinterColumns:
-  - JSONPath: .status.phase
-    name: Phase
-    type: string
-  - JSONPath: .status.assetRef.baseUrl
-    name: Base URL
-    type: string
-  - JSONPath: .metadata.creationTimestamp
-    name: Age
-    type: date
+    - JSONPath: .status.phase
+      name: Phase
+      type: string
+    - JSONPath: .status.assetRef.baseUrl
+      name: Base URL
+      type: string
+    - JSONPath: .metadata.creationTimestamp
+      name: Age
+      type: date
   group: rafter.kyma-project.io
   names:
     kind: Asset
+    listKind: AssetList
     plural: assets
-  scope: ""
+    singular: asset
+  scope: Namespaced
   subresources:
     status: {}
   validation:
@@ -29,12 +33,12 @@ spec:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
           description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
@@ -46,7 +50,7 @@ spec:
                 name:
                   type: string
               required:
-              - name
+                - name
               type: object
             parameters:
               type: object
@@ -66,15 +70,16 @@ spec:
                       namespace:
                         type: string
                     required:
-                    - name
-                    - namespace
+                      - name
+                      - namespace
                     type: object
                   type: array
                 mode:
                   enum:
-                  - single
-                  - package
-                  - index
+                    - single
+                    - package
+                    - index
+                    - configmap
                   type: string
                 mutationWebhookService:
                   items:
@@ -90,8 +95,8 @@ spec:
                       parameters:
                         type: object
                     required:
-                    - name
-                    - namespace
+                      - name
+                      - namespace
                     type: object
                   type: array
                 url:
@@ -110,16 +115,16 @@ spec:
                       parameters:
                         type: object
                     required:
-                    - name
-                    - namespace
+                      - name
+                      - namespace
                     type: object
                   type: array
               required:
-              - mode
-              - url
+                - mode
+                - url
               type: object
           required:
-          - source
+            - source
           type: object
         status:
           description: AssetStatus defines the observed state of Asset
@@ -136,11 +141,11 @@ spec:
                       name:
                         type: string
                     required:
-                    - name
+                      - name
                     type: object
                   type: array
               required:
-              - baseUrl
+                - baseUrl
               type: object
             lastHeartbeatTime:
               format: date-time
@@ -155,16 +160,16 @@ spec:
             reason:
               type: string
           required:
-          - lastHeartbeatTime
-          - observedGeneration
-          - phase
+            - lastHeartbeatTime
+            - observedGeneration
+            - phase
           type: object
       type: object
   version: v1beta1
   versions:
-  - name: v1beta1
-    served: true
-    storage: true
+    - name: v1beta1
+      served: true
+      storage: true
 status:
   acceptedNames:
     kind: ""
