@@ -22,17 +22,16 @@ var (
 )
 
 func TestLoader_Load_ConfigMap(t *testing.T) {
-
-	fakedc, err := newDynamicClient(
-		configMap("text", "default", map[string]string{
+	fakedc, err := newFakeDynamicClient(
+		fixConfigMap("text", "default", map[string]string{
 			"example.json": exampleDataBody,
 			"example2.txt": exampleDataBody,
 		}, nil),
-		configMap("binary", "default", nil, map[string][]byte{
+		fixConfigMap("binary", "default", nil, map[string][]byte{
 			"example.png":  []byte(examplePNGBody),
 			"example2.txt": []byte(examplePNGBody),
 		}),
-		configMap("mix", "default", map[string]string{
+		fixConfigMap("mix", "default", map[string]string{
 			"example.txt": exampleDataBody,
 		}, map[string][]byte{
 			"example2.png": []byte(examplePNGBody),
@@ -40,6 +39,14 @@ func TestLoader_Load_ConfigMap(t *testing.T) {
 	)
 	if err != nil {
 		return
+	}
+	loader := &loader{
+		temporaryDir:    "/tmp",
+		dynamicClient:   fakedc,
+		osRemoveAllFunc: os.RemoveAll,
+		osCreateFunc:    os.Create,
+		httpGetFunc:     get,
+		ioutilTempDir:   ioutil.TempDir,
 	}
 
 	for testName, testData := range map[string]struct {
@@ -102,14 +109,6 @@ func TestLoader_Load_ConfigMap(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			// Given
 			g := gomega.NewGomegaWithT(t)
-			loader := &loader{
-				temporaryDir:    "/tmp",
-				dynamicClient:   fakedc,
-				osRemoveAllFunc: os.RemoveAll,
-				osCreateFunc:    os.Create,
-				httpGetFunc:     get,
-				ioutilTempDir:   ioutil.TempDir,
-			}
 
 			// When
 			_, files, err := loader.Load(testData.src, testData.name, testData.mode, testData.filter)
@@ -121,7 +120,7 @@ func TestLoader_Load_ConfigMap(t *testing.T) {
 	}
 }
 
-func configMap(name string, namespace string, data map[string]string, binaryData map[string][]byte) *corev1.ConfigMap {
+func fixConfigMap(name string, namespace string, data map[string]string, binaryData map[string][]byte) *corev1.ConfigMap {
 	return &corev1.ConfigMap{
 		TypeMeta: v1.TypeMeta{
 			Kind:       "ConfigMap",
@@ -136,7 +135,7 @@ func configMap(name string, namespace string, data map[string]string, binaryData
 	}
 }
 
-func newDynamicClient(objects ...runtime.Object) (*dynamicFake.FakeDynamicClient, error) {
+func newFakeDynamicClient(objects ...runtime.Object) (*dynamicFake.FakeDynamicClient, error) {
 	scheme := runtime.NewScheme()
 	err := corev1.AddToScheme(scheme)
 	if err != nil {
