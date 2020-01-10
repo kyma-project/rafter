@@ -69,7 +69,7 @@ func (s *Configmap) Create(name string, files []*os.File, callbacks ...func(...i
 
 	confMap, err := s.configMapCli.Create(configmap)
 	if err != nil {
-		return "", errors.Wrapf(err, "while converting ConfigMap %s", name)
+		return "", errors.Wrapf(err, "while creating ConfigMap %s", name)
 	}
 
 	s.createdConfigMaps = append(s.createdConfigMaps, name)

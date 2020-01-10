@@ -110,6 +110,10 @@ func (t *TestSuite) Run() {
 	err = t.clusterAsset.DeleteLeftovers(t.testId)
 	failOnError(t.g, err)
 
+	t.t.Log("Deleting old configmaps...")
+	err = t.configMap.DeleteAll(t.t.Log)
+	failOnError(t.g, err)
+
 	t.t.Log("Deleting old cluster bucket...")
 	err = t.clusterBucket.Delete(t.t.Log)
 	failOnError(t.g, err)
@@ -150,12 +154,12 @@ func (t *TestSuite) Run() {
 	t.systemBucketName = uploadResult.UploadedFiles[0].Bucket
 
 	t.t.Log("Apply test configmap...")
-	singleAssetDetails, err := t.applyConfigmap()
+	configMapData, err := t.createConfigmapAssetData()
 	failOnError(t.g, err)
 
 	t.t.Log("Preparing metadata...")
 	t.assetDetails = convertToAssetResourceDetails(uploadResult, t.cfg.CommonAssetPrefix)
-	t.assetDetails = append(t.assetDetails, singleAssetDetails)
+	t.assetDetails = append(t.assetDetails, configMapData)
 
 	t.t.Log("Creating assets...")
 	resourceVersion, err = t.asset.CreateMany(t.assetDetails, t.testId, t.t.Log)
@@ -194,13 +198,13 @@ func (t *TestSuite) Run() {
 func (t *TestSuite) Cleanup() {
 	t.t.Log("Cleaning up...")
 
-	err := t.clusterBucket.Delete(t.t.Log)
+	err := t.configMap.DeleteAll(t.t.Log)
+	failOnError(t.g, err)
+
+	err = t.clusterBucket.Delete(t.t.Log)
 	failOnError(t.g, err)
 
 	err = t.bucket.Delete(t.t.Log)
-	failOnError(t.g, err)
-
-	err = t.configMap.DeleteAll(t.t.Log)
 	failOnError(t.g, err)
 
 	err = t.namespace.Delete(t.t.Log)
@@ -223,7 +227,7 @@ func (t *TestSuite) uploadTestFiles() (*upload.Response, error) {
 	return uploadResult, nil
 }
 
-func (t *TestSuite) applyConfigmap() (assetData, error) {
+func (t *TestSuite) createConfigmapAssetData() (assetData, error) {
 	configmapName := "configmap-test"
 	paths := []string{localPath("foo.json"), localPath("bar.png")}
 

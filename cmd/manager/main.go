@@ -21,7 +21,7 @@ import (
 	"github.com/kyma-project/rafter/internal/loader"
 	"github.com/kyma-project/rafter/internal/store"
 	"github.com/kyma-project/rafter/internal/webhookconfig"
-	assetstorev1beta1 "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
+	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 )
 
 var (
@@ -32,7 +32,7 @@ var (
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 
-	_ = assetstorev1beta1.AddToScheme(scheme)
+	_ = v1beta1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
