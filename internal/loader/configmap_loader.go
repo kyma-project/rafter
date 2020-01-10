@@ -32,7 +32,7 @@ func (l *loader) loadConfigMap(src string, name string, filter string) (string, 
 		return "", nil, fmt.Errorf("%s: invalid source format", src)
 	}
 
-	configMap, err := l.getConfigMap(srcs[1], srcs[0])
+	configMap, err := l.getConfigMap(srcs[0], srcs[1])
 	if err != nil {
 		return "", nil, err
 	}
