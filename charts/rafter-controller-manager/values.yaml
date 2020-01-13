@@ -12,7 +12,7 @@ minio:
 
 image:
   repository: eu.gcr.io/kyma-project/rafter-controller-manager
-  tag: 3778b2ec
+  tag: 5f3a957b
   pullPolicy: IfNotPresent
 
 installCRDs: true

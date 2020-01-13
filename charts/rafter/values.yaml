@@ -3,7 +3,7 @@ rafter-controller-manager:
 
   image:
     repository: eu.gcr.io/kyma-project/rafter-controller-manager
-    tag: 3778b2ec
+    tag: 5f3a957b
     pullPolicy: IfNotPresent
 
   installCRDs: true
@@ -175,7 +175,7 @@ rafter-upload-service:
 
   image:
     repository: eu.gcr.io/kyma-project/rafter-upload-service
-    tag: 3778b2ec
+    tag: 5f3a957b
     pullPolicy: IfNotPresent
 
   pod:
@@ -247,7 +247,7 @@ rafter-front-matter-service:
 
   image:
     repository: eu.gcr.io/kyma-project/rafter-front-matter-service
-    tag: 3778b2ec
+    tag: 5f3a957b
     pullPolicy: IfNotPresent
 
   pod:
@@ -270,7 +270,7 @@ rafter-asyncapi-service:
 
   image:
     repository: eu.gcr.io/kyma-project/rafter-asyncapi-service
-    tag: 3778b2ec
+    tag: 5f3a957b
     pullPolicy: IfNotPresent
 
   pod:
