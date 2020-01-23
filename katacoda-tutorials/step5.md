@@ -1,4 +1,4 @@
-This scenario shows how to use ConfigMaps as an alternative asset source in Rafter. You create a ConfigMap with three files, `file1.md`, `file2.js`, and `file3.yaml`. Then will create a Bucket CR and an Asset CR that points to the previously created ConfigMap. By adding filtering to the Asset CR definition, Rafter will only upload the `.md` file from the ConfigMap content and upload it into the bucket.
+This scenario shows how to use ConfigMaps as an alternative asset source in Rafter. You create a ConfigMap with three files, `file1.md`, `file2.js`, and `file3.yaml`. Then it will create a Bucket CR and an Asset CR that points to the previously created ConfigMap. By adding filtering to the Asset CR definition, Rafter will only upload the `.md` file from the ConfigMap content and upload it into the bucket.
 
 Follow these steps:
 
