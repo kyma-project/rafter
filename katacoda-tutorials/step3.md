@@ -8,7 +8,7 @@ Follow these steps:
 
 2. Create a bucket for the Markdown file by applying a Bucket CR. Run:
 
-```yaml
+    ```yaml
      cat <<EOF | kubectl apply -f -
      apiVersion: rafter.kyma-project.io/v1beta1
      kind: Bucket

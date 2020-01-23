@@ -11,7 +11,7 @@
 
 Rafter is a solution for storing and managing different types of files called assets. It uses [MinIO](https://min.io/) as object storage. The whole concept of Rafter relies on [Kubernetes custom resources (CRs)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) managed by the [Rafter Controller Manager](./cmd/manager/README.md). These CRs include:
 
-- Asset CR which manages single assets or asset packages from external URLs or ConfigMaps
+- Asset CR which manages single assets or asset packages from external URLs and ConfigMaps
 - Bucket CR which manages buckets
 - AssetGroup CR which manages a group of Asset CRs of a specific type to make it easier to use and extract webhook information
 
