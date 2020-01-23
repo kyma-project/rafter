@@ -1,5 +1,6 @@
-In this scenario, you will learn how to use Rafter to store static webpages. You will create a bucket, push an asset to it, and open the website from sources stored in the bucket. For the purpose of this scenario, the asset is a package containing all static files needed to build a website, such as HTML, JS, and CSS files. Follow these steps:
+In this scenario, you will learn how to use Rafter to store static webpages. You will first create a bucket, then push an asset to it, and finally open the website from sources stored in the bucket. For the purpose of this scenario, the asset is a package containing all static files needed to build a website, such as HTML, JS, and CSS files.
 
+Follow these steps:
 
 1. Export a URL to ready-to-use sources of a simple website as an environment variable:
 
@@ -43,7 +44,7 @@ In this scenario, you will learn how to use Rafter to store static webpages. You
 
    `kubectl get assets webpage -o jsonpath='{.status.phase}'`{{execute}}
 
-5. Export the name of the remote bucket in storage as an environment variable. This name is available in the Bucket CR status and is not exactly the same as the name of a specific Bucket CR:
+5. Export the name of the remote bucket in storage as an environment variable. This name is available in the Bucket CR status and differs from the name of a specific Bucket CR:
 
    `export BUCKET_NAME=$(kubectl get bucket pages -o jsonpath='{.status.remoteName}')`{{execute}}
 

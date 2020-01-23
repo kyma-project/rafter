@@ -1,4 +1,6 @@
-In this scenario, you will reuse the `content` bucket created in the previous use case, push an asset to it, and communicate with a webhook service responsible for the validation and conversion of [AsyncAPI](https://asyncapi.org/) specifications. The service will first validate the version of the specification provided in the Asset CR and then convert it to version 2.0. Follow these steps:
+In this scenario, you will reuse the `content` bucket created in the previous use case, push an asset to it, and communicate with a webhook service responsible for the validation and conversion of [AsyncAPI](https://asyncapi.org/) specifications. The service will first validate the version of the specification provided in the Asset CR and then convert it to version 2.0.
+
+Follow these steps:
 
 1. Export a URL to a single AsyncAPI specification file as an environment variable:
 
@@ -36,12 +38,12 @@ In this scenario, you will reuse the `content` bucket created in the previous us
 
 To make sure that the file is in storage and you can extract it, follow these steps:
 
-4. Export the file name and the bucket name as environment variables:
+4. Export the file name and the name of the remote bucket in storage as environment variables. The name of the remote bucket is available in the Bucket CR status and differs from the name of the Bucket CR:
 
    `export FILE_NAME=$(kubectl get asset asyncapi-file -o jsonpath='{.status.assetRef.files[0].name}')`{{execute}}
 
    `export BUCKET_NAME=$(kubectl get bucket content -o jsonpath='{.status.remoteName}')`{{execute}}
 
-5. Fetch the file in the terminal window. It should start with `asyncapi: '2.0.0'`:
+5. Fetch the file content in the terminal window. It should start with `asyncapi: '2.0.0'`:
 
    `curl https://[[HOST_SUBDOMAIN]]-31311-[[KATACODA_HOST]].environments.katacoda.com/$BUCKET_NAME/asyncapi-file/$FILE_NAME`{{execute}}

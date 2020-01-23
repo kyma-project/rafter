@@ -22,6 +22,10 @@
         "title": "Use Case 3 - Rafter as content storage using advanced webhook services",
         "text": "step4.md"
       }
+      {
+        "title": "Use Case 4 - Rafter as storage for ConfigMaps content",
+        "text": "step5.md"
+      }
     ],
     "intro": {
       "text": "intro.md"
