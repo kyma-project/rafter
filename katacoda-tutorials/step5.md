@@ -56,7 +56,7 @@ Follow these steps:
     EOF
     ```{{execute}}
 
-2. Create a bucket by applying the Bucket CR. Run:
+2. Create a bucket by applying the `sample-bucket` Bucket CR. Run:
 
     ```yaml
     cat <<EOF | kubectl apply -f -
@@ -71,7 +71,7 @@ Follow these steps:
     EOF
     ```{{execute}}
 
-3. Apply the Asset CR that selects from the ConfigMap all assets with the `.md` extension. The **url** parameter specifies the Namespace and ConfigMap names. Run:
+3. Apply the `sample-asset` Asset CR that selects from the ConfigMap all assets with the `.md` extension. The **url** parameter specifies the Namespace and ConfigMap names. Run:
 
     ```yaml
     cat <<EOF | kubectl apply -f -
