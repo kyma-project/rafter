@@ -71,7 +71,7 @@ Follow these steps:
     EOF
     ```{{execute}}
 
-3. Apply the Asset CR pointing to any asset from the ConfigMap that has the `.md` extension. Run:
+3. Apply the Asset CR pointing to any asset from the ConfigMap that has the `.md` extension. The **url** parameter specifies the Namespace and ConfigMap names. Run:
 
     ```yaml
     cat <<EOF | kubectl apply -f -
