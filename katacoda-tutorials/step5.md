@@ -30,11 +30,11 @@ Follow these steps:
             }).on('end', () => {
                 body = Buffer.concat(body).toString();
 
-          console.log('> Headers');
+                console.log('> Headers');
                 console.log(request.headers);
 
-          console.log('> Body');
-          console.log(body);
+                console.log('> Body');
+                console.log(body);
                 response.end();
             });
         }).listen(8083);
@@ -71,7 +71,7 @@ Follow these steps:
     EOF
     ```{{execute}}
 
-3. Apply the `sample-asset` Asset CR that selects from the ConfigMap all assets with the `.md` extension. The **url** parameter specifies the Namespace and ConfigMap names. Run:
+3. Apply the `sample-asset` Asset CR that selects from the ConfigMap all assets with the `.md` extension. The **url** parameter specifies the Namespace and ConfigMap names and has the `{namespace}/{configMap-name}` format. Run:
 
     ```yaml
     cat <<EOF | kubectl apply -f -

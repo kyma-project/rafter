@@ -1,4 +1,4 @@
-In this scenario, you will learn how to use Rafter to store static webpages. You will create a bucket, push an asset to it, and open the website from sources stored in the bucket. For the purpose of this scenario, the asset is a package containing all static files needed to build a website, such as HTML, JS, and CSS files.
+In this scenario, you will learn how to use Rafter to store static webpages. You will create a bucket, push an asset to it, and open the website from sources stored in the bucket. For the purpose of this scenario, the asset is a package containing all static files needed to build a website, such as HTML, CSS, and JS files.
 
 Follow these steps:
 
