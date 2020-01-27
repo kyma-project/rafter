@@ -49,7 +49,7 @@ Follow these steps:
 
 5. Check the status of the Asset CR. Now it has an additional **metadata** object with a set of values. In this scenario, there should be the **title** key with a value.
 
-   `kubectl get asset markdown-file -o jsonpath='{.status.assetRef.files[0].metadata.title}'`{{execute}}
+   `kubectl get assets markdown-file -o jsonpath='{.status.assetRef.files[0].metadata.title}'`{{execute}}
 
 To make sure that the file is in storage and you can extract it, follow these steps:
 
