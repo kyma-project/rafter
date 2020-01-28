@@ -8,7 +8,7 @@
 * @aerfio @magicmatatjahu @michal-hudy @m00g3n
 
 # All .md files
-*.md @kazydek @mmitoraj @bszwarc
+*.md @kazydek @mmitoraj @bszwarc @klaudiagrz
 
 # The documentation directory
-/docs/ @kazydek @mmitoraj @bszwarc
+/docs/ @kazydek @mmitoraj @bszwarc @klaudiagrz
