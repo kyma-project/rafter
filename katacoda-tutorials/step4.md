@@ -32,7 +32,7 @@ Follow these steps:
    EOF
    ```{{execute}}
 
-3. Check if the status of the Asset CR is `Ready` which means that fetching and communication with the AsyncAPI Service was completed. Run:
+3. Check if the status of the Asset CR is `Ready` which means that fetching and communication with the AsyncAPI Service were completed. Run:
 
    `kubectl get assets asyncapi-file -o jsonpath='{.status.phase}'`{{execute}}
 

@@ -43,7 +43,7 @@ Follow these steps:
    EOF
    ```{{execute}}
 
-4. Make sure that the status of the Asset CR is `Ready` which means that fetching and communication with the Front Matter Service was completed. Run:
+4. Make sure that the status of the Asset CR is `Ready` which means that fetching and communication with the Front Matter Service were completed. Run:
 
    `kubectl get assets markdown-file -o jsonpath='{.status.phase}'`{{execute}}
 

@@ -90,7 +90,7 @@ Follow these steps:
     EOF
     ```{{execute}}
 
-4. Make sure that the status of the Asset CR is `Ready` which means that fetching and filtering was completed. Run:
+4. Make sure that the status of the Asset CR is `Ready` which means that fetching and filtering were completed. Run:
 
    `kubectl get assets sample-asset -o jsonpath='{.status.phase}'`{{execute}}
 
