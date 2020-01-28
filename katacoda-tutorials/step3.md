@@ -8,18 +8,18 @@ Follow these steps:
 
 2. Create a bucket for the Markdown file by applying a Bucket CR. Run:
 
-    ```yaml
-     cat <<EOF | kubectl apply -f -
-     apiVersion: rafter.kyma-project.io/v1beta1
-     kind: Bucket
-     metadata:
-       name: content
-       namespace: default
-     spec:
-       region: "us-east-1"
-       policy: readonly
-     EOF
-     ```{{execute}}
+   ```yaml
+    cat <<EOF | kubectl apply -f -
+    apiVersion: rafter.kyma-project.io/v1beta1
+    kind: Bucket
+    metadata:
+      name: content
+      namespace: default
+    spec:
+      region: "us-east-1"
+      policy: readonly
+    EOF
+    ```{{execute}}
 
 3. Apply an Asset CR that points to a single Markdown file. To extract metadata from the Markdown file before it goes to storage, specify communication with **metadataWebhookService** in the Asset CR.  As a result, the status of the Asset CR will be enriched with the file metadata. Run:
 
