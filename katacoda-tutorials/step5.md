@@ -102,4 +102,4 @@ To make sure that the file is in storage and you can extract it, follow these st
 
 2. Fetch the file content in the terminal window:
 
-    `curl https://[[HOST_SUBDOMAIN]]-31311-[[KATACODA_HOST]].environments.katacoda.com/$BUCKET_NAME/sample-asset/file1.md`{{execute}}
+   `curl https://[[HOST_SUBDOMAIN]]-31311-[[KATACODA_HOST]].environments.katacoda.com/$BUCKET_NAME/sample-asset/file1.md`{{execute}}
