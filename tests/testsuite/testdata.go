@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v6"
 
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	"github.com/kyma-project/rafter/tests/pkg/file"
