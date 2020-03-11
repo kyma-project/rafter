@@ -119,7 +119,7 @@ migrator:
       pullPolicy: IfNotPresent
     minioClient:
       repository: 'minio/mc'
-      tag: 'RELEASE.2019-04-03T17-59-57Z'
+      tag: 'RELEASE.2020-03-09T18-26-53Z'
       pullPolicy: IfNotPresent
   pre:
     minioDeploymentRefName:
