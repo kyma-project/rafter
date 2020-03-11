@@ -18,7 +18,7 @@ type config struct {
 	Test           testsuite.Config
 }
 
-func TestAssetStore(t *testing.T) {
+func TestRafter(t *testing.T) {
 	g := gomega.NewGomegaWithT(t)
 
 	cfg, err := loadConfig("APP")
