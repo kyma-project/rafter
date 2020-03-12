@@ -150,6 +150,7 @@ rafter-controller-manager:
 
     environment:
       MINIO_BROWSER: "off"
+      MINIO_PROMETHEUS_AUTH_TYPE: "public"
 
     defaultBucket:
       enabled: false
