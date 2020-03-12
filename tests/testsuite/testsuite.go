@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go"
 	"github.com/onsi/gomega"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/dynamic"
