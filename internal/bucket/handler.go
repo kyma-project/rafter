@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	"github.com/minio/minio-go/v6/pkg/policy"
+	"github.com/minio/minio-go/pkg/policy"
 	"github.com/pkg/errors"
 )
 

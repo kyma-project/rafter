@@ -12,7 +12,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 
 	"github.com/golang/glog"
-	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
 )
 

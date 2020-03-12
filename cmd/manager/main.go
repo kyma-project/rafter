@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go"
 	"github.com/vrischmann/envconfig"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"

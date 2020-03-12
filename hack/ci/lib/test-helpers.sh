@@ -174,7 +174,7 @@ testHelpers::install_rafter() {
 
   local -r tag="latest"
   local -r pull_policy="Never"
-  local -r timeout=300
+  local -r timeout=180
 
   log::info "- Installing Rafter in ${release_name} release from local charts..."
 

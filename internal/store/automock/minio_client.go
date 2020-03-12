@@ -5,7 +5,7 @@ package automock
 import (
 	context "context"
 
-	minio "github.com/minio/minio-go/v6"
+	minio "github.com/minio/minio-go"
 	mock "github.com/stretchr/testify/mock"
 )
 
