@@ -12,7 +12,7 @@ import (
 	"github.com/kyma-project/rafter/internal/configurer"
 	"github.com/kyma-project/rafter/internal/requesthandler"
 	"github.com/kyma-project/rafter/pkg/runtime/signal"
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v6"
 	"github.com/pkg/errors"
 	"github.com/vrischmann/envconfig"
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"

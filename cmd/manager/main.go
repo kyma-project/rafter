@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v6"
 	"github.com/vrischmann/envconfig"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -14,6 +14,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+
 	// +kubebuilder:scaffold:imports
 
 	"github.com/kyma-project/rafter/internal/assethook"

@@ -12,7 +12,7 @@ import (
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v6"
 )
 
 func TestUploader_UploadFiles(t *testing.T) {

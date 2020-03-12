@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
-	"github.com/minio/minio-go"
-	"github.com/minio/minio-go/pkg/policy"
+	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go/v6/pkg/policy"
 	"github.com/pkg/errors"
 )
 

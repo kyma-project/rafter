@@ -16,7 +16,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v6"
 	"github.com/onsi/gomega"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/mock"
