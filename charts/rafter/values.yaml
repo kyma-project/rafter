@@ -136,7 +136,7 @@ rafter-controller-manager:
     secretKey: ""
 
     image:
-      tag: RELEASE.2019-10-12T01-39-57Z
+      tag: RELEASE.2020-03-09T18-26-53Z
 
     persistence:
       enabled: true
@@ -234,7 +234,7 @@ rafter-upload-service:
         pullPolicy: IfNotPresent
       minioClient:
         repository: 'minio/mc'
-        tag: 'RELEASE.2019-10-12T01-39-57Z'
+        tag: 'RELEASE.2019-04-03T17-59-57Z'
         pullPolicy: IfNotPresent
     pre:
       minioDeploymentRefName:
