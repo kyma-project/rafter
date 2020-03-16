@@ -233,8 +233,8 @@ rafter-upload-service:
         tag: 'v20190325-ff66a3a'
         pullPolicy: IfNotPresent
       minioClient:
-        repository: 'minio/mc'
-        tag: RELEASE.2019-10-12T01-39-57Z
+        repository: eu.gcr.io/kyma-project/incubator/pr/minio/mc
+        tag: RELEASE.2019-04-03T17-59-57Z-PR-10
         pullPolicy: IfNotPresent
     pre:
       minioDeploymentRefName:
