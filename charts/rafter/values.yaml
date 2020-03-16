@@ -136,7 +136,7 @@ rafter-controller-manager:
     secretKey: ""
 
     image:
-      tag: RELEASE.2019-06-04T01-15-58Z
+      tag: RELEASE.2019-10-12T01-39-57Z
 
     persistence:
       enabled: true
