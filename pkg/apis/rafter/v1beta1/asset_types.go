@@ -28,8 +28,9 @@ type Asset struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   AssetSpec   `json:"spec,omitempty"`
-	Status AssetStatus `json:"status,omitempty"`
+	Spec        AssetSpec   `json:"spec,omitempty"`
+	Status      AssetStatus `json:"status,omitempty"`
+	DisplayName *string     `json:"displayName"`
 }
 
 // +kubebuilder:object:root=true
