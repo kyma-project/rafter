@@ -49,7 +49,7 @@ var _ = Describe("Asset", func() {
 		}
 	})
 
-	It("should successfully create, update and delete AssetGroup", func() {
+	It("should successfully create, update and delete ClusterAssetGroup", func() {
 		By("creating the ClusterAssetGroup")
 		result, err := reconciler.Reconcile(request)
 		validateReconcilation(err, result)
