@@ -167,8 +167,6 @@ spec:
           - observedGeneration
           - phase
           type: object
-      required:
-      - displayName
       type: object
   version: v1beta1
   versions:

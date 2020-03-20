@@ -30,7 +30,7 @@ type Asset struct {
 
 	Spec        AssetSpec   `json:"spec,omitempty"`
 	Status      AssetStatus `json:"status,omitempty"`
-	DisplayName string      `json:"displayName"`
+	DisplayName string      `json:"displayName,omitempty"`
 }
 
 // +kubebuilder:object:root=true
