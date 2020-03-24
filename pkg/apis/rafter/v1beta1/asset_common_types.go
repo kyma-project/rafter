@@ -37,8 +37,9 @@ type AssetStatusRef struct {
 }
 
 type AssetFile struct {
-	Name     string                `json:"name"`
-	Metadata *runtime.RawExtension `json:"metadata,omitempty"`
+	Name        string                `json:"name"`
+	DisplayName string                `json:"displayName,omitempty"`
+	Metadata    *runtime.RawExtension `json:"metadata,omitempty"`
 }
 
 type WebhookService struct {
