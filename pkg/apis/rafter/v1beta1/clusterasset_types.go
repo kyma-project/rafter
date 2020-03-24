@@ -29,8 +29,9 @@ type ClusterAsset struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ClusterAssetSpec   `json:"spec,omitempty"`
-	Status ClusterAssetStatus `json:"status,omitempty"`
+	Spec        ClusterAssetSpec   `json:"spec,omitempty"`
+	Status      ClusterAssetStatus `json:"status,omitempty"`
+	DisplayName string             `json:"displayName,omitempty"`
 }
 
 // +kubebuilder:object:root=true
