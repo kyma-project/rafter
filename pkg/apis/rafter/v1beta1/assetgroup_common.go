@@ -40,6 +40,7 @@ type Source struct {
 	Filter string               `json:"filter,omitempty"`
 	// +optional
 	Parameters *runtime.RawExtension `json:"parameters,omitempty"`
+	DisplayName string      `json:"displayName,omitempty"`
 }
 
 // +kubebuilder:validation:Enum=Pending;Ready;Failed
