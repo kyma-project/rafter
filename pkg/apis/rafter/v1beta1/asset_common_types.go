@@ -74,6 +74,7 @@ type AssetBucketRef struct {
 type AssetSource struct {
 	Mode AssetMode `json:"mode"`
 	URL  string    `json:"url"`
+	DisplayName string      `json:"displayName,omitempty"`
 	// +optional
 	Filter string `json:"filter,omitempty"`
 

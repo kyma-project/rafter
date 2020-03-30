@@ -351,6 +351,7 @@ func (h *assetgroupHandler) convertToCommonAssetSpec(spec v1beta1.Source, bucket
 		Source: v1beta1.AssetSource{
 			Mode:                     h.convertToAssetMode(spec.Mode),
 			URL:                      spec.URL,
+			DisplayName:              spec.DisplayName,
 			Filter:                   spec.Filter,
 			ValidationWebhookService: convertToAssetWebhookServices(cfg.Validations),
 			MutationWebhookService:   convertToAssetWebhookServices(cfg.Mutations),
