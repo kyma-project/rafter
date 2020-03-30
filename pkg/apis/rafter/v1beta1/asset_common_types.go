@@ -11,6 +11,7 @@ type CommonAssetSpec struct {
 	BucketRef AssetBucketRef `json:"bucketRef,omitempty"`
 	// +optional
 	Parameters *runtime.RawExtension `json:"parameters,omitempty"`
+	DisplayName string      `json:"displayName,omitempty"`
 }
 
 // CommonAssetStatus defines the observed state of Asset
@@ -38,7 +39,6 @@ type AssetStatusRef struct {
 
 type AssetFile struct {
 	Name        string                `json:"name"`
-	DisplayName string                `json:"displayName,omitempty"`
 	Metadata    *runtime.RawExtension `json:"metadata,omitempty"`
 }
 
