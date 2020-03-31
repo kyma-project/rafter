@@ -11,6 +11,7 @@ type CommonAssetSpec struct {
 	BucketRef AssetBucketRef `json:"bucketRef,omitempty"`
 	// +optional
 	Parameters *runtime.RawExtension `json:"parameters,omitempty"`
+	// +optional
 	DisplayName string      `json:"displayName,omitempty"`
 }
 

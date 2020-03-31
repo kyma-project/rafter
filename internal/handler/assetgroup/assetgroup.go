@@ -359,6 +359,7 @@ func (h *assetgroupHandler) convertToCommonAssetSpec(spec v1beta1.Source, bucket
 		BucketRef: v1beta1.AssetBucketRef{
 			Name: bucketName,
 		},
+		DisplayName: spec.DisplayName,
 		Parameters: spec.Parameters,
 	}
 }
