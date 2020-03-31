@@ -96,6 +96,7 @@ func Test_findSource(t *testing.T) {
 func TestAssetGroupHandler_Handle_AddOrUpdate(t *testing.T) {
 	sourceName := v1beta1.AssetGroupSourceName("t1")
 	assetType := v1beta1.AssetGroupSourceType("swag")
+	displayName := "source display name"
 
 	t.Run("Create", func(t *testing.T) {
 		// Given
@@ -190,6 +191,36 @@ func TestAssetGroupHandler_Handle_AddOrUpdate(t *testing.T) {
 		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
 	})
 
+	t.Run("CreateWithDisplayName", func(t *testing.T) {
+	// Given
+	g := gomega.NewGomegaWithT(t)
+	ctx := context.TODO()
+	sources := []v1beta1.Source{testSourceWithDisplayName(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil, displayName)}
+	testData := testData("halo", "bucketName", sources)
+
+	assetSvc := new(automock.AssetService)
+	defer assetSvc.AssertExpectations(t)
+	bucketSvc := new(automock.BucketService)
+	defer bucketSvc.AssertExpectations(t)
+	webhookConfSvc := new(amcfg.AssetWebhookConfigService)
+	defer webhookConfSvc.AssertExpectations(t)
+
+	assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(nil, nil).Once()
+	assetSvc.On("Create", ctx, testData, mock.Anything).Return(nil).Once()
+	webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
+
+	handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+
+	// When
+	status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
+
+	// Then
+	g.Expect(err).ToNot(gomega.HaveOccurred())
+	g.Expect(status).ToNot(gomega.BeNil())
+	g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+	g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
+	})
+
 	t.Run("CreateError", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
@@ -273,6 +304,44 @@ func TestAssetGroupHandler_Handle_AddOrUpdate(t *testing.T) {
 		source, _ := getSourceByType(sources, sourceName)
 		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
 		existingAsset.Spec.Source.Filter = "xyz"
+		existingAssets := []assetgroup.CommonAsset{existingAsset}
+
+		assetSvc := new(automock.AssetService)
+		defer assetSvc.AssertExpectations(t)
+		bucketSvc := new(automock.BucketService)
+		defer bucketSvc.AssertExpectations(t)
+		webhookConfSvc := new(amcfg.AssetWebhookConfigService)
+		defer webhookConfSvc.AssertExpectations(t)
+
+		assetSvc.On("List", ctx, testData.Namespace, map[string]string{"rafter.kyma-project.io/asset-group": testData.Name}).Return(existingAssets, nil).Once()
+		assetSvc.On("Update", ctx, mock.Anything).Return(nil).Once()
+		webhookConfSvc.On("Get", ctx).Return(webhookconfig.AssetWebhookConfigMap{}, nil).Once()
+
+		handler := assetgroup.New(log, fakeRecorder(), assetSvc, bucketSvc, webhookConfSvc)
+
+		// When
+		status, err := handler.Handle(ctx, testData, testData.Spec.CommonAssetGroupSpec, testData.Status.CommonAssetGroupStatus)
+
+		// Then
+		g.Expect(err).ToNot(gomega.HaveOccurred())
+		g.Expect(status).ToNot(gomega.BeNil())
+		g.Expect(status.Phase).To(gomega.Equal(v1beta1.AssetGroupPending))
+		g.Expect(status.Reason).To(gomega.Equal(v1beta1.AssetGroupWaitingForAssets))
+	})
+
+	t.Run("UpdateWithDisplayName", func(t *testing.T) {
+		// Given
+		g := gomega.NewGomegaWithT(t)
+		ctx := context.TODO()
+		bucketName := "test-bucket"
+		sources := []v1beta1.Source{
+			testSourceWithDisplayName(sourceName, assetType, "https://dummy.url", v1beta1.AssetGroupSingle, nil, displayName),
+			testSource(sourceName, "markdown", "https://dummy.url", v1beta1.AssetGroupSingle, nil),
+		}
+		testData := testData("halo", "bucketName", sources)
+		source, _ := getSourceByType(sources, sourceName)
+		existingAsset := commonAsset(sourceName, assetType, testData.Name, bucketName, *source, v1beta1.AssetPending)
+		existingAsset.Spec.DisplayName = "xyz"
 		existingAssets := []assetgroup.CommonAsset{existingAsset}
 
 		assetSvc := new(automock.AssetService)
@@ -678,6 +747,17 @@ func testSource(sourceName v1beta1.AssetGroupSourceName, sourceType v1beta1.Asse
 		URL:        url,
 		Mode:       mode,
 		Parameters: parameters,
+	}
+}
+
+func testSourceWithDisplayName(sourceName v1beta1.AssetGroupSourceName, sourceType v1beta1.AssetGroupSourceType, url string, mode v1beta1.AssetGroupSourceMode, parameters *runtime.RawExtension, displayName string) v1beta1.Source {
+	return v1beta1.Source{
+		Name:       sourceName,
+		Type:       sourceType,
+		URL:        url,
+		Mode:       mode,
+		Parameters: parameters,
+		DisplayName: displayName,
 	}
 }
 

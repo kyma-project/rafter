@@ -48,6 +48,27 @@ func TestAssetHandler_Handle_OnAddOrUpdate(t *testing.T) {
 		g.Expect(status.Reason).To(Equal(v1beta1.AssetScheduled))
 	})
 
+	t.Run("OnAddWithDisplayName", func(t *testing.T) {
+		// Given
+		g := NewGomegaWithT(t)
+		ctx := context.TODO()
+		relistInterval := time.Minute
+		now := time.Now()
+		asset := testDataWithDisplayName("test-asset", "test-bucket", "https://localhost/test.md", "source displayName")
+
+		handler, mocks := newHandler(relistInterval)
+		defer mocks.AssertExpectations(t)
+
+		// When
+		status, err := handler.Do(ctx, now, asset, asset.Spec.CommonAssetSpec, asset.Status.CommonAssetStatus)
+
+		// Then
+		g.Expect(err).ToNot(HaveOccurred())
+		g.Expect(status).ToNot(BeZero())
+		g.Expect(status.Phase).To(Equal(v1beta1.AssetPending))
+		g.Expect(status.Reason).To(Equal(v1beta1.AssetScheduled))
+	})
+
 	t.Run("OnUpdate", func(t *testing.T) {
 		// Given
 		g := NewGomegaWithT(t)
@@ -854,6 +875,28 @@ func testData(assetName, bucketName, url string) *v1beta1.Asset {
 					MutationWebhookService:   make([]v1beta1.AssetWebhookService, 3),
 					MetadataWebhookService:   make([]v1beta1.WebhookService, 3),
 				},
+			},
+		},
+	}
+}
+
+func testDataWithDisplayName(assetName, bucketName, url string, displayName string) *v1beta1.Asset {
+	return &v1beta1.Asset{
+		ObjectMeta: v1.ObjectMeta{
+			Name:       assetName,
+			Generation: int64(1),
+		},
+		Spec: v1beta1.AssetSpec{
+			CommonAssetSpec: v1beta1.CommonAssetSpec{
+				BucketRef: v1beta1.AssetBucketRef{Name: bucketName},
+				Source: v1beta1.AssetSource{
+					URL:                      url,
+					Mode:                     v1beta1.AssetSingle,
+					ValidationWebhookService: make([]v1beta1.AssetWebhookService, 3),
+					MutationWebhookService:   make([]v1beta1.AssetWebhookService, 3),
+					MetadataWebhookService:   make([]v1beta1.WebhookService, 3),
+				},
+				DisplayName: displayName,
 			},
 		},
 	}
