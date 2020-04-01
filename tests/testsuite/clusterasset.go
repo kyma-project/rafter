@@ -54,6 +54,7 @@ func (a *clusterAsset) CreateMany(assets []assetData, testID string, callbacks .
 						URL:  asset.URL,
 						Mode: asset.Mode,
 					},
+					DisplayName: asset.DisplayName,
 				},
 			},
 		}

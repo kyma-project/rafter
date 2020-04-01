@@ -57,6 +57,7 @@ func (a *asset) CreateMany(assets []assetData, testID string, callbacks ...func(
 						URL:  asset.URL,
 						Mode: asset.Mode,
 					},
+					DisplayName: asset.DisplayName,
 				},
 			},
 		}

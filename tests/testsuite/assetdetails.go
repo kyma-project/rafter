@@ -9,12 +9,13 @@ import (
 )
 
 type assetData struct {
-	Name string
-	URL  string
-	Mode v1beta1.AssetMode
+	Name        string
+	URL         string
+	Mode        v1beta1.AssetMode
+	DisplayName string
 }
 
-func convertToAssetResourceDetails(response *upload.Response, prefix string) []assetData {
+func convertToAssetResourceDetails(response *upload.Response, prefix string, displayName string) []assetData {
 	var assets []assetData
 	for _, file := range response.UploadedFiles {
 		var mode v1beta1.AssetMode
@@ -25,9 +26,10 @@ func convertToAssetResourceDetails(response *upload.Response, prefix string) []a
 		}
 
 		asset := assetData{
-			Name: fmt.Sprintf("%s-%s", prefix, file.FileName),
-			URL:  file.RemotePath,
-			Mode: mode,
+			Name:        fmt.Sprintf("%s-%s", prefix, file.FileName),
+			URL:         file.RemotePath,
+			Mode:        mode,
+			DisplayName: displayName,
 		}
 		assets = append(assets, asset)
 	}

@@ -51,7 +51,8 @@ type TestSuite struct {
 	minioCli         *minio.Client
 	cfg              Config
 
-	testId string
+	displayName string
+	testId      string
 }
 
 func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWithT) (*TestSuite, error) {
@@ -95,6 +96,7 @@ func New(restConfig *rest.Config, cfg Config, t *testing.T, g *gomega.GomegaWith
 		g:             g,
 		minioCli:      minioCli,
 		testId:        "singularity",
+		displayName:   "test display name",
 		cfg:           cfg,
 	}, nil
 }
@@ -158,7 +160,7 @@ func (t *TestSuite) Run() {
 	failOnError(t.g, err)
 
 	t.t.Log("Preparing metadata...")
-	t.assetDetails = convertToAssetResourceDetails(uploadResult, t.cfg.CommonAssetPrefix)
+	t.assetDetails = convertToAssetResourceDetails(uploadResult, t.cfg.CommonAssetPrefix, t.displayName)
 	t.assetDetails = append(t.assetDetails, configMapData)
 
 	t.t.Log("Creating assets...")
