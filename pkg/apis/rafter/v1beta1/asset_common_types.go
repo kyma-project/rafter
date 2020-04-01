@@ -12,7 +12,7 @@ type CommonAssetSpec struct {
 	// +optional
 	Parameters *runtime.RawExtension `json:"parameters,omitempty"`
 	// +optional
-	DisplayName string      `json:"displayName,omitempty"`
+	DisplayName string `json:"displayName,omitempty"`
 }
 
 // CommonAssetStatus defines the observed state of Asset
@@ -39,8 +39,8 @@ type AssetStatusRef struct {
 }
 
 type AssetFile struct {
-	Name        string                `json:"name"`
-	Metadata    *runtime.RawExtension `json:"metadata,omitempty"`
+	Name     string                `json:"name"`
+	Metadata *runtime.RawExtension `json:"metadata,omitempty"`
 }
 
 type WebhookService struct {

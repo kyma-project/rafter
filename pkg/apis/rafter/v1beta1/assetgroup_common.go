@@ -41,7 +41,7 @@ type Source struct {
 	// +optional
 	Parameters *runtime.RawExtension `json:"parameters,omitempty"`
 	// +optional
-	DisplayName string      `json:"displayName,omitempty"`
+	DisplayName string `json:"displayName,omitempty"`
 }
 
 // +kubebuilder:validation:Enum=Pending;Ready;Failed
