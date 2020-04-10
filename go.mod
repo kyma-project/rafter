@@ -20,9 +20,11 @@ require (
 	github.com/vrischmann/envconfig v1.2.0
 	golang.org/x/net v0.0.0-20191004110552-13f9640d40b9
 	gopkg.in/ini.v1 v1.48.0 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20190905181640-827449938966 // indirect
 	k8s.io/api v0.0.0-20191003000013-35e20aa79eb8
 	k8s.io/apimachinery v0.0.0-20190913080033-27d36303b655
 	k8s.io/client-go v0.0.0-20191003000419-f68efa97b39e
 	sigs.k8s.io/controller-runtime v0.4.0
-	sigs.k8s.io/controller-tools v0.2.4 // indirect
 )
+
+replace gopkg.in/yaml.v2 => gopkg.in/yaml.v2 v2.2.8
