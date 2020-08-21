@@ -21,10 +21,11 @@ require (
 	golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7
 	gopkg.in/ini.v1 v1.48.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20190905181640-827449938966 // indirect
-	k8s.io/api v0.17.2
-	k8s.io/apimachinery v0.17.2
-	k8s.io/client-go v0.17.2
-	sigs.k8s.io/controller-runtime v0.5.0
+	k8s.io/api v0.17.8
+	k8s.io/apimachinery v0.17.8
+	k8s.io/client-go v0.17.8
+	sigs.k8s.io/controller-runtime v0.5.9
+	sigs.k8s.io/structured-merge-diff v1.0.1-0.20191108220359-b1b620dd3f06 // indirect
 )
 
 replace gopkg.in/yaml.v2 => gopkg.in/yaml.v2 v2.2.8
