@@ -1,19 +1,18 @@
 package controllers
 
 import (
-	"github.com/kyma-project/rafter/internal/webhookconfig"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
 	"path/filepath"
 	"sync"
 	"testing"
 	"time"
 
-	assethook "github.com/kyma-project/rafter/internal/assethook/automock"
-	loader "github.com/kyma-project/rafter/internal/loader/automock"
-	store "github.com/kyma-project/rafter/internal/store/automock"
-	assetstorev1beta1 "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic"
+	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
+
+	"github.com/kyma-project/rafter/internal/webhookconfig"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -24,6 +23,11 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+
+	assethook "github.com/kyma-project/rafter/internal/assethook/automock"
+	loader "github.com/kyma-project/rafter/internal/loader/automock"
+	store "github.com/kyma-project/rafter/internal/store/automock"
+	assetstorev1beta1 "github.com/kyma-project/rafter/pkg/apis/rafter/v1beta1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -53,7 +57,7 @@ func TestAPIs(t *testing.T) {
 
 	RunSpecsWithDefaultAndCustomReporters(t,
 		"Controller Suite",
-		[]Reporter{envtest.NewlineReporter{}})
+		[]Reporter{printer.NewlineReporter{}})
 }
 
 var _ = BeforeSuite(func(done Done) {
