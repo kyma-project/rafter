@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	parser "github.com/asyncapi/parser/pkg/parser"
+	parser "github.com/asyncapi/parser-go/pkg/parser"
 
 	v1 "github.com/kyma-project/rafter/pkg/endpoint/asyncapi/v1"
 	"github.com/onsi/gomega"

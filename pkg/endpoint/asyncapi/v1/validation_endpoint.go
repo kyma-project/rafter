@@ -2,10 +2,11 @@ package v1
 
 import (
 	"context"
-	"github.com/asyncapi/parser/pkg/parser"
+	"io"
+
+	"github.com/asyncapi/parser-go/pkg/parser"
 	"github.com/kyma-project/rafter/pkg/runtime/endpoint"
 	"github.com/kyma-project/rafter/pkg/runtime/service"
-	"io"
 )
 
 var (
