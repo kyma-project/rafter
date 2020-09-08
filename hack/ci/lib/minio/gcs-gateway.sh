@@ -146,7 +146,7 @@ gateway::switch() {
   helm upgrade "${release_name}" "${charts_path}" \
     --reuse-values \
     --set rafter-controller-manager.minio.persistence.enabled="false" \
-    --set rafter-controller-manager.minio.podAnnotations.persistence="\"false\"" \
+    --set rafter-controller-manager.minio.podAnnotations.persistence="off" \
     --set rafter-controller-manager.minio.existingSecret="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-controller-manager.minio.gcsgateway.enabled="true" \
     --set rafter-controller-manager.minio.gcsgateway.projectId="${CLOUDSDK_CORE_PROJECT}" \
@@ -156,7 +156,7 @@ gateway::switch() {
     --set rafter-controller-manager.envs.store.accessKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-controller-manager.envs.store.secretKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-upload-service.minio.persistence.enabled="false" \
-    --set rafter-upload-service.minio.podAnnotations.persistence="\"false\"" \
+    --set rafter-upload-service.minio.podAnnotations.persistence="off" \
     --set rafter-upload-service.envs.upload.accessKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-upload-service.envs.upload.secretKey.valueFrom.secretKeyRef.name="${MINIO_GATEWAY_SECRET_NAME}" \
     --set rafter-upload-service.migrator.post.minioSecretRefName="${MINIO_GATEWAY_SECRET_NAME}" \

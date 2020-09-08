@@ -143,13 +143,14 @@ rafter-controller-manager:
       size: 10Gi
 
     podAnnotations:
-      persistence: "true"
+      persistence: "on"
 
     DeploymentUpdate:
       type: Recreate
 
     environment:
       MINIO_BROWSER: "off"
+      MINIO_PROMETHEUS_AUTH_TYPE: "public"
 
     defaultBucket:
       enabled: false
@@ -171,7 +172,7 @@ rafter-upload-service:
       enabled: true
       size: 10Gi
     podAnnotations:
-      persistence: "true"
+      persistence: "on"
 
   image:
     repository: eu.gcr.io/kyma-project/rafter-upload-service
