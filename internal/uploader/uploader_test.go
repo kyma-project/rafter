@@ -233,7 +233,22 @@ func TestUploader_PopulateResults(t *testing.T) {
 		// Then
 		g.Expect(res).To(gomega.BeEmpty())
 	})
+}
 
+func TestUploader_NormalizeObjectName(t *testing.T) {
+	t.Run("Test cases", func(t *testing.T) {
+		// Given
+		g := gomega.NewGomegaWithT(t)
+		u := uploader.Uploader{}
+
+		// When
+		objectName1 := u.NormalizeObjectName("dir///subdir//", "file.json")
+		objectName2 := u.NormalizeObjectName("dir///subdir/", "//file.json///")
+
+		// Then
+		g.Expect(objectName1).To(gomega.Equal("dir/subdir/file.json"))
+		g.Expect(objectName2).To(gomega.Equal("dir/subdir/file.json"))
+	})
 }
 
 func TestOrigin(t *testing.T) {
