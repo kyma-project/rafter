@@ -62,6 +62,36 @@ func TestLoader_Load_NotSupported(t *testing.T) {
 	g.Expect(files).To(gomega.HaveLen(0))
 }
 
+func TestLoader_filename(t *testing.T) {
+	// Given
+	g := gomega.NewGomegaWithT(t)
+	loader := &loader{
+		temporaryDir:    "/tmp",
+		osRemoveAllFunc: removeAll,
+	}
+
+	t.Run("Empty filename", func(t *testing.T) {
+		// When
+		filename := loader.fileName("")
+		// Then
+		g.Expect(filename).To(gomega.Equal("asset"))
+	})
+
+	t.Run("Filename with directory", func(t *testing.T) {
+		// When
+		filename := loader.fileName("directory/foobar")
+		// Then
+		g.Expect(filename).To(gomega.Equal("foobar"))
+	})
+
+	t.Run("Filename as url", func(t *testing.T) {
+		// When
+		filename := loader.fileName("directory/foobar?query=foo&query2=bar#fragment")
+		// Then
+		g.Expect(filename).To(gomega.Equal("foobar"))
+	})
+}
+
 func removeAll(s string) error {
 	if s == "error1" {
 		return fmt.Errorf("nope")
