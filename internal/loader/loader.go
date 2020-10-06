@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"k8s.io/client-go/dynamic"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 
@@ -101,6 +102,14 @@ func (l *loader) fileName(source string) string {
 	_, filename := path.Split(source)
 	if len(filename) == 0 {
 		filename = "asset"
+	}
+
+	// trim query params, fragments etc
+	parsedUrl, err := url.Parse(filename)
+	if err != nil {
+		filename = "asset"
+	} else {
+		filename = parsedUrl.Path
 	}
 
 	return filename
