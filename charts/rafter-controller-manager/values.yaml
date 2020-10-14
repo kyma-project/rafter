@@ -45,7 +45,9 @@ pod:
     - mountPath: /tmp
       name: tmp-empty-dir
   extraProperties: {}
-  extraContainerProperties: {}
+  extraContainerProperties:
+    securityContext:
+      privileged: false
 
 serviceAccount:
   create: true

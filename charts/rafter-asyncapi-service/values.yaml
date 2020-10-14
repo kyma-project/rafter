@@ -20,7 +20,9 @@ pod:
   labels: {}
   annotations: {}
   extraProperties: {}
-  extraContainerProperties: {}
+  extraContainerProperties:
+    securityContext:
+      privileged: false
 
 service:
   name:
