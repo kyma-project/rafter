@@ -48,6 +48,7 @@ pod:
   extraContainerProperties:
     securityContext:
       privileged: false
+      allowPrivilegeEscalation: false
 
 serviceAccount:
   create: true

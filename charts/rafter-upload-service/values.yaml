@@ -33,6 +33,7 @@ pod:
   extraContainerProperties:
     securityContext:
       privileged: false
+      allowPrivilegeEscalation: false
 
 service:
   name:
