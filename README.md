@@ -16,7 +16,7 @@
 The project will no longer be developed within the `kyma-project` organization.
 Contact us if you are interested in becoming a new maintainer.
 If we fail to find new maintainers, the project will be archived.
-Until than, no new fetures will be developed and maintanance will be limited to bare minimum.
+Until then, no new features will be developed and maintenance activities will be limited to the bare minimum.
 
 ---
 
