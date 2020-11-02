@@ -16,8 +16,8 @@ minio:
     persistence: "on"
 
 image:
-  repository: eu.gcr.io/kyma-project/rafter-upload-service
-  tag: 5f3a957b
+  repository: eu.gcr.io/kyma-project/pr/rafter-upload-service
+  tag: PR-91
   pullPolicy: IfNotPresent
 
 deployment:
