@@ -38,4 +38,4 @@ LABEL source = git@github.com:kyma-project/rafter.git
 COPY --from=builder /app /app
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
-ENTRYPOINT ["/app/main"]
+CMD ["/app/main","-logtostderr","=false"]
