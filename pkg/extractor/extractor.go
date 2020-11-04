@@ -1,10 +1,11 @@
 package extractor
 
 import (
+	"k8s.io/klog"
 	"time"
 
 	"github.com/gernest/front"
-	"github.com/golang/glog"
+
 	"github.com/kyma-project/rafter/pkg/fileheader"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -49,7 +50,7 @@ func (e *extractor) ReadMetadata(fileHeader fileheader.FileHeader) (map[string]i
 	defer func() {
 		err := f.Close()
 		if err != nil {
-			glog.Error(err)
+			klog.Error(err)
 		}
 	}()
 

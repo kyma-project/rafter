@@ -2,9 +2,6 @@ package main
 
 import (
 	"flag"
-	"net/http"
-	"os"
-
 	"github.com/minio/minio-go"
 	"github.com/vrischmann/envconfig"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -12,8 +9,10 @@ import (
 	"k8s.io/client-go/dynamic"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+	"k8s.io/klog/klogr"
+	"net/http"
+	"os"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	// +kubebuilder:scaffold:imports
 
 	"github.com/kyma-project/rafter/internal/assethook"
@@ -58,8 +57,7 @@ func main() {
 	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
 		"Enable leader election for controller manager. Enabling this will ensure there is only one active controller manager.")
 	flag.Parse()
-
-	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
+	ctrl.SetLogger(klogr.New())
 
 	cfg, err := loadConfig("APP")
 	if err != nil {

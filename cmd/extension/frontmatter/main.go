@@ -4,10 +4,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"time"
 
-	"github.com/golang/glog"
+
 	"github.com/kyma-project/rafter/internal/route"
 	"github.com/kyma-project/rafter/pkg/runtime/signal"
 	"github.com/pkg/errors"
@@ -38,17 +39,17 @@ func main() {
 
 	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 	srv := &http.Server{Addr: addr, Handler: mux}
-	glog.Infof("Listening on %s", addr)
+	logrus.Infof("Listening on %s", addr)
 
 	go func() {
 		<-stopCh
 		if err := srv.Shutdown(context.Background()); err != nil {
-			glog.Errorf("HTTP server Shutdown: %v", err)
+			logrus.Errorf("HTTP server Shutdown: %v", err)
 		}
 	}()
 
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-		glog.Errorf("HTTP server ListenAndServe: %v", err)
+		logrus.Errorf("HTTP server ListenAndServe: %v", err)
 	}
 }
 
@@ -67,7 +68,7 @@ func parseFlags(cfg config) {
 	if cfg.Verbose {
 		err := flag.Set("stderrthreshold", "INFO")
 		if err != nil {
-			glog.Error(errors.Wrap(err, "while parsing flags"))
+			logrus.Error(errors.Wrap(err, "while parsing flags"))
 		}
 	}
 	flag.Parse()
@@ -82,6 +83,6 @@ func loadConfig(prefix string) (config, error) {
 func exitOnError(err error, context string) {
 	if err != nil {
 		wrappedError := errors.Wrap(err, context)
-		glog.Fatal(wrappedError)
+		logrus.Fatal(wrappedError)
 	}
 }

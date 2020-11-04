@@ -1,13 +1,13 @@
 package configurer
 
 import (
-	"github.com/golang/glog"
 	"github.com/kyma-project/rafter/internal/bucket"
 	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/klog"
 )
 
 type Config struct {
@@ -46,7 +46,7 @@ func (c *Configurer) Load() (*SharedAppConfig, error) {
 	}
 
 	sharedAppConfig := c.fromConfigMap(configMap)
-	glog.Infof("Config successfully loaded from ConfigMap %s in namespace %s", c.cfg.Name, c.cfg.Namespace)
+	klog.Infof("Config successfully loaded from ConfigMap %s in namespace %s", c.cfg.Name, c.cfg.Namespace)
 
 	return sharedAppConfig, nil
 }
@@ -61,7 +61,7 @@ func (c *Configurer) Save(config SharedAppConfig) error {
 		return errors.Wrapf(err, "while creating ConfigMap %s in namespace %s", c.cfg.Name, c.cfg.Namespace)
 	}
 
-	glog.Infof("Config successfully saved to ConfigMap %s in namespace %s", c.cfg.Name, c.cfg.Namespace)
+	klog.Infof("Config successfully saved to ConfigMap %s in namespace %s", c.cfg.Name, c.cfg.Namespace)
 
 	return nil
 }

@@ -3,12 +3,12 @@ package requesthandler
 import (
 	"context"
 	"encoding/json"
+	"k8s.io/klog"
 	"mime/multipart"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/golang/glog"
 	"github.com/kyma-project/rafter/internal/bucket"
 	"github.com/kyma-project/rafter/internal/fileheader"
 	"github.com/kyma-project/rafter/internal/uploader"
@@ -74,7 +74,7 @@ func (r *RequestHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	defer func() {
 		err := rq.Body.Close()
 		if err != nil {
-			glog.Error(errors.Wrap(err, "while closing request body"))
+			klog.Error(errors.Wrap(err, "while closing request body"))
 		}
 	}()
 
@@ -101,7 +101,7 @@ func (r *RequestHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	defer func() {
 		err := rq.MultipartForm.RemoveAll()
 		if err != nil {
-			glog.Error(errors.Wrap(err, "while removing files loaded from multipart form"))
+			klog.Error(errors.Wrap(err, "while removing files loaded from multipart form"))
 		}
 	}()
 
@@ -135,7 +135,7 @@ func (r *RequestHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	fileToUploadCh := r.populateFilesChannel(publicFiles, privateFiles, filesCount, directory)
 	uploadedFiles, errs := u.UploadFiles(context.Background(), fileToUploadCh, filesCount)
 
-	glog.Infof("Finished processing request with uploading %d files.", filesCount)
+	klog.Infof("Finished processing request with uploading %d files.", filesCount)
 
 	var uploadErrors []ResponseError
 	for _, err := range errs {
@@ -208,7 +208,7 @@ func (r *RequestHandler) writeResponse(w http.ResponseWriter, statusCode int, re
 	_, err = w.Write(jsonResponse)
 	if err != nil {
 		wrappedErr := errors.Wrapf(err, "while writing JSON response")
-		glog.Error(wrappedErr)
+		klog.Error(wrappedErr)
 	}
 }
 

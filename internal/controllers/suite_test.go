@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"k8s.io/klog/klogr"
 	"path/filepath"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sync"
 	"testing"
 	"time"
@@ -20,8 +22,6 @@ import (
 	"sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
-	logf "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
 	assethook "github.com/kyma-project/rafter/internal/assethook/automock"
@@ -61,7 +61,8 @@ func TestAPIs(t *testing.T) {
 }
 
 var _ = BeforeSuite(func(done Done) {
-	logf.SetLogger(zap.LoggerTo(GinkgoWriter, true))
+	log := klogr.New()
+	logf.SetLogger(log)
 
 	By("bootstrapping test environment")
 	testEnv = &envtest.Environment{

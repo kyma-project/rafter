@@ -41,5 +41,4 @@ COPY --from=builder /app /app
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 ENTRYPOINT ["/app/main"]
-CMD ["-logtostderr","=false"]
 

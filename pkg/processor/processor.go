@@ -9,8 +9,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 
-	"github.com/golang/glog"
 	"github.com/pkg/errors"
+	"k8s.io/klog"
 )
 
 type Job struct {
@@ -69,7 +69,7 @@ func (p *Processor) Do(ctx context.Context, jobCh chan Job, jobCount int) ([]Res
 	defer cancel()
 
 	workersCount := p.countNeededWorkers(jobCount, p.MaxWorkers)
-	glog.Infof("Creating %d concurrent worker(s)...", workersCount)
+	klog.Infof("Creating %d concurrent worker(s)...", workersCount)
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(workersCount)
 	for i := 0; i < workersCount; i++ {
@@ -102,7 +102,7 @@ func (p *Processor) work(context context.Context, jobCh chan Job, errorsCh chan 
 	for {
 		select {
 		case <-context.Done():
-			glog.Error(errors.Wrapf(context.Err(), "ResultError while concurrently processing file"))
+			klog.Error(errors.Wrapf(context.Err(), "ResultError while concurrently processing file"))
 			return
 		default:
 		}
@@ -131,12 +131,12 @@ func (p *Processor) work(context context.Context, jobCh chan Job, errorsCh chan 
 // processFile processes a single file
 func (p *Processor) processFile(job Job) (*ResultSuccess, error) {
 	start := time.Now()
-	glog.Infof("Processing file `%s`...\n", job.FilePath)
+	klog.Infof("Processing file `%s`...\n", job.FilePath)
 
 	res, err := p.workerFn(job)
 	if err != nil {
 		err = errors.Wrapf(err, "Error while processing file `%s`", job.FilePath)
-		glog.Error(err)
+		klog.Error(err)
 		return nil, err
 	}
 

@@ -8,7 +8,6 @@ require (
 	github.com/gernest/front v0.0.0-20181129160812-ed80ca338b88
 	github.com/go-ini/ini v1.51.0 // indirect
 	github.com/go-logr/logr v0.1.0
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/onsi/ginkgo v1.14.0
 	github.com/onsi/gomega v1.10.1
@@ -24,6 +23,7 @@ require (
 	k8s.io/api v0.17.11
 	k8s.io/apimachinery v0.17.11
 	k8s.io/client-go v0.17.11
+	k8s.io/klog v1.0.0
 	sigs.k8s.io/controller-runtime v0.5.10
 )
 

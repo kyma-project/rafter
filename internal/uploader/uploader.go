@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"k8s.io/klog"
 	"path/filepath"
 	"sync"
 	"time"
@@ -12,7 +13,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 
-	"github.com/golang/glog"
 	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
 )
@@ -81,7 +81,7 @@ func (u *Uploader) UploadFiles(ctx context.Context, filesChannel chan FileUpload
 	defer cancel()
 
 	workersCount := u.countNeededWorkers(filesCount, u.MaxUploadWorkers)
-	glog.Infof("Creating %d concurrent upload worker(s)...", workersCount)
+	klog.Infof("Creating %d concurrent upload worker(s)...", workersCount)
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(workersCount)
 	for i := 0; i < workersCount; i++ {
@@ -90,7 +90,7 @@ func (u *Uploader) UploadFiles(ctx context.Context, filesChannel chan FileUpload
 			for {
 				select {
 				case <-contextWithTimeout.Done():
-					glog.Error(errors.Wrapf(contextWithTimeout.Err(), "Error while concurrently uploading file"))
+					klog.Error(errors.Wrapf(contextWithTimeout.Err(), "Error while concurrently uploading file"))
 					return
 				default:
 				}
@@ -148,7 +148,7 @@ func (u *Uploader) uploadFile(ctx context.Context, fileUpload FileUpload) (*Uplo
 	defer func() {
 		err := f.Close()
 		if err != nil {
-			glog.Error(errors.Wrapf(err, "while closing file %s", file.Filename()))
+			klog.Error(errors.Wrapf(err, "while closing file %s", file.Filename()))
 		}
 	}()
 
@@ -158,16 +158,16 @@ func (u *Uploader) uploadFile(ctx context.Context, fileUpload FileUpload) (*Uplo
 	// normalize object name. More info: https://github.com/minio/minio/issues/5874
 	objectName := u.normalizeObjectName(fileUpload.Directory, fileName)
 
-	glog.Infof("Uploading `%s` into bucket `%s`...\n", objectName, fileUpload.Bucket)
+	klog.Infof("Uploading `%s` into bucket `%s`...\n", objectName, fileUpload.Bucket)
 
 	_, err = u.client.PutObjectWithContext(ctx, fileUpload.Bucket, objectName, f, fileSize, minio.PutObjectOptions{})
 	if err != nil {
 		error := errors.Wrapf(err, "Error while uploading file `%s` into `%s`", objectName, fileUpload.Bucket)
-		glog.Error(error)
+		klog.Error(error)
 		return nil, error
 	}
 
-	glog.Infof("Upload succeeded for `%s`.\n", objectName)
+	klog.Infof("Upload succeeded for `%s`.\n", objectName)
 
 	result := &UploadResult{
 		FileName:   fileName,

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"k8s.io/klog"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -15,7 +16,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 
-	"github.com/golang/glog"
 	"github.com/pkg/errors"
 )
 
@@ -72,7 +72,7 @@ func (h *ExtractHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	defer func() {
 		err := rq.Body.Close()
 		if err != nil {
-			glog.Error(errors.Wrap(err, "while closing request body"))
+			klog.Error(errors.Wrap(err, "while closing request body"))
 		}
 	}()
 
@@ -99,7 +99,7 @@ func (h *ExtractHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	defer func() {
 		err := rq.MultipartForm.RemoveAll()
 		if err != nil {
-			glog.Error(errors.Wrap(err, "while removing files loaded from multipart form"))
+			klog.Error(errors.Wrap(err, "while removing files loaded from multipart form"))
 		}
 	}()
 
@@ -124,7 +124,7 @@ func (h *ExtractHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	e := processor.New(processFn, h.maxWorkers, h.processTimeout)
 	succ, errs := e.Do(context.Background(), jobCh, jobsCount)
 
-	glog.Infof("Finished processing request with %d files attached.", jobsCount)
+	klog.Infof("Finished processing request with %d files attached.", jobsCount)
 
 	response := h.convertToResponse(succ, errs)
 
@@ -189,7 +189,7 @@ func (h *ExtractHandler) convertToResponse(successes []processor.ResultSuccess, 
 	for _, succ := range successes {
 		metadata, ok := succ.Output.(map[string]interface{})
 		if !ok {
-			glog.Errorf("Invalid conversion for extracted metadata from file %s: %+v", succ.FilePath, succ.Output)
+			klog.Errorf("Invalid conversion for extracted metadata from file %s: %+v", succ.FilePath, succ.Output)
 			continue
 		}
 
@@ -226,7 +226,7 @@ func (h *ExtractHandler) writeResponse(w http.ResponseWriter, statusCode int, re
 	_, err = w.Write(jsonResponse)
 	if err != nil {
 		wrappedErr := errors.Wrapf(err, "while writing JSON response")
-		glog.Error(wrappedErr)
+		klog.Error(wrappedErr)
 	}
 }
 
