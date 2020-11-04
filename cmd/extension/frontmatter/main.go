@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"time"
 
@@ -39,17 +39,17 @@ func main() {
 
 	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 	srv := &http.Server{Addr: addr, Handler: mux}
-	logrus.Infof("Listening on %s", addr)
+	log.Infof("Listening on %s", addr)
 
 	go func() {
 		<-stopCh
 		if err := srv.Shutdown(context.Background()); err != nil {
-			logrus.Errorf("HTTP server Shutdown: %v", err)
+			log.Errorf("HTTP server Shutdown: %v", err)
 		}
 	}()
 
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-		logrus.Errorf("HTTP server ListenAndServe: %v", err)
+		log.Errorf("HTTP server ListenAndServe: %v", err)
 	}
 }
 
@@ -68,7 +68,7 @@ func parseFlags(cfg config) {
 	if cfg.Verbose {
 		err := flag.Set("stderrthreshold", "INFO")
 		if err != nil {
-			logrus.Error(errors.Wrap(err, "while parsing flags"))
+			log.Error(errors.Wrap(err, "while parsing flags"))
 		}
 	}
 	flag.Parse()
@@ -83,6 +83,6 @@ func loadConfig(prefix string) (config, error) {
 func exitOnError(err error, context string) {
 	if err != nil {
 		wrappedError := errors.Wrap(err, context)
-		logrus.Fatal(wrappedError)
+		log.Fatal(wrappedError)
 	}
 }
