@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"k8s.io/klog"
+	log "k8s.io/klog"
 	"path/filepath"
 	"sync"
 	"time"
@@ -81,7 +81,7 @@ func (u *Uploader) UploadFiles(ctx context.Context, filesChannel chan FileUpload
 	defer cancel()
 
 	workersCount := u.countNeededWorkers(filesCount, u.MaxUploadWorkers)
-	klog.Infof("Creating %d concurrent upload worker(s)...", workersCount)
+	log.Infof("Creating %d concurrent upload worker(s)...", workersCount)
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(workersCount)
 	for i := 0; i < workersCount; i++ {
@@ -90,7 +90,7 @@ func (u *Uploader) UploadFiles(ctx context.Context, filesChannel chan FileUpload
 			for {
 				select {
 				case <-contextWithTimeout.Done():
-					klog.Error(errors.Wrapf(contextWithTimeout.Err(), "Error while concurrently uploading file"))
+					log.Error(errors.Wrapf(contextWithTimeout.Err(), "Error while concurrently uploading file"))
 					return
 				default:
 				}
@@ -148,7 +148,7 @@ func (u *Uploader) uploadFile(ctx context.Context, fileUpload FileUpload) (*Uplo
 	defer func() {
 		err := f.Close()
 		if err != nil {
-			klog.Error(errors.Wrapf(err, "while closing file %s", file.Filename()))
+			log.Error(errors.Wrapf(err, "while closing file %s", file.Filename()))
 		}
 	}()
 
@@ -158,16 +158,16 @@ func (u *Uploader) uploadFile(ctx context.Context, fileUpload FileUpload) (*Uplo
 	// normalize object name. More info: https://github.com/minio/minio/issues/5874
 	objectName := u.normalizeObjectName(fileUpload.Directory, fileName)
 
-	klog.Infof("Uploading `%s` into bucket `%s`...\n", objectName, fileUpload.Bucket)
+	log.Infof("Uploading `%s` into bucket `%s`...\n", objectName, fileUpload.Bucket)
 
 	_, err = u.client.PutObjectWithContext(ctx, fileUpload.Bucket, objectName, f, fileSize, minio.PutObjectOptions{})
 	if err != nil {
 		error := errors.Wrapf(err, "Error while uploading file `%s` into `%s`", objectName, fileUpload.Bucket)
-		klog.Error(error)
+		log.Error(error)
 		return nil, error
 	}
 
-	klog.Infof("Upload succeeded for `%s`.\n", objectName)
+	log.Infof("Upload succeeded for `%s`.\n", objectName)
 
 	result := &UploadResult{
 		FileName:   fileName,

@@ -3,7 +3,7 @@ package bucket
 import (
 	"encoding/json"
 	"fmt"
-	"k8s.io/klog"
+	log "k8s.io/klog"
 	"strconv"
 	"time"
 
@@ -88,11 +88,11 @@ func (h *Handler) CreateIfDoesntExist(bucketName, bucketRegion string) error {
 	}
 
 	if exists {
-		klog.Infof("Bucket `%s` already exists. Skipping creating bucket...\n", bucketName)
+		log.Infof("Bucket `%s` already exists. Skipping creating bucket...\n", bucketName)
 		return nil
 	}
 
-	klog.Infof("Creating bucket `%s`...\n", bucketName)
+	log.Infof("Creating bucket `%s`...\n", bucketName)
 
 	err = h.client.MakeBucket(bucketName, bucketRegion)
 	if err != nil {
@@ -104,18 +104,18 @@ func (h *Handler) CreateIfDoesntExist(bucketName, bucketRegion string) error {
 
 // SetPolicy sets provided policy on a given bucket
 func (h *Handler) SetPolicy(bucketName, policy string) error {
-	klog.Infof("Setting `%s` policy on bucket `%s`...\n", policy, bucketName)
+	log.Infof("Setting `%s` policy on bucket `%s`...\n", policy, bucketName)
 	err := h.client.SetBucketPolicy(bucketName, policy)
 	if err != nil {
 		return errors.Wrapf(err, "while setting bucket policy on bucket `%s`", bucketName)
 	}
-	klog.Infof("Policy successfully set on bucket `%s`\n", bucketName)
+	log.Infof("Policy successfully set on bucket `%s`\n", bucketName)
 	return nil
 }
 
 func (h *Handler) tryCreatingBucket(prefix string) (string, error) {
 	for i := 0; i < creationRetries; i++ {
-		klog.Infof("Trying to create a bucket with prefix %s (attempt %d of %d)", prefix, i+1, creationRetries)
+		log.Infof("Trying to create a bucket with prefix %s (attempt %d of %d)", prefix, i+1, creationRetries)
 		bucketName := h.generateBucketName(prefix)
 		err := h.CreateIfDoesntExist(bucketName, h.cfg.Region)
 		if err != nil {
@@ -123,13 +123,13 @@ func (h *Handler) tryCreatingBucket(prefix string) (string, error) {
 				return "", err
 			}
 
-			klog.Errorf(`Error while creating bucket %s: %s. Retrying after %d ms...`, bucketName, err.Error(), creationRetryTime/1000000)
+			log.Errorf(`Error while creating bucket %s: %s. Retrying after %d ms...`, bucketName, err.Error(), creationRetryTime/1000000)
 			time.Sleep(creationRetryTime)
 			continue
 		}
 
 		// No error - exiting
-		klog.Infof("Bucket `%s` created", bucketName)
+		log.Infof("Bucket `%s` created", bucketName)
 		return bucketName, nil
 	}
 

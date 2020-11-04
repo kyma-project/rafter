@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"k8s.io/klog"
+	log "k8s.io/klog"
 	"net/http"
 	"time"
 
@@ -89,17 +89,17 @@ func main() {
 
 	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 	srv := &http.Server{Addr: addr, Handler: mux}
-	klog.Infof("Listening on %s", addr)
+	log.Infof("Listening on %s", addr)
 
 	go func() {
 		<-stopCh
 		if err := srv.Shutdown(context.Background()); err != nil {
-			klog.Errorf("HTTP server Shutdown: %v", err)
+			log.Errorf("HTTP server Shutdown: %v", err)
 		}
 	}()
 
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-		klog.Errorf("HTTP server ListenAndServe: %v", err)
+		log.Errorf("HTTP server ListenAndServe: %v", err)
 	}
 }
 
@@ -133,7 +133,7 @@ func parseFlags(cfg config) {
 	if cfg.Verbose {
 		err := flag.Set("stderrthreshold", "INFO")
 		if err != nil {
-			klog.Error(errors.Wrap(err, "while parsing flags"))
+			log.Error(errors.Wrap(err, "while parsing flags"))
 		}
 	}
 	flag.Parse()
@@ -148,6 +148,6 @@ func loadConfig(prefix string) (config, error) {
 func exitOnError(err error, context string) {
 	if err != nil {
 		wrappedError := errors.Wrap(err, context)
-		klog.Fatal(wrappedError)
+		log.Fatal(wrappedError)
 	}
 }

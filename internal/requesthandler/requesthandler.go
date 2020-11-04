@@ -3,7 +3,7 @@ package requesthandler
 import (
 	"context"
 	"encoding/json"
-	"k8s.io/klog"
+	log "k8s.io/klog"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -74,7 +74,7 @@ func (r *RequestHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	defer func() {
 		err := rq.Body.Close()
 		if err != nil {
-			klog.Error(errors.Wrap(err, "while closing request body"))
+			log.Error(errors.Wrap(err, "while closing request body"))
 		}
 	}()
 
@@ -101,7 +101,7 @@ func (r *RequestHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	defer func() {
 		err := rq.MultipartForm.RemoveAll()
 		if err != nil {
-			klog.Error(errors.Wrap(err, "while removing files loaded from multipart form"))
+			log.Error(errors.Wrap(err, "while removing files loaded from multipart form"))
 		}
 	}()
 
@@ -135,7 +135,7 @@ func (r *RequestHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	fileToUploadCh := r.populateFilesChannel(publicFiles, privateFiles, filesCount, directory)
 	uploadedFiles, errs := u.UploadFiles(context.Background(), fileToUploadCh, filesCount)
 
-	klog.Infof("Finished processing request with uploading %d files.", filesCount)
+	log.Infof("Finished processing request with uploading %d files.", filesCount)
 
 	var uploadErrors []ResponseError
 	for _, err := range errs {
@@ -208,7 +208,7 @@ func (r *RequestHandler) writeResponse(w http.ResponseWriter, statusCode int, re
 	_, err = w.Write(jsonResponse)
 	if err != nil {
 		wrappedErr := errors.Wrapf(err, "while writing JSON response")
-		klog.Error(wrappedErr)
+		log.Error(wrappedErr)
 	}
 }
 

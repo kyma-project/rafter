@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"k8s.io/klog"
+	log "k8s.io/klog"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -72,7 +72,7 @@ func (h *ExtractHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	defer func() {
 		err := rq.Body.Close()
 		if err != nil {
-			klog.Error(errors.Wrap(err, "while closing request body"))
+			log.Error(errors.Wrap(err, "while closing request body"))
 		}
 	}()
 
@@ -99,7 +99,7 @@ func (h *ExtractHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	defer func() {
 		err := rq.MultipartForm.RemoveAll()
 		if err != nil {
-			klog.Error(errors.Wrap(err, "while removing files loaded from multipart form"))
+			log.Error(errors.Wrap(err, "while removing files loaded from multipart form"))
 		}
 	}()
 
@@ -124,7 +124,7 @@ func (h *ExtractHandler) ServeHTTP(w http.ResponseWriter, rq *http.Request) {
 	e := processor.New(processFn, h.maxWorkers, h.processTimeout)
 	succ, errs := e.Do(context.Background(), jobCh, jobsCount)
 
-	klog.Infof("Finished processing request with %d files attached.", jobsCount)
+	log.Infof("Finished processing request with %d files attached.", jobsCount)
 
 	response := h.convertToResponse(succ, errs)
 
@@ -189,7 +189,7 @@ func (h *ExtractHandler) convertToResponse(successes []processor.ResultSuccess, 
 	for _, succ := range successes {
 		metadata, ok := succ.Output.(map[string]interface{})
 		if !ok {
-			klog.Errorf("Invalid conversion for extracted metadata from file %s: %+v", succ.FilePath, succ.Output)
+			log.Errorf("Invalid conversion for extracted metadata from file %s: %+v", succ.FilePath, succ.Output)
 			continue
 		}
 
@@ -226,7 +226,7 @@ func (h *ExtractHandler) writeResponse(w http.ResponseWriter, statusCode int, re
 	_, err = w.Write(jsonResponse)
 	if err != nil {
 		wrappedErr := errors.Wrapf(err, "while writing JSON response")
-		klog.Error(wrappedErr)
+		log.Error(wrappedErr)
 	}
 }
 
