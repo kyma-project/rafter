@@ -9,7 +9,7 @@ This project contains the Helm chart for the AsyncAPI Service.
 - The `rafter-charts` repository added to your Helm client with this command:
 
 ```bash
-helm repo add rafter-charts https://rafter-charts.storage.googleapis.com
+helm repo add rafter-charts https://kyma-project.github.io/rafter
 ```
 
 ## Details

@@ -1,15 +1,15 @@
 dependencies:
 - name: rafter-controller-manager
-  repository: https://rafter-charts.storage.googleapis.com/
+  repository: https://kyma-project.github.io/rafter/
   version: 0.1.0
 - name: rafter-upload-service
-  repository: https://rafter-charts.storage.googleapis.com/
+  repository: https://kyma-project.github.io/rafter/
   version: 0.1.0
 - name: rafter-front-matter-service
-  repository: https://rafter-charts.storage.googleapis.com/
+  repository: https://kyma-project.github.io/rafter/
   version: 0.1.0
 - name: rafter-asyncapi-service
-  repository: https://rafter-charts.storage.googleapis.com/
+  repository: https://kyma-project.github.io/rafter/
   version: 0.1.0
 digest: sha256:24d4c8f469a38dda2210cac846f73cff892ec7602e7763fd0891b82b6ad65683
 generated: "2019-11-27T14:34:03.292676+01:00"

@@ -2,7 +2,7 @@ Before you follow the steps, wait for the environment setup to finish. Once read
 
 1. Add a new chart's repository to Helm. Run:
 
-   `helm repo add rafter-charts https://rafter-charts.storage.googleapis.com`{{execute}}
+   `helm repo add rafter-charts https://kyma-project.github.io/rafter`{{execute}}
 
 2. Install Rafter:
 
