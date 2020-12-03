@@ -135,6 +135,8 @@ testHelpers::install_ingress() {
 
   log::info '- Installing ingress...'
 
+  helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+
   helm fetch stable/nginx-ingress --version ${ingress_version}
 
   helm install --name my-ingress stable/nginx-ingress --version ${ingress_version} \
