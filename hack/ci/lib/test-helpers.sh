@@ -135,6 +135,8 @@ testHelpers::install_ingress() {
 
   log::info '- Installing ingress...'
 
+  helm fetch stable/nginx-ingress --version ${ingress_version}
+
   helm install --name my-ingress stable/nginx-ingress --version ${ingress_version} \
       --set controller.service.type=NodePort \
       --set controller.service.nodePorts.http=${node_port_http} \
