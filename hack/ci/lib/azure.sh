@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# source: https://github.com/kyma-project/test-infra/blob/bb9d70fc141529637e099279f6de0418c4fa6b3b/prow/scripts/lib/azure.sh
 
 LIBDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" || exit; pwd)"
 
