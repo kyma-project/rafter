@@ -31,6 +31,10 @@ testHelpers::load_test_infra_utilities() {
     echo 'Cannot load JUnit utilities.'	
     exit 1	
   }
+  source "${lib_dir}/azure.sh" || {
+    echo 'Cannot load azure utilities.'
+    exit 1
+  }
 }
 testHelpers::load_test_infra_utilities
 

@@ -99,8 +99,6 @@ See the required Azure variables:
 | **AZURE_RS_GROUP** | Defines the name of the Azure Resource Group |
 | **AZURE_REGION** | Azure region code |
 | **AZURE_SUBSCRIPTION_ID** | ID of the the Azure Subscription |
-| **AZURE_SUBSCRIPTION_APP_ID** | App ID of the Azure Subscription |
-| **AZURE_SUBSCRIPTION_SECRET** | Credentials for the Azure Subscription |
-| **AZURE_SUBSCRIPTION_TENANT** | Tenant ID of the Azure Subscription |
+| **AZURE_CREDENTIALS_FILE** | Path to the credentials for the Azure Subscription |
 
 >**NOTE:** **MINIO_GATEWAY_MODE** must be set to `azure`.
