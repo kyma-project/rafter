@@ -59,6 +59,10 @@ init_environment() {
     echo '- Cannot load test helpers.'
     return 1
   }
+  source "${current_dir}/lib/azure.sh" || {
+    echo '- Cannot load azure helpers.'
+    return 1
+  }
   source "${current_dir}/lib/minio/gateway-helpers.sh" || {
     echo '- Cannot load gateway helpers.'
     return 1
