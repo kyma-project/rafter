@@ -94,9 +94,9 @@ See the required Azure variables:
 | Variable | Description |
 | --- | --- |
 | **MINIO_GATEWAY_MODE** | Platform for MinIO Gateway tests |
-| **BUILD_TYPE** | Defines one of `pr/master/release`. This value is used to create the name of the Azure Storage Account. |
-| **PULL_NUMBER** | Defines the pull request number. Required if **BUILD_TYPE** is set to `pr`. |
-| **AZURE_RS_GROUP** | Defines the name of the Azure Resource Group |
+| **BUILD_TYPE** | Value that defines one of `pr/master/release`. It is used to create the name of the Azure Storage Account. |
+| **PULL_NUMBER** | Pull request number. Required if **BUILD_TYPE** is set to `pr`. |
+| **AZURE_RS_GROUP** | Name of the Azure Resource Group |
 | **AZURE_REGION** | Azure region code |
 | **AZURE_SUBSCRIPTION_ID** | ID of the the Azure Subscription |
 | **AZURE_CREDENTIALS_FILE** | Path to the credentials for the Azure Subscription |
