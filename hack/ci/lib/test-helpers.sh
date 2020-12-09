@@ -128,13 +128,18 @@ testHelpers::prepare_local_helm_charts() {
 # Arguments:
 #   $1 - The absolute path of custom ingress yaml definition
 testHelpers::install_ingress() {
-  local -r ingress_yaml="${1}"
+  local -r ingress_version="${1}"
+  local -r ingress_yaml="${2}"
   local -r node_port_http=30080
   local -r node_port_https=30443
 
   log::info '- Installing ingress...'
 
-  helm install --name my-ingress stable/nginx-ingress \
+  helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+
+  helm fetch stable/nginx-ingress --version ${ingress_version}
+
+  helm install --name my-ingress stable/nginx-ingress --version ${ingress_version} \
       --set controller.service.type=NodePort \
       --set controller.service.nodePorts.http=${node_port_http} \
       --set controller.service.nodePorts.https=${node_port_https} \

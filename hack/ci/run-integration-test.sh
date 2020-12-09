@@ -117,7 +117,7 @@ main() {
   junit::test_pass
   
   junit::test_start "Install_Ingress"
-  testHelpers::install_ingress "${INGRESS_YAML_FILE}" 2>&1 | junit::test_output
+  testHelpers::install_ingress "${STABLE_INGRESS_VERSION}" "${INGRESS_YAML_FILE}" 2>&1 | junit::test_output
   junit::test_pass
   
   junit::test_start "Load_Images"

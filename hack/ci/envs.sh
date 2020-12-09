@@ -3,6 +3,7 @@
 readonly STABLE_HELM_VERSION="v2.16.1"
 readonly STABLE_KIND_VERSION="v0.5.1"
 readonly STABLE_KUBERNETES_VERSION="v1.16.3"
+readonly STABLE_INGRESS_VERSION="1.34.2"
 
 readonly ENVS_FILE_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 readonly CLUSTER_CONFIG_FILE="${ENVS_FILE_DIR}/config/kind/cluster-config.yaml"

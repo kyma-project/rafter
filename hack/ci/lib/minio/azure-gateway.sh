@@ -5,8 +5,8 @@ readonly MINIO_GATEWAY_SECRET_NAME="az-minio-secret"
 azureGateway::authenticate_to_azure() {
   log::info "- Authenticating to Azure..."
 
-  az login --service-principal -u "${AZURE_SUBSCRIPTION_APP_ID}" -p "${AZURE_SUBSCRIPTION_SECRET}" --tenant "${AZURE_SUBSCRIPTION_TENANT}"
-  az account set --subscription "${AZURE_SUBSCRIPTION_ID}"
+  az::login "$AZURE_CREDENTIALS_FILE"
+  az::set_subscription "$AZURE_SUBSCRIPTION_ID"
 
   log::success "- Authenticated."
 }
@@ -88,7 +88,7 @@ gateway::validate_environment() {
   log::info "- Validating Azure Blob Gateway environment..."
 
   local discoverUnsetVar=false
-  for var in AZURE_RS_GROUP AZURE_REGION AZURE_SUBSCRIPTION_ID AZURE_SUBSCRIPTION_APP_ID AZURE_SUBSCRIPTION_SECRET AZURE_SUBSCRIPTION_TENANT BUILD_TYPE; do
+  for var in AZURE_RS_GROUP AZURE_REGION AZURE_SUBSCRIPTION_ID AZURE_CREDENTIALS_FILE BUILD_TYPE; do
     if [ -n "${var-}" ] ; then
       continue
     else

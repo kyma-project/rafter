@@ -19,9 +19,7 @@
 #   - AZURE_RS_GROUP - Defines the name of the Azure Resource Group
 #   - AZURE_REGION - Azure region code
 #   - AZURE_SUBSCRIPTION_ID - ID of the the Azure Subscription
-#   - AZURE_SUBSCRIPTION_APP_ID - App ID of the Azure Subscription
-#   - AZURE_SUBSCRIPTION_SECRET - Credentials for the Azure Subscription
-#   - AZURE_SUBSCRIPTION_TENANT - Tenant ID of the Azure Subscription
+#   - AZURE_CREDENTIALS_FILE - Path to the credentials for the Azure Subscription
 
 set -o errexit
 set -o nounset
@@ -59,6 +57,10 @@ init_environment() {
   }
   source "${current_dir}/lib/test-helpers.sh" || {
     echo '- Cannot load test helpers.'
+    return 1
+  }
+  source "${current_dir}/lib/azure.sh" || {
+    echo '- Cannot load azure helpers.'
     return 1
   }
   source "${current_dir}/lib/minio/gateway-helpers.sh" || {
@@ -184,7 +186,7 @@ main() {
   junit::test_pass
   
   junit::test_start "Install_Ingress"
-  testHelpers::install_ingress "${INGRESS_YAML_FILE}" 2>&1 | junit::test_output
+  testHelpers::install_ingress "${STABLE_INGRESS_VERSION}" "${INGRESS_YAML_FILE}" 2>&1 | junit::test_output
   junit::test_pass
   
   junit::test_start "Load_Images"
