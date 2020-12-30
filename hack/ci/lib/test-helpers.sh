@@ -93,12 +93,12 @@ testHelpers::install_tiller() {
       --clusterrole=cluster-admin \
       --serviceaccount=kube-system:tiller \
 
-  helm repo add stable https://charts.helm.sh/stable
-
   helm init \
       --service-account tiller \
       --upgrade --wait  \
       --history-max 200
+
+  helm repo add stable https://charts.helm.sh/stable
 
   log::success "- Tiller installed."
 }
