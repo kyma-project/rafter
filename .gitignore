@@ -23,6 +23,6 @@ bin
 *.swo
 *~
 .vscode
-
+vendor
 # downloaded licenses
 licenses

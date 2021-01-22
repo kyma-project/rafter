@@ -26,6 +26,7 @@ deployment:
   labels: {}
   annotations: {}
   replicas: 1
+  loglevel: "error"
   extraProperties: {}
 
 pod:

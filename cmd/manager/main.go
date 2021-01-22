@@ -1,7 +1,11 @@
 package main
 
 import (
+	"errors"
 	"flag"
+	"fmt"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"net/http"
 	"os"
 
@@ -13,7 +17,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	controller_zap "sigs.k8s.io/controller-runtime/pkg/log/zap"
 	// +kubebuilder:scaffold:imports
 
 	"github.com/kyma-project/rafter/internal/assethook"
@@ -49,6 +53,7 @@ type Config struct {
 	WebhookConfigMap    webhookconfig.Config
 	BucketRegion        string `envconfig:"optional"`
 	ClusterBucketRegion string `envconfig:"optional"`
+	LogLevel            string `envconfig:"default=info"`
 }
 
 func main() {
@@ -59,13 +64,22 @@ func main() {
 		"Enable leader election for controller manager. Enabling this will ensure there is only one active controller manager.")
 	flag.Parse()
 
-	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
-
 	cfg, err := loadConfig("APP")
 	if err != nil {
+		ctrl.SetLogger(controller_zap.New())
 		setupLog.Error(err, "unable to load config")
 		os.Exit(1)
 	}
+
+	logLevel, err := ToZapLogLevel(cfg.LogLevel)
+	if err != nil {
+		ctrl.SetLogger(controller_zap.New())
+		setupLog.Error(err, "unable to set logging level")
+		os.Exit(2)
+	}
+
+	atomicLevel := zap.NewAtomicLevelAt(logLevel)
+	ctrl.SetLogger(controller_zap.New(controller_zap.UseDevMode(true), controller_zap.Level(&atomicLevel)))
 
 	httpClient := &http.Client{}
 	minioClient, err := minio.New(cfg.Store.Endpoint, cfg.Store.AccessKey, cfg.Store.SecretKey, cfg.Store.UseSSL)
@@ -155,4 +169,19 @@ func initWebhookConfigService(webhookCfg webhookconfig.Config, dc dynamic.Interf
 
 	webhookCfgService := webhookconfig.New(resourceGetter, webhookCfg.CfgMapName, webhookCfg.CfgMapNamespace)
 	return webhookCfgService
+}
+
+func ToZapLogLevel(level string) (zapcore.Level, error) {
+	switch level {
+	case "debug":
+		return zapcore.DebugLevel, nil
+	case "info":
+		return zapcore.InfoLevel, nil
+	case "warn":
+		return zapcore.WarnLevel, nil
+	case "error":
+		return zapcore.ErrorLevel, nil
+	default:
+		return 0, errors.New(fmt.Sprintf("Desired log level: %s not exist", level))
+	}
 }
