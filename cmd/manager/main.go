@@ -71,7 +71,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	logLevel, err := ToZapLogLevel(cfg.LogLevel)
+	logLevel, err := toZapLogLevel(cfg.LogLevel)
 	if err != nil {
 		ctrl.SetLogger(controller_zap.New())
 		setupLog.Error(err, "unable to set logging level")
@@ -171,7 +171,7 @@ func initWebhookConfigService(webhookCfg webhookconfig.Config, dc dynamic.Interf
 	return webhookCfgService
 }
 
-func ToZapLogLevel(level string) (zapcore.Level, error) {
+func toZapLogLevel(level string) (zapcore.Level, error) {
 	switch level {
 	case "debug":
 		return zapcore.DebugLevel, nil
