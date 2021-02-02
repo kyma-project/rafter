@@ -81,6 +81,8 @@ func main() {
 	atomicLevel := zap.NewAtomicLevelAt(logLevel)
 	ctrl.SetLogger(controller_zap.New(controller_zap.UseDevMode(true), controller_zap.Level(&atomicLevel)))
 
+
+	ctrl.Log.Error(errors.New("error wylecial z kosmosu"), "tutaj jest prawilny error")
 	httpClient := &http.Client{}
 	minioClient, err := minio.New(cfg.Store.Endpoint, cfg.Store.AccessKey, cfg.Store.SecretKey, cfg.Store.UseSSL)
 	if err != nil {
