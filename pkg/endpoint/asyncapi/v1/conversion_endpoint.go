@@ -5,7 +5,6 @@ import (
 	asyncapierror "github.com/asyncapi/converter-go/pkg/error"
 
 	"github.com/asyncapi/converter-go/pkg/decode"
-	"github.com/asyncapi/converter-go/pkg/encode"
 	"github.com/kyma-project/rafter/pkg/runtime/endpoint"
 	"github.com/kyma-project/rafter/pkg/runtime/service"
 
@@ -40,7 +39,7 @@ func (c Convert) Mutate(ctx context.Context, reader io.Reader, metadata string) 
 
 // AddConversion registers the endpoint in a service.
 func AddConversion(srv service.Service) error {
-	converter, err := v2.New(decode.FromJSONWithYamlFallback, encode.ToJSON)
+	converter, err := v2.New(decode.FromJSONWithYamlFallback, defaultJSONEncoder)
 	if err != nil {
 		return nil
 	}
