@@ -11,7 +11,7 @@ var errInvalidType = errors.New("invalid type")
 
 // removes null entries from JSON array
 func sanitizeSlice(data []interface{}) interface{} {
-	var result []interface{}
+	result := []interface{}{}
 	for _, item := range data {
 		if item == nil {
 			continue

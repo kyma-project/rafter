@@ -24,6 +24,9 @@ var (
 				nil,
 				"abc",
 				[]interface{}{
+					nil,
+				},
+				[]interface{}{
 					"test",
 					nil,
 					"me",
@@ -49,7 +52,7 @@ func Test_defaultJSONEncoder(t *testing.T) {
 			args: args{
 				i: &map1,
 			},
-			wantW:   `{"check":[{"this":"test"},true],"map":{"test":[123,"abc",["test","me","plz"]]},"test":"me"}`,
+			wantW:   `{"check":[{"this":"test"},true],"map":{"test":[123,"abc",[],["test","me","plz"]]},"test":"me"}`,
 			wantErr: false,
 		},
 		{
@@ -73,4 +76,3 @@ func Test_defaultJSONEncoder(t *testing.T) {
 		})
 	}
 }
-
