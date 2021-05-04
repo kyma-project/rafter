@@ -40,7 +40,7 @@ Rafter comes with the following set of services and extensions compatible with R
 - [AsyncAPI Service](./cmd/extension/asyncapi/README.md) (extension)
 - [Front Matter Service](./cmd/extension/frontmatter/README.md) (extension)
 
-> **NOTE:** To learn how Rafter is implemented in [Kyma](https://kyma-project.io), read [Rafter](https://kyma-project.io/docs/master/components/rafter) documentation.
+> **NOTE:** To learn how Rafter is implemented in [Kyma](https://kyma-project.io), read [Rafter documentation](./docs).
 
 ### What Rafter is not
 
@@ -63,7 +63,7 @@ Try out [this](https://katacoda.com/rafter/) set of interactive tutorials to see
 - Use Rafter as [headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) with the support of Rafter metadata webhook and Front Matter service. This example is based on a use case of storing Markdown files.
 - Use Rafter as [headless CMS](https://en.wikipedia.org/wiki/Headless_content_management_system) with the support of Rafter validation and conversion webhooks. This example is based on a use case of storing [AsyncAPI](https://asyncapi.org/) specifications.
 
-> **NOTE:** Read [this](./docs/development-guide.md) development guide to start developing the project.
+> **NOTE:** Read [this](./docs/01-development-guide.md) development guide to start developing the project.
 
 ## Installation
 
