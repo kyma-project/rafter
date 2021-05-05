@@ -3,7 +3,7 @@ title: AsyncAPI Service
 type: Details
 ---
 
-AsyncAPI Service is an HTTP server enabled by default in Kyma to process AsyncAPI specifications. It only accepts `multipart/form-data` forms and contains two endpoints:
+AsyncAPI Service is an HTTP server that processes AsyncAPI specifications. It only accepts `multipart/form-data` forms and contains two endpoints:
 
 - `/validate` that validates the AsyncAPI specification against the AsyncAPI schema in version 2.0.0. AsyncAPI Service uses the [AsyncAPI Parser](https://github.com/asyncapi/parser) for this purpose.
 

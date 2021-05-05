@@ -17,9 +17,9 @@ Rafter enables you to manage assets using supported webhooks. For example, if yo
 
 Rafter comes with the following set of services and extensions compatible with Rafter webhooks:
 
-- [Upload Service](./12-upload-service.md) (optional service)
-- [AsyncAPI Service](./13-asyncapi-service.md) (extension)
-- [Front Matter Service](./14-front-matter-service.md) (extension)
+- [Upload Service](./11-upload-service.md) (optional service)
+- [AsyncAPI Service](./12-asyncapi-service.md) (extension)
+- [Front Matter Service](./13-front-matter-service.md) (extension)
 
 >**CAUTION:** Rafter does not enforce any access control. To protect the confidentiality of your information, use Rafter only to store public data. Do not use it to process and store any kind of confidential information, including personal data.
 

@@ -3,14 +3,10 @@ title: MinIO and MinIO Gateway
 type: Details
 ---
 
-The whole concept of Rafter relies on MinIO as the storage solution. It supports Kyma's manifesto and the "batteries included" rule by providing you with this on-premise solution by default.
-
-Depending on the usage scenario, you can:
+Rafter uses MinIO as the default storage solution. Depending on your usage scenario, you can:
 
 - Use MinIO for local development.
 - Store your assets on a production scale using MinIO in [Gateway mode](https://github.com/minio/minio/tree/master/docs/gateway).
-
-Rafter ensures that both usage scenarios work for Kyma, without additional configuration of the built-in controllers.
 
 ## Development mode storage
 
@@ -24,7 +20,7 @@ In the context of Rafter, the Asset Controller stores all assets in MinIO, in de
 
 For the production purposes, Rafter uses MinIO Gateway which:
 
-- Is a multi-cloud solution that offers the flexibility to choose a given cloud provider for the specific Kyma installation, including Azure, Amazon, and Google.
+- Is a multi-cloud solution that offers the flexibility to choose a given cloud provider, including Azure, Amazon, and Google.
 - Allows you to use various cloud providers that support the data replication and CDN configuration.
 - Is compatible with Amazon S3 APIs.
 
@@ -32,7 +28,7 @@ For the production purposes, Rafter uses MinIO Gateway which:
 
 >**TIP:** Using Gateway mode may generate additional costs for storing buckets, assets, or traffic in general. To avoid them, verify the payment policy with the given cloud provider before you switch to Gateway mode.
 
-See [this tutorial](./22-set-minio-to-gateway-mode.md) to learn how to set MinIO to Google Cloud Storage Gateway mode.
+See [this tutorial](./21-set-minio-to-gateway-mode.md) to learn how to set MinIO to Google Cloud Storage Gateway mode.
 
 ## Access MinIO credentials
 
