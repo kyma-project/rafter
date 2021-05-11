@@ -15,7 +15,7 @@ This table lists the configurable parameters, their descriptions, and default va
 
 | Parameter | Description | Default value |
 |-----------|-------------|---------------|
-| **controller-manager.minio.persistence.enabled** | Parameter that enables MinIO persistence. Deactivate it only if you use [Gateway mode](#tutorials-set-minio-to-gateway-mode). | `true` |
+| **controller-manager.minio.persistence.enabled** | Parameter that enables MinIO persistence. Deactivate it only if you use [Gateway mode](./21-set-minio-to-gateway-mode.md). | `true` |
 | **controller-manager.minio.environment.MINIO_BROWSER** | Parameter that enables browsing MinIO storage. By default, the MinIO browser is turned off for security reasons. You can change the value to `on` to use the browser. If you enable the browser, it is available at `https://storage.{DOMAIN}/minio/`, for example at `https://storage.kyma.local/minio/`. | `"off"` |
 | **controller-manager.minio.resources.requests.memory** | Requests for memory resources. | `32Mi` |
 | **controller-manager.minio.resources.requests.cpu** |  Requests for CPU resources. | `10m` |
