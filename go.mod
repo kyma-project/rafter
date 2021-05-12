@@ -7,7 +7,7 @@ require (
 	github.com/asyncapi/parser-go v0.3.0
 	github.com/gernest/front v0.0.0-20181129160812-ed80ca338b88
 	github.com/go-ini/ini v1.51.0 // indirect
-	github.com/go-logr/logr v0.3.0
+	github.com/go-logr/logr v0.4.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/onsi/ginkgo v1.14.0
@@ -31,5 +31,5 @@ require (
 replace (
 	github.com/smartystreets/goconvey => github.com/m00g3n/goconvey v1.6.5-0.20200622160247-ef17e6397c60
 	go.etcd.io/etcd => go.etcd.io/etcd v3.3.25+incompatible
-	gopkg.in/yaml.v2 => gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v2 => gopkg.in/yaml.v2 v3.0.0-20200615113413-eeeca48fe776
 )
