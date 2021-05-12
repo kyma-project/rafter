@@ -7,7 +7,7 @@ require (
 	github.com/asyncapi/parser-go v0.3.0
 	github.com/gernest/front v0.0.0-20181129160812-ed80ca338b88
 	github.com/go-ini/ini v1.51.0 // indirect
-	github.com/go-logr/logr v0.1.0
+	github.com/go-logr/logr v0.3.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/onsi/ginkgo v1.14.0
@@ -20,12 +20,12 @@ require (
 	github.com/vrischmann/envconfig v1.3.0
 	go.uber.org/multierr v1.5.0 // indirect
 	go.uber.org/zap v1.10.0
-	golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	gopkg.in/ini.v1 v1.48.0 // indirect
-	k8s.io/api v0.17.11
-	k8s.io/apimachinery v0.17.11
-	k8s.io/client-go v0.17.11
-	sigs.k8s.io/controller-runtime v0.5.10
+	k8s.io/api v0.20.2
+	k8s.io/apimachinery v0.20.2
+	k8s.io/client-go v0.20.2
+	sigs.k8s.io/controller-runtime v0.5.0
 )
 
 replace (
