@@ -31,5 +31,5 @@ require (
 replace (
 	github.com/smartystreets/goconvey => github.com/m00g3n/goconvey v1.6.5-0.20200622160247-ef17e6397c60
 	go.etcd.io/etcd => go.etcd.io/etcd v3.3.25+incompatible
-	gopkg.in/yaml.v2 => gopkg.in/yaml.v2 v3.0.0-20200615113413-eeeca48fe776
+	//gopkg.in/yaml.v2 => gopkg.in/yaml.v2 v3.0.0-20200615113413-eeeca48fe776
 )
