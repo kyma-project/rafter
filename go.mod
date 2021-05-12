@@ -10,8 +10,8 @@ require (
 	github.com/go-logr/logr v0.4.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/minio/minio-go v6.0.14+incompatible
-	github.com/onsi/ginkgo v1.14.0
-	github.com/onsi/gomega v1.10.1
+	github.com/onsi/ginkgo v1.14.1
+	github.com/onsi/gomega v1.10.2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.7.1
 	github.com/sirupsen/logrus v1.6.0
@@ -19,17 +19,16 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/vrischmann/envconfig v1.3.0
 	go.uber.org/multierr v1.5.0 // indirect
-	go.uber.org/zap v1.10.0
+	go.uber.org/zap v1.15.0
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
-	gopkg.in/ini.v1 v1.48.0 // indirect
 	k8s.io/api v0.20.2
 	k8s.io/apimachinery v0.20.2
 	k8s.io/client-go v0.20.2
-	sigs.k8s.io/controller-runtime v0.5.0
+	sigs.k8s.io/controller-runtime v0.8.3
 )
 
 replace (
 	github.com/smartystreets/goconvey => github.com/m00g3n/goconvey v1.6.5-0.20200622160247-ef17e6397c60
 	go.etcd.io/etcd => go.etcd.io/etcd v3.3.25+incompatible
-	//gopkg.in/yaml.v2 => gopkg.in/yaml.v2 v3.0.0-20200615113413-eeeca48fe776
+	gopkg.in/yaml.v2 => gopkg.in/yaml.v2 v2.3.0
 )
