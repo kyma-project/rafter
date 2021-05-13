@@ -2,6 +2,7 @@ package asset_test
 
 import (
 	"context"
+	"github.com/go-logr/logr"
 	"strings"
 	"testing"
 	"time"
@@ -17,10 +18,9 @@ import (
 	"github.com/stretchr/testify/mock"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/record"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 )
 
-var log = logf.Log.WithName("asset-test")
+var log = logr.FromContext(context.TODO()).WithName("asset-test")
 
 const (
 	remoteBucketName = "bucket-name"

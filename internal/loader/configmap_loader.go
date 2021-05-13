@@ -2,6 +2,7 @@ package loader
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -56,7 +57,7 @@ func (l *loader) loadConfigMap(src string, name string, filter string) (string, 
 func (l *loader) getConfigMap(namespace, name string) (*corev1.ConfigMap, error) {
 	configmapsResource := schema.GroupVersionResource{Group: "", Version: "v1", Resource: "configmaps"}
 
-	item, err := l.dynamicClient.Resource(configmapsResource).Namespace(namespace).Get(name, metav1.GetOptions{})
+	item, err := l.dynamicClient.Resource(configmapsResource).Namespace(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		return nil, errors.Wrapf(err, "while getting ConfigMap %s from %s namespace", name, namespace)
 

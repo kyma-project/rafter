@@ -1,6 +1,7 @@
 package namespace
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/kyma-project/rafter/tests/pkg/retry"
@@ -21,11 +22,11 @@ func New(coreCli corev1.CoreV1Interface, name string) *Namespace {
 
 func (n *Namespace) Create(callbacks ...func(...interface{})) error {
 	err := retry.WithIgnoreOnAlreadyExist(retry.DefaultBackoff, func() error {
-		_, err := n.coreCli.Namespaces().Create(&v1.Namespace{
+		_, err := n.coreCli.Namespaces().Create(context.Background(), &v1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: n.name,
 			},
-		})
+		}, metav1.CreateOptions{})
 		return err
 	}, callbacks...)
 	if err != nil {
@@ -39,7 +40,7 @@ func (n *Namespace) Delete(callbacks ...func(...interface{})) error {
 		for _, callback := range callbacks {
 			callback(fmt.Sprintf("DELETE: namespace: %s", n.name))
 		}
-		return n.coreCli.Namespaces().Delete(n.name, &metav1.DeleteOptions{})
+		return n.coreCli.Namespaces().Delete(context.Background(), n.name, metav1.DeleteOptions{})
 	}, callbacks...)
 	if err != nil {
 		return errors.Wrapf(err, "while deleting namespace %s", n.name)

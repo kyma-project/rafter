@@ -51,7 +51,7 @@ var _ = Describe("Asset", func() {
 
 	It("should successfully create, update and delete AssetGroup", func() {
 		By("creating the AssetGroup")
-		result, err := reconciler.Reconcile(request)
+		result, err := reconciler.Reconcile(context.TODO(), request)
 		validateReconcilation(err, result)
 		assetgroup = &v1beta1.AssetGroup{}
 		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, assetgroup)).To(Succeed())
@@ -77,7 +77,7 @@ var _ = Describe("Asset", func() {
 			}
 		}
 
-		result, err = reconciler.Reconcile(request)
+		result, err = reconciler.Reconcile(context.TODO(), request)
 		validateReconcilation(err, result)
 		assetgroup = &v1beta1.AssetGroup{}
 		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, assetgroup)).To(Succeed())
@@ -90,7 +90,7 @@ var _ = Describe("Asset", func() {
 		assetgroup.Spec.Sources[markdownIndex].Filter = "zyx"
 		Expect(k8sClient.Update(context.TODO(), assetgroup)).To(Succeed())
 
-		result, err = reconciler.Reconcile(request)
+		result, err = reconciler.Reconcile(context.TODO(), request)
 		validateReconcilation(err, result)
 		assetgroup = &v1beta1.AssetGroup{}
 		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, assetgroup)).To(Succeed())
@@ -109,7 +109,7 @@ var _ = Describe("Asset", func() {
 		By("deleting the AssetGroup")
 		Expect(k8sClient.Delete(context.TODO(), assetgroup)).To(Succeed())
 
-		_, err = reconciler.Reconcile(request)
+		_, err = reconciler.Reconcile(context.TODO(), request)
 		Expect(err).To(Succeed())
 
 		assetgroup = &v1beta1.AssetGroup{}

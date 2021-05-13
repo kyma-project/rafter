@@ -58,9 +58,7 @@ func NewAssetGroup(config AssetGroupConfig, log logr.Logger, mgr ctrl.Manager, w
 // +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=buckets/status,verbs=get;list
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;watch
 
-func (r *AssetGroupReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (r *AssetGroupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 
 	instance := &cmsv1alpha1.AssetGroup{}
 	err := r.Get(ctx, req.NamespacedName, instance)
@@ -92,6 +90,8 @@ func (r *AssetGroupReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) 
 }
 
 func (r *AssetGroupReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&cmsv1alpha1.AssetGroup{}).
 		Owns(&v1beta1.Asset{}).

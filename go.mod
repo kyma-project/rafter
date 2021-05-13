@@ -20,7 +20,7 @@ require (
 	github.com/vrischmann/envconfig v1.3.0
 	go.uber.org/multierr v1.5.0 // indirect
 	go.uber.org/zap v1.15.0
-	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
+	golang.org/x/net v0.0.0-20210510120150-4163338589ed
 	k8s.io/api v0.20.2
 	k8s.io/apimachinery v0.20.2
 	k8s.io/client-go v0.20.2

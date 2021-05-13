@@ -53,7 +53,7 @@ type AssetWebhookConfigService interface {
 
 //go:generate mockery -name=ResourceGetter -output=automock -outpkg=automock -case=underscore
 type ResourceGetter interface {
-	Get(name string, options metav1.GetOptions, subresources ...string) (*unstructured.Unstructured, error)
+	Get(ctx context.Context, name string, options metav1.GetOptions, subresources ...string) (*unstructured.Unstructured, error)
 }
 
 func New(indexer ResourceGetter, webhookCfgMapName, webhookCfgMapNamespace string) *assetWebhookConfigService {
@@ -65,7 +65,7 @@ func New(indexer ResourceGetter, webhookCfgMapName, webhookCfgMapNamespace strin
 }
 
 func (r *assetWebhookConfigService) Get(ctx context.Context) (AssetWebhookConfigMap, error) {
-	item, err := r.resourceGetter.Get(r.webhookCfgMapName, metav1.GetOptions{})
+	item, err := r.resourceGetter.Get(ctx, r.webhookCfgMapName, metav1.GetOptions{})
 
 	if err != nil {
 		if apiErrors.IsNotFound(err) {

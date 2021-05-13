@@ -16,7 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/uuid"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/runtime/log"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 var _ = Describe("Asset", func() {
@@ -52,7 +52,7 @@ var _ = Describe("Asset", func() {
 
 		reconciler = &AssetReconciler{
 			Client:                  k8sClient,
-			cacheSynchronizer:       func(stop <-chan struct{}) bool { return true },
+			cacheSynchronizer:       func(ctx context.Context) bool { return true },
 			Log:                     log.Log,
 			recorder:                record.NewFakeRecorder(100),
 			relistInterval:          60 * time.Hour,
@@ -73,7 +73,7 @@ var _ = Describe("Asset", func() {
 	It("should successfully create, update and delete Asset", func() {
 		By("creating the Asset")
 		// On scheduled
-		result, err := reconciler.Reconcile(request)
+		result, err := reconciler.Reconcile(context.TODO(), request)
 		validateReconcilation(err, result)
 		asset = &assetstorev1beta1.Asset{}
 		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, asset)).To(Succeed())
@@ -85,7 +85,7 @@ var _ = Describe("Asset", func() {
 		mocks.Loader.On("Clean", "/tmp").Return(nil).Once()
 		mocks.Store.On("PutObjects", mock.Anything, asset.Spec.BucketRef.Name, asset.Name, "/tmp", []string{"test.file1", "test.file2"}).Return(nil).Once()
 
-		result, err = reconciler.Reconcile(request)
+		result, err = reconciler.Reconcile(context.TODO(), request)
 		validateReconcilation(err, result)
 		asset = &assetstorev1beta1.Asset{}
 		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, asset)).To(Succeed())
@@ -97,7 +97,7 @@ var _ = Describe("Asset", func() {
 		Expect(k8sClient.Update(context.TODO(), asset)).To(Succeed())
 
 		// On scheduled
-		result, err = reconciler.Reconcile(request)
+		result, err = reconciler.Reconcile(context.TODO(), request)
 		validateReconcilation(err, result)
 		asset = &assetstorev1beta1.Asset{}
 		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, asset)).To(Succeed())
@@ -110,7 +110,7 @@ var _ = Describe("Asset", func() {
 		mocks.Loader.On("Clean", "/tmp").Return(nil).Once()
 		mocks.Store.On("PutObjects", mock.Anything, asset.Spec.BucketRef.Name, asset.Name, "/tmp", []string{"test.file"}).Return(nil).Once()
 
-		result, err = reconciler.Reconcile(request)
+		result, err = reconciler.Reconcile(context.TODO(), request)
 		validateReconcilation(err, result)
 		asset = &assetstorev1beta1.Asset{}
 		Expect(k8sClient.Get(context.TODO(), request.NamespacedName, asset)).To(Succeed())
@@ -123,7 +123,7 @@ var _ = Describe("Asset", func() {
 		mocks.Store.On("ListObjects", mock.Anything, asset.Spec.BucketRef.Name, asset.Name).Return([]string{"test.file"}, nil).Once()
 		mocks.Store.On("DeleteObjects", mock.Anything, asset.Spec.BucketRef.Name, asset.Name).Return(nil).Once()
 
-		result, err = reconciler.Reconcile(request)
+		result, err = reconciler.Reconcile(context.TODO(), request)
 		validateReconcilation(err, result)
 
 		asset = &assetstorev1beta1.Asset{}
