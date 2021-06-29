@@ -75,6 +75,10 @@ func main() {
 		err = c.Save(configurer.SharedAppConfig{SystemBuckets: buckets})
 		exitOnError(err, "Error during saving system bucket configuration")
 	} else {
+		handler := bucket.NewHandler(client, cfg.Bucket)
+		err = handler.CheckBuckets(sharedConfig.SystemBuckets)
+		exitOnError(err, "Error during checking system buckets")
+
 		buckets = sharedConfig.SystemBuckets
 	}
 

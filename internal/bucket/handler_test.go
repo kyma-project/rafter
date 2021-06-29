@@ -148,6 +148,85 @@ func TestHandler_CreateSystemBuckets(t *testing.T) {
 	})
 }
 
+func TestBucketHandler_CheckBuckets(t *testing.T) {
+	t.Run("Buckets exist", func(t *testing.T) {
+		// Given
+		g := gomega.NewGomegaWithT(t)
+
+		buckets := bucket.SystemBucketNames{
+			Private: "public-bucket",
+			Public:  "private-bucket",
+		}
+		cfg := bucket.Config{
+			Region: "region",
+		}
+		minioCli := &automock.BucketClient{}
+		handler := bucket.NewHandler(minioCli, cfg)
+
+		minioCli.On("BucketExists", buckets.Private).Return(true, nil).Once()
+		minioCli.On("BucketExists", buckets.Public).Return(true, nil).Once()
+		defer minioCli.AssertExpectations(t)
+
+		// When
+		err := handler.CheckBuckets(buckets)
+
+		// Then
+		g.Expect(err).NotTo(gomega.HaveOccurred())
+	})
+
+	t.Run("Create buckets", func(t *testing.T) {
+		// Given
+		g := gomega.NewGomegaWithT(t)
+
+		buckets := bucket.SystemBucketNames{
+			Private: "public-bucket",
+			Public:  "private-bucket",
+		}
+		region := "region"
+		cfg := bucket.Config{
+			Region: region,
+		}
+		minioCli := &automock.BucketClient{}
+		handler := bucket.NewHandler(minioCli, cfg)
+
+		minioCli.On("BucketExists", buckets.Private).Return(false, nil).Once()
+		minioCli.On("MakeBucket", buckets.Private, region).Return(nil).Once()
+		minioCli.On("BucketExists", buckets.Public).Return(false, nil).Once()
+		minioCli.On("MakeBucket", buckets.Public, region).Return(nil).Once()
+		defer minioCli.AssertExpectations(t)
+
+		// When
+		err := handler.CheckBuckets(buckets)
+
+		// Then
+		g.Expect(err).NotTo(gomega.HaveOccurred())
+	})
+
+	t.Run("Checking error", func(t *testing.T) {
+		// Given
+		g := gomega.NewGomegaWithT(t)
+
+		buckets := bucket.SystemBucketNames{
+			Private: "public-bucket",
+			Public:  "private-bucket",
+		}
+		cfg := bucket.Config{
+			Region: "region",
+		}
+		minioCli := &automock.BucketClient{}
+		handler := bucket.NewHandler(minioCli, cfg)
+
+		minioCli.On("BucketExists", buckets.Private).Return(false, errors.New("test error")).Once()
+		defer minioCli.AssertExpectations(t)
+
+		// When
+		err := handler.CheckBuckets(buckets)
+
+		// Then
+		g.Expect(err).To(gomega.HaveOccurred())
+	})
+}
+
 func TestBucketHandler_CreateIfDoesntExist(t *testing.T) {
 	t.Run("SuccessRegion", func(t *testing.T) {
 		// Given

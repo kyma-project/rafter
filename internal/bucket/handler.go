@@ -102,6 +102,21 @@ func (h *Handler) CreateIfDoesntExist(bucketName, bucketRegion string) error {
 	return nil
 }
 
+// CheckBuckets makes sure that system buckets are created if they don't exist yet
+func (h *Handler) CheckBuckets(buckets SystemBucketNames) error {
+	err := h.CreateIfDoesntExist(buckets.Private, h.cfg.Region)
+	if err != nil {
+		return errors.Wrapf(err, "while creating private system buckets")
+	}
+
+	err = h.CreateIfDoesntExist(buckets.Public, h.cfg.Region)
+	if err != nil {
+		return errors.Wrapf(err, "while creating private system buckets")
+	}
+
+	return nil
+}
+
 // SetPolicy sets provided policy on a given bucket
 func (h *Handler) SetPolicy(bucketName, policy string) error {
 	glog.Infof("Setting `%s` policy on bucket `%s`...\n", policy, bucketName)
