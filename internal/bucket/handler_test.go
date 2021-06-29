@@ -202,7 +202,7 @@ func TestBucketHandler_CheckBuckets(t *testing.T) {
 		g.Expect(err).NotTo(gomega.HaveOccurred())
 	})
 
-	t.Run("Checking error", func(t *testing.T) {
+	t.Run("Checking private bucket error", func(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 
@@ -217,6 +217,31 @@ func TestBucketHandler_CheckBuckets(t *testing.T) {
 		handler := bucket.NewHandler(minioCli, cfg)
 
 		minioCli.On("BucketExists", buckets.Private).Return(false, errors.New("test error")).Once()
+		defer minioCli.AssertExpectations(t)
+
+		// When
+		err := handler.CheckBuckets(buckets)
+
+		// Then
+		g.Expect(err).To(gomega.HaveOccurred())
+	})
+
+	t.Run("Checking public bucket error", func(t *testing.T) {
+		// Given
+		g := gomega.NewGomegaWithT(t)
+
+		buckets := bucket.SystemBucketNames{
+			Private: "public-bucket",
+			Public:  "private-bucket",
+		}
+		cfg := bucket.Config{
+			Region: "region",
+		}
+		minioCli := &automock.BucketClient{}
+		handler := bucket.NewHandler(minioCli, cfg)
+
+		minioCli.On("BucketExists", buckets.Private).Return(true, nil).Once()
+		minioCli.On("BucketExists", buckets.Public).Return(false, errors.New("test error")).Once()
 		defer minioCli.AssertExpectations(t)
 
 		// When
