@@ -111,7 +111,17 @@ func (h *Handler) CheckBuckets(buckets SystemBucketNames) error {
 
 	err = h.CreateIfDoesntExist(buckets.Public, h.cfg.Region)
 	if err != nil {
-		return errors.Wrapf(err, "while creating private system buckets")
+		return errors.Wrapf(err, "while creating public system buckets")
+	}
+
+	readOnlyPolicy, err := h.bucketPolicyString(buckets.Public, policy.BucketPolicyReadOnly)
+	if err != nil {
+		return errors.Wrapf(err, "while creating policy for %s bucket", buckets.Public)
+	}
+
+	err = h.SetPolicy(buckets.Public, readOnlyPolicy)
+	if err != nil {
+		return errors.Wrapf(err, "while setting policy %s for %s bucket", readOnlyPolicy, buckets.Public)
 	}
 
 	return nil

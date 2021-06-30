@@ -153,9 +153,10 @@ func TestBucketHandler_CheckBuckets(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 
+		publicBucket := "public-bucket"
 		buckets := bucket.SystemBucketNames{
-			Private: "public-bucket",
-			Public:  "private-bucket",
+			Private: "private-bucket",
+			Public:  publicBucket,
 		}
 		cfg := bucket.Config{
 			Region: "region",
@@ -165,6 +166,8 @@ func TestBucketHandler_CheckBuckets(t *testing.T) {
 
 		minioCli.On("BucketExists", buckets.Private).Return(true, nil).Once()
 		minioCli.On("BucketExists", buckets.Public).Return(true, nil).Once()
+		minioCli.On("SetBucketPolicy", publicBucket, mock.MatchedBy(func(policy string) bool { return true })).Return(nil).Once()
+
 		defer minioCli.AssertExpectations(t)
 
 		// When
@@ -178,9 +181,10 @@ func TestBucketHandler_CheckBuckets(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 
+		publicBucket := "public-bucket"
 		buckets := bucket.SystemBucketNames{
-			Private: "public-bucket",
-			Public:  "private-bucket",
+			Private: "private-bucket",
+			Public:  publicBucket,
 		}
 		region := "region"
 		cfg := bucket.Config{
@@ -193,6 +197,7 @@ func TestBucketHandler_CheckBuckets(t *testing.T) {
 		minioCli.On("MakeBucket", buckets.Private, region).Return(nil).Once()
 		minioCli.On("BucketExists", buckets.Public).Return(false, nil).Once()
 		minioCli.On("MakeBucket", buckets.Public, region).Return(nil).Once()
+		minioCli.On("SetBucketPolicy", publicBucket, mock.MatchedBy(func(policy string) bool { return true })).Return(nil).Once()
 		defer minioCli.AssertExpectations(t)
 
 		// When
@@ -206,9 +211,10 @@ func TestBucketHandler_CheckBuckets(t *testing.T) {
 		// Given
 		g := gomega.NewGomegaWithT(t)
 
+		
 		buckets := bucket.SystemBucketNames{
-			Private: "public-bucket",
-			Public:  "private-bucket",
+			Private: "private-bucket",
+			Public:  "public-bucket",
 		}
 		cfg := bucket.Config{
 			Region: "region",
