@@ -44,7 +44,7 @@ func (r *Resource) Create(res interface{}, callbacks ...func(...interface{})) (s
 		for _, callback := range callbacks {
 			callback(fmt.Sprintf("[CREATE]: %s", unstructuredObj))
 		}
-		resource, err = r.ResCli.Create(unstructuredObj, metav1.CreateOptions{})
+		resource, err = r.ResCli.Create(context.Background(), unstructuredObj, metav1.CreateOptions{})
 		if err != nil {
 			return err
 		}
@@ -61,7 +61,7 @@ func (r *Resource) Get(name string, callbacks ...func(...interface{})) (*unstruc
 	var result *unstructured.Unstructured
 	err := retry.OnTimeout(retry.DefaultBackoff, func() error {
 		var err error
-		result, err = r.ResCli.Get(name, metav1.GetOptions{})
+		result, err = r.ResCli.Get(context.Background(), name, metav1.GetOptions{})
 		return err
 	}, callbacks...)
 	if err != nil {
@@ -80,7 +80,7 @@ func (r *Resource) Get(name string, callbacks ...func(...interface{})) (*unstruc
 func (r *Resource) Delete(name string, timeout time.Duration, callbacks ...func(...interface{})) error {
 	var initialResourceVersion string
 	err := retry.OnTimeout(retry.DefaultBackoff, func() error {
-		u, err := r.ResCli.Get(name, metav1.GetOptions{})
+		u, err := r.ResCli.Get(context.Background(), name, metav1.GetOptions{})
 		if err != nil {
 			return err
 		}
@@ -101,7 +101,7 @@ func (r *Resource) Delete(name string, timeout time.Duration, callbacks ...func(
 			}
 			callback(fmt.Sprintf("DELETE %s: namespace:%s name:%s", r.kind, namespace, name))
 		}
-		return r.ResCli.Delete(name, &metav1.DeleteOptions{})
+		return r.ResCli.Delete(context.Background(), name, metav1.DeleteOptions{})
 	}, callbacks...)
 
 	if err != nil {
@@ -126,4 +126,8 @@ func (r *Resource) Delete(name string, timeout time.Duration, callbacks ...func(
 		return err
 	}
 	return nil
+}
+
+func (r *Resource) Watch(options metav1.ListOptions) (watch.Interface, error) {
+	return nil, nil
 }

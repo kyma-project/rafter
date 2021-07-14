@@ -28,7 +28,7 @@ type AssetReconciler struct {
 	client.Client
 	Log logr.Logger
 
-	cacheSynchronizer       func(stop <-chan struct{}) bool
+	cacheSynchronizer       func(ctx context.Context) bool
 	recorder                record.EventRecorder
 	relistInterval          time.Duration
 	maxConcurrentReconciles int
@@ -70,9 +70,7 @@ func NewAsset(config AssetConfig, log logr.Logger, di *Container) *AssetReconcil
 // +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=buckets/status,verbs=get;list
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
 
-func (r *AssetReconciler) Reconcile(request ctrl.Request) (ctrl.Result, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (r *AssetReconciler) Reconcile(ctx context.Context, request ctrl.Request) (ctrl.Result, error) {
 
 	if err := r.appendFinalizer(ctx, request.NamespacedName); err != nil {
 		return ctrl.Result{}, errors.Wrap(err, "while appending finalizer")
@@ -178,8 +176,9 @@ func (r *AssetReconciler) update(ctx context.Context, namespacedName types.Names
 
 		err = updateFnc(instance)
 		if err != nil && apiErrors.IsConflict(err) {
-			r.cacheSynchronizer(ctx.Done())
+			r.cacheSynchronizer(ctx)
 		}
+		ctx.Done()
 
 		return err
 	})
@@ -188,6 +187,8 @@ func (r *AssetReconciler) update(ctx context.Context, namespacedName types.Names
 }
 
 func (r *AssetReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&assetstorev1beta1.Asset{}).
 		WithOptions(controller.Options{

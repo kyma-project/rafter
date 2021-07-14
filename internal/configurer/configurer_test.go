@@ -1,6 +1,7 @@
 package configurer_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/kyma-project/rafter/internal/bucket"
@@ -127,7 +128,7 @@ func TestConfigurer_Save(t *testing.T) {
 		// Then
 		g.Expect(err).NotTo(gomega.HaveOccurred())
 
-		cfgMap, err := coreCli.ConfigMaps(configMapNamespace).Get(configMapName, metav1.GetOptions{})
+		cfgMap, err := coreCli.ConfigMaps(configMapNamespace).Get(context.Background(), configMapName, metav1.GetOptions{})
 		g.Expect(err).NotTo(gomega.HaveOccurred())
 		g.Expect(cfgMap).To(gomega.Equal(expectedConfigMap))
 	})

@@ -26,7 +26,7 @@ type ClusterBucketReconciler struct {
 	client.Client
 	Log logr.Logger
 
-	cacheSynchronizer       func(stop <-chan struct{}) bool
+	cacheSynchronizer       func(ctx context.Context) bool
 	recorder                record.EventRecorder
 	relistInterval          time.Duration
 	finalizer               finalizer.Finalizer
@@ -62,9 +62,7 @@ func NewClusterBucket(config ClusterBucketConfig, log logr.Logger, di *Container
 // +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=clusterbuckets/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
 
-func (r *ClusterBucketReconciler) Reconcile(request ctrl.Request) (ctrl.Result, error) {
-	ctx, cancel := context.WithCancel(context.TODO())
-	defer cancel()
+func (r *ClusterBucketReconciler) Reconcile(ctx context.Context, request ctrl.Request) (ctrl.Result, error) {
 
 	if err := r.appendFinalizer(ctx, request.NamespacedName); err != nil {
 		return ctrl.Result{}, errors.Wrap(err, "while appending finalizer")
@@ -170,8 +168,9 @@ func (r *ClusterBucketReconciler) update(ctx context.Context, namespacedName typ
 
 		err = updateFnc(instance)
 		if err != nil && apiErrors.IsConflict(err) {
-			r.cacheSynchronizer(ctx.Done())
+			r.cacheSynchronizer(ctx)
 		}
+		ctx.Done()
 
 		return err
 	})
@@ -180,6 +179,9 @@ func (r *ClusterBucketReconciler) update(ctx context.Context, namespacedName typ
 }
 
 func (r *ClusterBucketReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	_, cancel := context.WithCancel(context.TODO())
+	defer cancel()
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&assetstorev1beta1.ClusterBucket{}).
 		WithOptions(controller.Options{

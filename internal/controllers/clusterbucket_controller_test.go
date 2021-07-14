@@ -15,7 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/uuid"
 	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/runtime/log"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 var _ = Describe("ClusterBucket", func() {
@@ -42,7 +42,7 @@ var _ = Describe("ClusterBucket", func() {
 
 		reconciler = &ClusterBucketReconciler{
 			Client:                  k8sClient,
-			cacheSynchronizer:       func(stop <-chan struct{}) bool { return true },
+			cacheSynchronizer:       func(ctx context.Context) bool { return true },
 			Log:                     log.Log,
 			recorder:                record.NewFakeRecorder(100),
 			relistInterval:          60 * time.Hour,
@@ -64,7 +64,7 @@ var _ = Describe("ClusterBucket", func() {
 		mocks.Store.On("SetBucketPolicy", "test", bucket.Spec.Policy).Return(nil).Once()
 
 		// when
-		result, err := reconciler.Reconcile(request)
+		result, err := reconciler.Reconcile(context.TODO(), request)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result.Requeue).To(BeFalse())
@@ -90,7 +90,7 @@ var _ = Describe("ClusterBucket", func() {
 		mocks.Store.On("SetBucketPolicy", "test", bucket.Spec.Policy).Return(nil).Once()
 
 		// when
-		result, err = reconciler.Reconcile(request)
+		result, err = reconciler.Reconcile(context.TODO(), request)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result.Requeue).To(BeFalse())
@@ -113,7 +113,7 @@ var _ = Describe("ClusterBucket", func() {
 		mocks.Store.On("DeleteBucket", mock.Anything, "test").Return(nil).Once()
 
 		// when
-		result, err = reconciler.Reconcile(request)
+		result, err = reconciler.Reconcile(context.TODO(), request)
 		// then
 		Expect(err).ToNot(HaveOccurred())
 		Expect(result.Requeue).To(BeFalse())

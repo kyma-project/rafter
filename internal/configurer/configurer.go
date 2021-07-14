@@ -1,6 +1,7 @@
 package configurer
 
 import (
+	"context"
 	"github.com/golang/glog"
 	"github.com/kyma-project/rafter/internal/bucket"
 	"github.com/pkg/errors"
@@ -37,7 +38,7 @@ func (c *Configurer) Load() (*SharedAppConfig, error) {
 		return nil, nil
 	}
 
-	configMap, err := c.client.ConfigMaps(c.cfg.Namespace).Get(c.cfg.Name, metav1.GetOptions{})
+	configMap, err := c.client.ConfigMaps(c.cfg.Namespace).Get(context.Background(), c.cfg.Name, metav1.GetOptions{})
 	if err != nil {
 		if apierrors.IsNotFound(err) {
 			return nil, nil
@@ -56,7 +57,7 @@ func (c *Configurer) Save(config SharedAppConfig) error {
 		return nil
 	}
 
-	_, err := c.client.ConfigMaps(c.cfg.Namespace).Create(c.convertToConfigMap(config))
+	_, err := c.client.ConfigMaps(c.cfg.Namespace).Create(context.Background(), c.convertToConfigMap(config), metav1.CreateOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "while creating ConfigMap %s in namespace %s", c.cfg.Name, c.cfg.Namespace)
 	}

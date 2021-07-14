@@ -1,6 +1,7 @@
 package configmap
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -67,7 +68,7 @@ func (s *Configmap) Create(name string, files []*os.File, callbacks ...func(...i
 		BinaryData: binaryData,
 	}
 
-	confMap, err := s.configMapCli.Create(configmap)
+	confMap, err := s.configMapCli.Create(context.Background(), configmap, metav1.CreateOptions{})
 	if err != nil {
 		return "", errors.Wrapf(err, "while creating ConfigMap %s", name)
 	}
@@ -81,7 +82,7 @@ func (s *Configmap) DeleteAll(callbacks ...func(...interface{})) error {
 	for _, name := range s.createdConfigMaps {
 		err := retry.WithIgnoreOnNotFound(retry.DefaultBackoff, func() error {
 			s.log(fmt.Sprintf("DELETE: configmap: %s", name), callbacks...)
-			return s.configMapCli.Delete(name, &metav1.DeleteOptions{})
+			return s.configMapCli.Delete(context.Background(), name, metav1.DeleteOptions{})
 		}, callbacks...)
 		if err != nil {
 			return errors.Wrapf(err, "While deleting configmap: %s", name)

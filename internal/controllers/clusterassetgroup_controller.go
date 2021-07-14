@@ -58,9 +58,7 @@ func NewClusterAssetGroup(config ClusterAssetGroupConfig, log logr.Logger, mgr c
 // +kubebuilder:rbac:groups=rafter.kyma-project.io,resources=clusterbuckets/status,verbs=get;list
 // +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;watch
 
-func (r *ClusterAssetGroupReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (r *ClusterAssetGroupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 
 	instance := &cmsv1alpha1.ClusterAssetGroup{}
 	err := r.Get(ctx, req.NamespacedName, instance)
@@ -103,6 +101,9 @@ func (r *ClusterAssetGroupReconciler) updateStatus(ctx context.Context, instance
 }
 
 func (r *ClusterAssetGroupReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&cmsv1alpha1.ClusterAssetGroup{}).
 		Owns(&v1beta1.ClusterAsset{}).
